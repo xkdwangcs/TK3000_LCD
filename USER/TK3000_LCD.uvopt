@@ -156,7 +156,7 @@
           <Type>0</Type>
           <LineNumber>226</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134299470</Address>
+          <Address>134303022</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -166,38 +166,6 @@
           <Filename>.\USBH_APP\usbh_usr.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\\TK3000_LCD\USBH_APP/usbh_usr.c\226</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
-          <LineNumber>105</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134272616</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\UI\MainTask.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\TK3000_LCD\UI/MainTask.c\105</Expression>
-        </Bp>
-        <Bp>
-          <Number>2</Number>
-          <Type>0</Type>
-          <LineNumber>474</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134286454</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\UI\PicDisplay.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\TK3000_LCD\UI/PicDisplay.c\474</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>

@@ -144,7 +144,7 @@ void MainTask(void)
 				if(isExitWhile) break;
 				GUI_Delay(500);
 			}
-			TestPictureFontDisplay();    
+			//TestPictureFontDisplay();    
 		}
     while(1)
     {
