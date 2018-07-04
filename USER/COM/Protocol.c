@@ -66,13 +66,13 @@ u16 Package(char* func,char* cmdName,u8* cmdData,u16 dataLeng)
 	_cmdSendBuff.PackNum=0x00;
 	_cmdSendBuff.PackID=0x00;
 	strcpy(_cmdSendBuff.FunCode,func);
-  strcpy(_cmdSendBuff.CmdName,cmdName);
-  CopyBytes((u8*)&_cmdSendBuff.CmdData,0,cmdData,dataLeng);
+	strcpy(_cmdSendBuff.CmdName,cmdName);
+	CopyBytes((u8*)&_cmdSendBuff.CmdData,0,cmdData,dataLeng);
 	u16 crc16 = CRC16ByPoly((u8*)&_cmdSendBuff, 1, length - 4);
 	_cmdSendBuff.CmdData[dataLeng] = crc16 / 256;
 	_cmdSendBuff.CmdData[dataLeng + 1] = crc16 % 256;
 	_cmdSendBuff.CmdData[dataLeng + 2] = _tail;
-  _cmdSendBuff.DataLeng=dataLeng;
+	_cmdSendBuff.DataLeng=dataLeng;
 	return length;
 }
 

@@ -39,16 +39,16 @@ typedef enum
 #pragma pack(1)  
 typedef struct
 {
-	u8 Head;					      //头字节
+	u8 Head;					    //头字节
 	u16 Length;					    //整包的长度，包手包头、包尾
 	u8 DestAddr;				    //目的地址
 	u8 SourAddr;				    //源地址
-  u8 PackNum;             //分包数，为0时表示没分包
+	u8 PackNum;             		//分包数，为0时表示没分包
 	u8 PackID;					    //包号
-	char FunCode[3];			  //功能码
-	char CmdName[20];			  //命令名，固定长度，不足用0补充
-	u8 CmdData[CMDBuffLeng];	//命令数据据，发送时包括了CRC、尾
-  u16 DataLeng;            //数据域实际长度
+	char FunCode[3];			 	//功能码
+	char CmdName[20];			  	//命令名，固定长度，不足用0补充
+	u8 CmdData[CMDBuffLeng];		//命令数据据，发送时包括了CRC、尾
+  u16 DataLeng;            			//数据域实际长度
   u16 RecvOK;
 } ProtocolBuffStruct;//通信缓存结构
 #pragma pack()  
