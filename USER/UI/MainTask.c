@@ -115,27 +115,37 @@ void MainTask(void)
 			}
 					
 			//CreateKeyboard();//创建软键盘
-      CreateNumKeyForm();
+			CreateNumKeyForm();
 			StatusParaStruct appStatus;
 			while(true)
 			{
 				bool isExitWhile=false;				
 				GUI_Clear();
 				appStatus =GetCurrStatus();
-				switch(appStatus.StatusID)
+				switch(appStatus.DevStatus)
 				{
-					case 0: //没有读取到当前状态
+					case NoGetStatus: //没有读取到当前状态
 						GUI_DispStringHCenterAt("没有读取到设备程序当前状态",200,50);
 						break;
-					case 1: //设备准备就绪,进入工作主界面
+					case DeviceIniting: //设备初始化中
+
+						break;					
+					case DevReady: //设备准备就绪,进入工作主界面
+					case DevWorking: //设备正在工作
 						CreateWorkForm();
 						isExitWhile=true;
 						break;
-					case 2: //注册码录入,进入注册码录入界面
+					case DevScram: //急停中
+						
+						break;
+					case RegWait: //注册码录入,进入注册码录入界面
 						//CreateLoginForm();						
 						//GUI_DispStringHCenterAt(appStatus.StatusDescribe,200,50);
 						CreateRegister();
 						isExitWhile=true;
+						break;
+					case USBInsert: //USB已插入
+						
 						break;
 					default:
 						GUI_DispStringHCenterAt(appStatus.StatusDescribe,200,50);
@@ -148,7 +158,7 @@ void MainTask(void)
 		}
     while(1)
     {
-        GUI_Delay(20);
+        GUI_Delay(100);
     }
 }
 

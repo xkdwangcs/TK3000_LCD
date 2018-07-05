@@ -478,6 +478,11 @@
               <FileType>1</FileType>
               <FilePath>.\DAL\FileOperate.c</FilePath>
             </File>
+            <File>
+              <FileName>SysParameter.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\DAL\SysParameter.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

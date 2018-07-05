@@ -6,9 +6,10 @@
 *
 ******************************************/
 
-#include  "DIALOG.h"
+#include "DIALOG.h"
 #include "XBFFont.h"
-
+#include "CMD.h"
+#
 
 #define Register (GUI_ID_USER +0x00)
 #define lbRegCode_Register (GUI_ID_USER +0x01)
@@ -39,21 +40,23 @@ void InitDialog_Register(WM_MESSAGE * pMsg){
 
     hItem = WM_GetDialogItem(pMsg->hWin,lbRegCode_Register);
     TEXT_SetText(hItem,"注册码");
-    TEXT_SetFont(hItem,&XBF_Font24);
+    TEXT_SetFont(hItem,&XBF_Font32);
     TEXT_SetTextAlign(hItem,GUI_TA_VCENTER|GUI_TA_LEFT);
 
     hItem = WM_GetDialogItem(pMsg->hWin,labDevCode_Register);
     TEXT_SetText(hItem,"机器码");
-    TEXT_SetFont(hItem,&XBF_Font24);
+    TEXT_SetFont(hItem,&XBF_Font32);
     TEXT_SetTextAlign(hItem,GUI_TA_VCENTER|GUI_TA_LEFT);
 
     hItem = WM_GetDialogItem(pMsg->hWin,txtRegCode_Register);
     EDIT_SetText(hItem, "");
+	EDIT_SetMaxLen(hItem,50);
     EDIT_SetFont(hItem, GUI_FONT_24_ASCII);
     EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
 
     hItem = WM_GetDialogItem(pMsg->hWin,txtDevCode_Register);
-    EDIT_SetText(hItem, "");
+    EDIT_SetText(hItem, SysParameter.DevNumCalc);
+	EDIT_SetMaxLen(hItem,50);
     EDIT_SetFont(hItem, GUI_FONT_24_ASCII);
     EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
 
@@ -70,6 +73,7 @@ void DoEvent_Register(WM_MESSAGE * pMsg)
 {
     int Id = WM_GetId(pMsg->hWinSrc);
     int NCode = pMsg->Data.v;
+	WM_HWIN	hItem;
     switch(Id)
     {
      case txtRegCode_Register:
@@ -77,7 +81,8 @@ void DoEvent_Register(WM_MESSAGE * pMsg)
 			case WM_NOTIFICATION_CLICKED:				
         break;
 			case WM_NOTIFICATION_RELEASED:
-        ShowNumKeyboard1(pMsg->hWin,EDIT_SetText,Id);
+			//弹出数字键盘
+			ShowNumKeyboard1(pMsg->hWin,EDIT_SetText,Id);
         break;
 			case WM_NOTIFICATION_VALUE_CHANGED:
 			break;
@@ -90,9 +95,10 @@ void DoEvent_Register(WM_MESSAGE * pMsg)
 					//DO:按钮已被点击
 					break;
 				case WM_NOTIFICATION_RELEASED:
+					//取消跳过功能
 					//DO:按钮已被释放（弹起）
-					GUI_EndDialog(pMsg->hWin, 0);
-					CreateWorkForm();
+//					GUI_EndDialog(pMsg->hWin, 0);
+//					CreateWorkForm();
 					break;
 			}
 			break;
@@ -104,6 +110,26 @@ void DoEvent_Register(WM_MESSAGE * pMsg)
 					break;
 				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
+					hItem = WM_GetDialogItem(pMsg->hWin,txtDevCode_Register);
+					char regNum[20]={0};
+					EDIT_GetText(hItem,regNum,20);
+					RegisterDevice(regNum);					
+					while(true)
+					{
+						StatusParaStruct status = GetCurrStatus();
+						if(status.DevStatus==DevReady) //注册成功，跳转到主界面
+						{
+							GUI_EndDialog(pMsg->hWin, 0);
+							CreateWorkForm();
+							return;
+						}
+						else if(status.DevStatus!=NoGetStatus)
+						{							
+							char* msg=status.StatusDescribe;
+							//这里显注册错误信息到界面
+						}
+						GUI_Delay(500);
+					}
 					break;
 			}
 			break;
@@ -131,6 +157,7 @@ static void _cbDialog(WM_MESSAGE * pMsg)
 WM_HWIN CreateRegister(void) {
     WM_HWIN hWin;
     hWin = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
+	GetSysParameter();
     return hWin;
 }
  
