@@ -35,17 +35,17 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 void InitDialog_Register(WM_MESSAGE * pMsg){
     WM_HWIN hItem = pMsg->hWin;
     FRAMEWIN_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
-    FRAMEWIN_SetFont(hItem, &XBF_Font24);
+    FRAMEWIN_SetFont(hItem, &GUI_FontYAHE24);
     FRAMEWIN_SetTextColor(hItem, 0x008000FF);
 
     hItem = WM_GetDialogItem(pMsg->hWin,lbRegCode_Register);
     TEXT_SetText(hItem,"注册码");
-    TEXT_SetFont(hItem,&XBF_Font32);
+    TEXT_SetFont(hItem,&GUI_FontYAHE32);
     TEXT_SetTextAlign(hItem,GUI_TA_VCENTER|GUI_TA_LEFT);
 
     hItem = WM_GetDialogItem(pMsg->hWin,labDevCode_Register);
     TEXT_SetText(hItem,"机器码");
-    TEXT_SetFont(hItem,&XBF_Font32);
+    TEXT_SetFont(hItem,&GUI_FontYAHE32);
     TEXT_SetTextAlign(hItem,GUI_TA_VCENTER|GUI_TA_LEFT);
 
     hItem = WM_GetDialogItem(pMsg->hWin,txtRegCode_Register);
@@ -61,10 +61,10 @@ void InitDialog_Register(WM_MESSAGE * pMsg){
     EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnGoto_Register);
-    BUTTON_SetFont(hItem, &XBF_Font24);
+    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnReg_Register);
-    BUTTON_SetFont(hItem, &XBF_Font24);
+    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
 }
 
 

@@ -330,7 +330,7 @@
               <MiscControls>--c99 --locale=english --diag_suppress=870 </MiscControls>
               <Define>STM32F4XX,USE_USB_OTG_FS, USE_EMBEDDED_PHY, USE_STDPERIPH_DRIVER, __FPU_PRESENT = 1,__FPU_USED = 1,ARM_MATH_CM4, __CC_ARM</Define>
               <Undefine></Undefine>
-              <IncludePath>..\STM32F40x_FWLib\inc;..\STM32F40x_FWLib\src;..\USER;..\CORE;.\Public;.\UI;.\BSP;.\COM;.\emWin\Include;.\emWin\Config;.\emWin\GUI_X;.\emWin\Driver;.\emWin\Fonts;.\DAL;.\USBH_APP;..\Libraries\STM32_USB_HOST_Library\Class\MSC\inc;..\Libraries\STM32_USB_HOST_Library\Core\inc;..\Libraries\STM32_USB_OTG_Driver\inc;..\Libraries\STM32_USB_Device_Library\Class\msc\inc;..\Libraries\STM32_USB_Device_Library\Core\inc;.\USBD_APP;.\emWin\FontLib;.\FATFS\src;.\emWin\PNG;.\emWin\Key</IncludePath>
+              <IncludePath>..\STM32F40x_FWLib\inc;..\STM32F40x_FWLib\src;..\USER;..\CORE;.\Public;.\UI;.\BSP;.\COM;.\emWin\Include;.\emWin\Config;.\emWin\GUI_X;.\emWin\Driver;.\emWin\Fonts;.\DAL;.\USBH_APP;..\Libraries\STM32_USB_HOST_Library\Class\MSC\inc;..\Libraries\STM32_USB_HOST_Library\Core\inc;..\Libraries\STM32_USB_OTG_Driver\inc;..\Libraries\STM32_USB_Device_Library\Class\msc\inc;..\Libraries\STM32_USB_Device_Library\Core\inc;.\USBD_APP;.\emWin\FontLib;.\FATFS\src;.\emWin\PNG;.\emWin\UI_Public</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -509,24 +509,39 @@
               <FilePath>.\UI\USBFunc_Ctr.c</FilePath>
             </File>
             <File>
-              <FileName>MsgBox_NobtDLG.c</FileName>
+              <FileName>Register.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\UI\MsgBox_NobtDLG.c</FilePath>
+              <FilePath>.\UI\Register.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>UI_Public</GroupName>
+          <Files>
+            <File>
+              <FileName>pymb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\emWin\UI_Public\pymb.c</FilePath>
             </File>
             <File>
-              <FileName>MsgBoxDLG.c</FileName>
+              <FileName>SoftKeyboard.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\UI\MsgBoxDLG.c</FilePath>
+              <FilePath>.\emWin\UI_Public\SoftKeyboard.c</FilePath>
+            </File>
+            <File>
+              <FileName>NumKeyForm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\emWin\UI_Public\NumKeyForm.c</FilePath>
             </File>
             <File>
               <FileName>PicDisplay.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\UI\PicDisplay.c</FilePath>
+              <FilePath>.\emWin\UI_Public\PicDisplay.c</FilePath>
             </File>
             <File>
-              <FileName>Register.c</FileName>
+              <FileName>MessageBox.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\UI\Register.c</FilePath>
+              <FilePath>.\emWin\UI_Public\MessageBox.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -842,26 +857,6 @@
               <FileName>zutil.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\emWin\PNG\zutil.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>GUI_Key</GroupName>
-          <Files>
-            <File>
-              <FileName>pymb.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\emWin\Key\pymb.c</FilePath>
-            </File>
-            <File>
-              <FileName>SoftKeyboard.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\emWin\Key\SoftKeyboard.c</FilePath>
-            </File>
-            <File>
-              <FileName>NumKeyForm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\emWin\Key\NumKeyForm.c</FilePath>
             </File>
           </Files>
         </Group>

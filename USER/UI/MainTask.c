@@ -92,7 +92,7 @@ void MainTask(void)
 //	GUI_Delay(1000);	
 	
 	FIL fil;
-	FRESULT rst=OpenFile(_xbfLibName,FA_READ,&fil);
+	FRESULT rst=OpenFile(_xbfLibName32,FA_READ,&fil);
 	if(rst!=FR_OK)
 	{
 		GUI_SetFont(&GUI_Font24_ASCII);	
@@ -103,7 +103,7 @@ void MainTask(void)
 			CloseFile(&fil,_xbfLibName);
 			UseXBF();
 			GUI_UC_SetEncodeUTF8();
-			GUI_SetFont(&XBF_Font32);	
+			GUI_SetFont(&GUI_FontYAHE32);	
 			GUI_SetTextAlign(GUI_TA_HORIZONTAL|GUI_TA_LEFT);
 			char devMode[16]={0};
 			while(!GetDevMode(devMode))

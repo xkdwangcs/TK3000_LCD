@@ -142,7 +142,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 	{
 		hItem = WM_GetDialogItem(pMsg->hWin, i);
 		TEXT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
-		TEXT_SetFont(hItem, &XBF_Font24);
+		TEXT_SetFont(hItem, &GUI_FontYAHE24);
 		TEXT_SetText(hItem, "");
 	}
 

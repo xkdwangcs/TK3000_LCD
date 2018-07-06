@@ -28,11 +28,6 @@
 #define btnCancel_WorkForm (GUI_ID_USER +0x0D)
 #define btnOK_WorkForm (GUI_ID_USER +0x0E)
 
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontFontXYQ_YH_20_20;
-extern GUI_CONST_STORAGE  GUI_FONT GUI_FontHZ48;
-extern GUI_CONST_STORAGE  GUI_FONT GUI_FontHZ24;
-extern GUI_CONST_STORAGE  GUI_FONT GUI_FontHZ16;
-extern GUI_CONST_STORAGE  GUI_FONT GUI_FontHZ12;
 
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 { FRAMEWIN_CreateIndirect,"欢迎使用拓控产品",WorkForm,0,0,800,480,0, 0x0, 0 },
@@ -57,13 +52,14 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 void InitDialog_WorkForm(WM_MESSAGE * pMsg){
     WM_HWIN hItem = pMsg->hWin;
     FRAMEWIN_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
-    FRAMEWIN_SetFont(hItem, &XBF_Font24);
+    FRAMEWIN_SetFont(hItem, &GUI_FontYAHE24);
 	FRAMEWIN_SetTextColor(hItem, 0x008000FF); //加这句，点击按钮会闪烁?(经验证开启存储设备就不闪了）
 
     hItem = WM_GetDialogItem(pMsg->hWin,labZ_WorkForm);
     TEXT_SetText(hItem,"Z");
     TEXT_SetFont(hItem,&GUI_Font24_ASCII);
     TEXT_SetTextAlign(hItem,GUI_TA_VCENTER|GUI_TA_LEFT);
+	TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_HCENTER);
 
     hItem = WM_GetDialogItem(pMsg->hWin,labY_WorkForm);
     TEXT_SetText(hItem,"Y");
@@ -103,16 +99,16 @@ void InitDialog_WorkForm(WM_MESSAGE * pMsg){
     BUTTON_SetFont(hItem, GUI_FONT_16_ASCII);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnZdown_WorkForm);
-    BUTTON_SetFont(hItem, GUI_FONT_16_ASCII);
+    BUTTON_SetFont(hItem, GUI_FONT_16_ASCII);	
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnZup_WorkForm);
     BUTTON_SetFont(hItem, GUI_FONT_16_ASCII);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnCancel_WorkForm);
-    BUTTON_SetFont(hItem, &XBF_Font24);
+    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnOK_WorkForm);
-    BUTTON_SetFont(hItem, &XBF_Font24);
+    BUTTON_SetFont(hItem, &GUI_FontYAHE24);	
 }
 
 

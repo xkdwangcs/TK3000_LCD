@@ -87,8 +87,9 @@ void InitDialog_NumKeyForm(WM_MESSAGE * pMsg)
     FRAMEWIN_SetTextAlign(hItem,GUI_TA_HCENTER | GUI_TA_VCENTER);
     FRAMEWIN_SetFont(hItem, GUI_FONT_20_ASCII);
     FRAMEWIN_SetTextColor(hItem, 0x008000FF);
+	//FRAMEWIN_SetClientColor(hItem,
     //FRAMEWIN_SetTitleVis(hItem, 0); //不显示标题栏
-    FRAMEWIN_SetMoveable(hItem,1); //可拖动，但有重影
+    //FRAMEWIN_SetMoveable(hItem,1); //可拖动，但有重影
 
     hItem = WM_GetDialogItem(pMsg->hWin,btn0_NumKeyForm);
     BUTTON_SetFont(hItem, GUI_FONT_32_ASCII);
@@ -97,7 +98,7 @@ void InitDialog_NumKeyForm(WM_MESSAGE * pMsg)
     BUTTON_SetFont(hItem, GUI_FONT_32_ASCII);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btn2_NumKeyForm);
-    BUTTON_SetFont(hItem, GUI_FONT_32_ASCII);
+    BUTTON_SetFont(hItem, GUI_FONT_32_ASCII);	
 
     hItem = WM_GetDialogItem(pMsg->hWin,btn3_NumKeyForm);
     BUTTON_SetFont(hItem, GUI_FONT_32_ASCII);
@@ -145,10 +146,10 @@ void InitDialog_NumKeyForm(WM_MESSAGE * pMsg)
     BUTTON_SetFont(hItem, GUI_FONT_32_ASCII);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnLeft_NumKeyForm);
-    BUTTON_SetFont(hItem, &XBF_Font24);
+    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnRight_NumKeyForm);
-    BUTTON_SetFont(hItem, &XBF_Font24);
+    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnBack_NumKeyForm);
     BUTTON_SetFont(hItem, GUI_FONT_32_ASCII);

@@ -470,7 +470,7 @@ void TestPictureFontDisplay(void)
 	//XBF字库的使用
 //	UseXBF();
 	GUI_UC_SetEncodeUTF8();
-	GUI_SetFont(&XBF_Font32);	
+	GUI_SetFont(&GUI_FontYAHE32);	
 	GUI_SetTextAlign(GUI_TA_HORIZONTAL|GUI_TA_LEFT);
 	//GUI_Clear();
 	
