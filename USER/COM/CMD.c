@@ -5,17 +5,17 @@
 #include "SysTick_Timer.h"
 
 
-//µ±Ç°Ê¹ÓÃµÄ´®¿ÚºÅ
+//å½“å‰ä½¿ç”¨çš„ä¸²å£å·
 USART_TypeDef *currUSART = USART1;
 StatusParaStruct currStatus;
 
-//RDDÏà¹ØÃüÁîµÄ´¦Àí
+//RDDç›¸å…³å‘½ä»¤çš„å¤„ç†
 void RDDProcess(void)
 {  
 	
 }
 
-//WRTÏà¹ØÃüÁîµÄ´¦Àí
+//WRTç›¸å…³å‘½ä»¤çš„å¤„ç†
 void WRTProcess(void)
 {
 
@@ -27,10 +27,10 @@ extern WM_HWIN CreateMsgBox();
 extern void ShowMsg(char* msg);
 extern void ShowMsg_NoBt(char* msg);
 
-//SRQÏà¹ØÃüÁîµÄ´¦Àí
+//SRQç›¸å…³å‘½ä»¤çš„å¤„ç†
 void SRQProcess(void)
 {
-	if (StrCMP(_cmdRecvBuff.CmdName, "CURRSTATUS")) //×´Ì¬Ö÷¶¯ÉÏËÍ
+	if (StrCMP(_cmdRecvBuff.CmdName, "CURRSTATUS")) //çŠ¶æ€ä¸»åŠ¨ä¸Šé€
 	{
 		u8 count=0;
 		currStatus.DevStatus=NoGetStatus;
@@ -39,17 +39,18 @@ void SRQProcess(void)
 		strcpy(currStatus.StatusDescribe,ls[1].item);		
 		switch(currStatus.DevStatus)
 		{
-			case DeviceIniting: //Éè±¸³õÊ¼»¯ÖĞ
-
+			case DeviceIniting: //è®¾å¤‡åˆå§‹åŒ–ä¸­,å±å¹•ä¹Ÿé‡å¯
+                __disable_fault_irq(); 
+                NVIC_SystemReset();
 				break;					
-			case DevWorking: //Éè±¸ÕıÔÚ¹¤×÷
+			case DevWorking: //è®¾å¤‡æ­£åœ¨å·¥ä½œ
 									
 				break;
-			case DevScram: //¼±Í£ÖĞ
-				ShowMsgNoButton("Éè±¸ÒÑ¼±Í££¬Çë¼ì²éºóµ¯³ö¡¾¼±Í£°´Å¥¡¿ÔÙ¼ÌĞø£¡");
+			case DevScram: //æ€¥åœä¸­
+				ShowMessageBox_NoBut("è®¾å¤‡å·²æ€¥åœï¼Œè¯·å¼¹å‡ºã€æ€¥åœæŒ‰é’®ã€‘å†ç»§ç»­ï¼");
 				break;
-			case USBInsert: //USBÒÑ²åÈë
-				ShowUSBForm();
+			case USBInsert: //USBå·²æ’å…¥
+				//ShowUSBForm();
 				break;
 			default:
 				break;
@@ -57,15 +58,15 @@ void SRQProcess(void)
 	}
 	
 	
-//	if (StrCMP(_cmdRecvBuff.CmdName, "USBFunc_Ctr")) //¿ØÖÆ°åÉÏUSBÏà¹Ø¹¦ÄÜ´°Ìå
+//	if (StrCMP(_cmdRecvBuff.CmdName, "USBFunc_Ctr")) //æ§åˆ¶æ¿ä¸ŠUSBç›¸å…³åŠŸèƒ½çª—ä½“
 //	  {		
 //		  CreateUSBFunc_Ctr();
 //	  }
-//	  else if (StrCMP(_cmdRecvBuff.CmdName, "SysResetForm")) //ÏµÍ³¸´Î»´°Ìå
+//	  else if (StrCMP(_cmdRecvBuff.CmdName, "SysResetForm")) //ç³»ç»Ÿå¤ä½çª—ä½“
 //	  {		
 //		  //
 //	  }
-//	  else if(StrCMP(_cmdRecvBuff.CmdName, "BootStatus")) //Òıµ¼³ÌĞò×´Ì¬ÉÏ±¨
+//	  else if(StrCMP(_cmdRecvBuff.CmdName, "BootStatus")) //å¼•å¯¼ç¨‹åºçŠ¶æ€ä¸ŠæŠ¥
 //	  {
 //		//CreateMsgBox_Nobt();
 //		//ShowMsg_NoBt((char*)_cmdRecvBuff.CmdData);
@@ -82,7 +83,7 @@ void SRQProcess(void)
 //	  }
 }
 
-//¶ÁÊı¾İÑÓÊ±£¬µ±¶ÁÈ¡µ½Êı¾İºóÁ¢¼´·µ»Ø
+//è¯»æ•°æ®å»¶æ—¶ï¼Œå½“è¯»å–åˆ°æ•°æ®åç«‹å³è¿”å›
 void ReadDataDelay()
 {
 	  for(u16 i=0;i<100;i++)
@@ -95,7 +96,7 @@ void ReadDataDelay()
 		}
 }
 
-//¶ÁÈ¡Éè±¸ĞÍºÅ£¬Ò²ÓÃ×÷Áª»úÎÕÊÖ¡£µ±¶ÁÈ¡µ½·µ»Øtrue
+//è¯»å–è®¾å¤‡å‹å·ï¼Œä¹Ÿç”¨ä½œè”æœºæ¡æ‰‹ã€‚å½“è¯»å–åˆ°è¿”å›true
 bool GetDevMode(char* devModeBuff)
 {
 	  SendChars_Pack(_rdd,"DEVMODE",NULL);
@@ -115,7 +116,7 @@ void GetParameter()
   CopyBytes((u8*)&Parameter,0,_cmdRecvBuff.CmdData,_cmdRecvBuff.DataLeng);
 }
 
-//´ÓÏÂÎ»»ú¶ÁÈ¡ÏµÍ³²ÎÊı
+//ä»ä¸‹ä½æœºè¯»å–ç³»ç»Ÿå‚æ•°
 void GetSysParameter()
 {
 	SendChars_Pack(_rdd,"SYSPARA",NULL);
@@ -123,7 +124,7 @@ void GetSysParameter()
 	CopyBytes((u8*)&SysParameter,0,_cmdRecvBuff.CmdData,_cmdRecvBuff.DataLeng);
 }
 
-//»ñÈ¡ÏÂÎ»»úµ±Ç°×´Ì¬
+//è·å–ä¸‹ä½æœºå½“å‰çŠ¶æ€
 StatusParaStruct GetCurrStatus(void)
 {
 	currStatus.DevStatus=NoGetStatus;
@@ -152,7 +153,7 @@ void AxisPTStop(char* axisID)
   SendChars_Pack(_wrt,"AxisPTStop",axisID);
 }
 
-//ÔÚÉè±¸ÉÏ½øĞĞ×¢²á
+//åœ¨è®¾å¤‡ä¸Šè¿›è¡Œæ³¨å†Œ
 void RegisterDevice(char* regNum)
 {
 	SendChars_Pack(_wrt,"RegisterDevice",regNum);

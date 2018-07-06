@@ -29,12 +29,6 @@ FIL    Fontfile32;
 FIL    Fontfile36;
 FIL    Fontfile40;
 
-//static	FATFS fontfs16;
-//static	FATFS fontfs24;
-//static	FATFS fontfs32;
-//static	FATFS fontfs36;
-//static	FATFS fontfs40;
-
 static	FATFS fontfs;
 static	FIL* FontFile16;
 static	FIL* FontFile24;
@@ -114,7 +108,7 @@ void UseXBF(void)
 	FRESULT result;
 	result = f_mount(&fontfs,"0:/",0);
 	
-	result = f_open(&Fontfile16, _xbfLibName, FA_OPEN_EXISTING | FA_READ | FA_OPEN_ALWAYS);
+	result = f_open(&Fontfile16, _xbfLibName16, FA_OPEN_EXISTING | FA_READ | FA_OPEN_ALWAYS);
 	if (result == FR_OK)
 	{
 		/* 创建XBF字体 */
@@ -122,7 +116,7 @@ void UseXBF(void)
 							_cbGetData16, &Fontfile16); 
 	}		
 	
-	result = f_open(&Fontfile24, _xbfLibName, FA_OPEN_EXISTING | FA_READ | FA_OPEN_ALWAYS);
+	result = f_open(&Fontfile24, _xbfLibName24, FA_OPEN_EXISTING | FA_READ | FA_OPEN_ALWAYS);
 	if (result == FR_OK)
 	{
 		/* 创建XBF字体 */

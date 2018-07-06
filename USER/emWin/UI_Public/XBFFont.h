@@ -12,7 +12,7 @@
 *********************************************************************************************************
 */
 
-extern char* _xbfLibName;
+extern char* _xbfLibName32;
 
 extern GUI_FONT GUI_FontYAHE16;
 extern GUI_FONT GUI_FontYAHE20;

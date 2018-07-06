@@ -543,50 +543,15 @@
               <FileType>1</FileType>
               <FilePath>.\emWin\UI_Public\MessageBox.c</FilePath>
             </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>FontLib</GroupName>
-          <Files>
             <File>
-              <FileName>GUI_Font12.c</FileName>
+              <FileName>MessageBox_NoBtn.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\emWin\FontLib\GUI_Font12.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUI_Font16.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\emWin\FontLib\GUI_Font16.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUI_Font24.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\emWin\FontLib\GUI_Font24.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUI_Font48.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\emWin\FontLib\GUI_Font48.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUI_UC_EncodeNone.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\emWin\FontLib\GUI_UC_EncodeNone.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUICharPEx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\emWin\FontLib\GUICharPEx.c</FilePath>
-            </File>
-            <File>
-              <FileName>FontXYQ_YH_20_20.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\emWin\FontLib\FontXYQ_YH_20_20.c</FilePath>
+              <FilePath>.\emWin\UI_Public\MessageBox_NoBtn.c</FilePath>
             </File>
             <File>
               <FileName>XBFFont.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\emWin\FontLib\XBFFont.c</FilePath>
+              <FilePath>.\emWin\UI_Public\XBFFont.c</FilePath>
             </File>
           </Files>
         </Group>

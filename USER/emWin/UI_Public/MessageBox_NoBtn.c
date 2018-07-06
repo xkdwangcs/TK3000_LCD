@@ -11,26 +11,19 @@
 
 #define MessageBox (GUI_ID_USER +0x00)
 #define lbMsg_MessageBox (GUI_ID_USER +0x01)
-#define btnOK_MessageBox (GUI_ID_USER +0x02)
-#define btnCancel_MessageBox (GUI_ID_USER +0x03)
 
 
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 { FRAMEWIN_CreateIndirect,"提示",MessageBox,0,0,584,343,0, 0x0, 0 },
 { TEXT_CreateIndirect,"这是消息框",lbMsg_MessageBox,48,52,483,136,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"确定",btnOK_MessageBox,183,225,89,41,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"取消",btnCancel_MessageBox,307,225,89,41,0, 0x0, 0 },
 };
 
-
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE16;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE20;
 extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE24;
 extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE32;
 extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE36;
 extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE40;
 
-static WM_HWIN _thisForm;
+static WM_HWIN _thisForm=NULL;
 static WM_HWIN _callForm=NULL;
 
 
@@ -38,27 +31,18 @@ static WM_HWIN _callForm=NULL;
 static void InitDialog_MessageBox(WM_MESSAGE * pMsg){
     WM_HWIN hItem = pMsg->hWin;
     FRAMEWIN_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
-    FRAMEWIN_SetFont(hItem, &GUI_FontYAHE24);
+    //FRAMEWIN_SetTitleHeight(hItem,28);
+    FRAMEWIN_SetFont(hItem, &GUI_FontYAHE24);    
     FRAMEWIN_SetClientColor(hItem,0x00808080);
     FRAMEWIN_SetTextColor(hItem, 0x00FFFFFF);
 
     hItem = WM_GetDialogItem(pMsg->hWin,lbMsg_MessageBox);
     TEXT_SetText(hItem,"这是消息框");
-    TEXT_SetFont(hItem,&GUI_FontYAHE24);
+    TEXT_SetFont(hItem,&GUI_FontYAHE32);
     TEXT_SetTextAlign(hItem,GUI_TA_VCENTER|GUI_TA_HCENTER);
     TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//自动换行
     TEXT_SetBkColor(hItem,0x00808080);
     TEXT_SetTextColor(hItem,0x00FFFFFF);
-
-    hItem = WM_GetDialogItem(pMsg->hWin,btnOK_MessageBox);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
-    BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00A9A9A9);
-    BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
-
-    hItem = WM_GetDialogItem(pMsg->hWin,btnCancel_MessageBox);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
-    BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00A9A9A9);
-    BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 }
 
 
@@ -68,33 +52,7 @@ static void DoEvent_MessageBox(WM_MESSAGE * pMsg)
     int Id = WM_GetId(pMsg->hWinSrc);
     int NCode = pMsg->Data.v;
     switch(Id)
-    {
-		case btnOK_MessageBox:
-			switch(NCode)
-			{
-				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
-					break;
-				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
-          WM_HideWin(pMsg->hWin);
-          WM_ShowWindow(_callForm);
-					break;
-			}
-			break;
-		case btnCancel_MessageBox:
-			switch(NCode)
-			{
-				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
-					break;
-				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
-          WM_HideWin(pMsg->hWin);
-          WM_ShowWindow(_callForm);
-					break;
-			}
-			break;
+    {		
 		default:
 			WM_DefaultProc(pMsg);
 			break;
@@ -115,32 +73,41 @@ static void _cbDialog(WM_MESSAGE * pMsg)
     }
 }
 
-
-WM_HWIN CreateMessageBox(void) {
+WM_HWIN CreateMessageBox_NoBtn(void) {
+    //是否换一种方式创建？？？
     _thisForm = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
+    //_thisForm=GUI_M
     WM_HideWin(_thisForm);
     return _thisForm;
 }
 
 //设备消息框为居中
-static void SetMsgBoxCenter(WM_HWIN callForm)
+static void SetMsgBoxCenter()
 {
-    int fW = WM_GetWindowSizeX(callForm);
+    int fW = 800;//WM_GetWindowSizeX(callForm);
     int kW = WM_GetWindowSizeX(_thisForm);
-    int fH = WM_GetWindowSizeY(callForm);
+    int fH = 480;//WM_GetWindowSizeY(callForm);
     int kH = WM_GetWindowSizeY(_thisForm);
     int x0=(fW-kW)/2;
     int y0=(fH-kH)/2;
     WM_MoveTo(_thisForm, x0, y0);
 }
 
-void ShowMessageBox(WM_HWIN callForm,char* msg)
+extern WM_HWIN _currForm;
+void ShowMessageBox_NoBut(char* msg)
 {
-    _callForm=callForm;
-    WM_HideWindow(callForm);
+    //_callForm=callForm;
+    GUI_HWIN currForm = WM_GetFocussedWindow();
+    currForm=WM_GetPrevSibling(_thisForm);//WM_GetDesktopWindow();
+    
+    if(currForm!=NULL)
+    {
+        GUI_EndDialog(_currForm,0);
+        //WM_HideWindow(currForm);
+    }
     WM_HWIN hItem = WM_GetDialogItem(_thisForm,lbMsg_MessageBox);
     TEXT_SetText(hItem,msg);
-    SetMsgBoxCenter(callForm);
+    SetMsgBoxCenter();
     WM_ShowWindow(_thisForm);
 }
 

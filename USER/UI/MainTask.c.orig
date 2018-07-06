@@ -21,7 +21,10 @@ Purpose     : GUIDEMO initialization
 */
 #include "MainTask.h"
 #include "bsp_touch.h"
-
+#include "LCDPara.h"
+#include "FileOperate.h"
+#include "XBFFont.h"
+#include "CMD.h"
 
 /*********************************************************************
 *
@@ -31,58 +34,132 @@ extern WM_HWIN CreateWorkForm(void);
 
 void TouchCalibrationTask()
 {
-	  GUI_PID_STATE PIDState;	
-	  GUI_Init();                /* ³õÊ¼»¯ */
-	TOUCH_Calibration();       /* ËÄµã´¥ÃşĞ£×¼ */
-	GUI_CURSOR_Show();         /* ÏÔÊ¾Êó±ê */
-	GUI_SetBkColor(GUI_WHITE); /* ÉèÖÃ±³¾°É« */
-	GUI_SetColor(GUI_BLACK);   /* ÉèÖÃÇ°¾°É« */
-	GUI_Clear();
-	GUI_SetFont(&GUI_Font24B_1);
-	GUI_DispStringAt("Draw Panel", 0, 0);	
-	/* 
-		Á¬Ğø¶ÁÈ¡5´Î£¬ÒòÎªemWinµÄPIDÊäÈë¹ÜÀíÆ÷º¬ÓĞÒ»¸öFIFO»º³åÆ÷£¬
-	Ä¬ÈÏÇé¿öÏÂ×î¶à¿ÉÒÔ±£´æ5¸öPIDÊÂ¼ş£¬ÏÂÃæÁ¬Ğø¶ÁÈ¡5´ÎÏàµ±ÓÚÇå¿ÕFIFO.
-	·ÀÖ¹´¥ÃşĞ£×¼µÄÊ±µã»÷µÄµãÏÔÊ¾µ½»­°åÉÏÃæ¡£
-	*/
-	GUI_PID_GetState(&PIDState);
-	GUI_PID_GetState(&PIDState);
-	GUI_PID_GetState(&PIDState);
-	GUI_PID_GetState(&PIDState);
-	GUI_PID_GetState(&PIDState);
-	
-	while(1) 
-	{
-		GUI_PID_GetState(&PIDState);
-		if (PIDState.Pressed == 1) 
-		{
-			GUI_SetPenSize(5);
-			/* ÎªÁË·ÀÖ¹ÓÎ±ê²»ÏÔÊ¾»òÕß²»¸ú×ÅÒÆ¶¯£¬ÕâÀïÌí¼ÓÈçÏÂº¯Êı */
-			GUI_CURSOR_SetPosition(PIDState.x, PIDState.y);
-			GUI_DrawPoint(PIDState.x, PIDState.y);
-		}
-		GUI_Delay(1);
-	}
+    GUI_PID_STATE PIDState;
+    //GUI_Init();                /* åˆå§‹åŒ– */
+    TOUCH_Calibration();       /* å››ç‚¹è§¦æ‘¸æ ¡å‡† */
+    GUI_CURSOR_Show();         /* æ˜¾ç¤ºé¼ æ ‡ */
+    GUI_SetBkColor(GUI_WHITE); /* è®¾ç½®èƒŒæ™¯è‰² */
+    GUI_SetColor(GUI_BLACK);   /* è®¾ç½®å‰æ™¯è‰² */
+    GUI_Clear();
+    GUI_SetFont(&GUI_Font24B_1);
+    GUI_DispStringAt("Draw Panel", 0, 0);
+    /*
+    	è¿ç»­è¯»å–5æ¬¡ï¼Œå› ä¸ºemWinçš„PIDè¾“å…¥ç®¡ç†å™¨å«æœ‰ä¸€ä¸ªFIFOç¼“å†²å™¨ï¼Œ
+    é»˜è®¤æƒ…å†µä¸‹æœ€å¤šå¯ä»¥ä¿å­˜5ä¸ªPIDäº‹ä»¶ï¼Œä¸‹é¢è¿ç»­è¯»å–5æ¬¡ç›¸å½“äºæ¸…ç©ºFIFO.
+    é˜²æ­¢è§¦æ‘¸æ ¡å‡†çš„æ—¶ç‚¹å‡»çš„ç‚¹æ˜¾ç¤ºåˆ°ç”»æ¿ä¸Šé¢ã€‚
+    */
+    GUI_PID_GetState(&PIDState);
+    GUI_PID_GetState(&PIDState);
+    GUI_PID_GetState(&PIDState);
+    GUI_PID_GetState(&PIDState);
+    GUI_PID_GetState(&PIDState);
+
+    while(1)
+    {
+        GUI_PID_GetState(&PIDState);
+        if (PIDState.Pressed == 1)
+        {
+            GUI_SetPenSize(5);
+            /* ä¸ºäº†é˜²æ­¢æ¸¸æ ‡ä¸æ˜¾ç¤ºæˆ–è€…ä¸è·Ÿç€ç§»åŠ¨ï¼Œè¿™é‡Œæ·»åŠ å¦‚ä¸‹å‡½æ•° */
+            GUI_CURSOR_SetPosition(PIDState.x, PIDState.y);
+            GUI_DrawPoint(PIDState.x, PIDState.y);
+        }
+        GUI_Delay(1);
+    }
 }
 extern WM_HWIN CreateUSBOpre(void);
 void MainTask(void)
 {
-  //TouchCalibrationTask();
-  
-    GUI_Init();//³õÊ¼»¯emWin/ucGUI
-		//WM_SetCreateFlags(WM_CF_MEMDEV);
-	
+	GUI_Init();//åˆå§‹åŒ–emWin/ucGUI	
+	WM_SetCreateFlags(WM_CF_MEMDEV); //ä½¿èƒ½è®¾å¤‡ç¼“å­˜ï¼Œè§£å†³é—ªçƒ	
 //  GUI_MEMDEV_Handle  hMem0 = GUI_MEMDEV_CreateEx(0, 0, 800, 480, GUI_MEMDEV_HASTRANS);
 //  GUI_MEMDEV_Select(hMem0);
-	//CreateWorkForm();
-//  GUI_MEMDEV_Select(0);		
-	//GUI_MEMDEV_WriteAt(hMem0, 800, 480);
-  
-    CreateWorkForm();
-		while(1)
-		{
-			GUI_Delay(20);
+//  CreateWorkForm();
+//  GUI_MEMDEV_Select(0);
+//  GUI_MEMDEV_WriteAt(hMem0, 800, 480);
+	if(_isTouchCalibration)
+	{
+		TouchCalibrationTask();
+	}
+//	//XBFå­—åº“çš„ä½¿ç”¨
+//	UseXBF();
+//	GUI_UC_SetEncodeUTF8();
+//	GUI_SetFont(&XBF_Font);	
+//	GUI_SetTextAlign(GUI_TA_HORIZONTAL|GUI_TA_LEFT);
+//	GUI_DispStringHCenterAt("ä¸­æ–‡æµ‹è¯•,XBF!",200,50);
+//	GUI_DispStringHCenterAt("äºŒè¡Œä¸­æ–‡æµ‹è¯•,XBF!",200,80);	
+//	GUI_DispStringHCenterAt("éå¸¸å¥½!",200,110);
+//	GUI_Delay(1000);	
+	
+	FIL fil;
+	FRESULT rst=OpenFile(_xbfLibName32,FA_READ,&fil);
+	if(rst!=FR_OK)
+	{
+		GUI_SetFont(&GUI_Font24_ASCII);	
+		GUI_DispStringHCenterAt("Plase copy XBF file to disk!",200,50);		
+	}
+	else
+	{
+			CloseFile(&fil,_xbfLibName32);
+			UseXBF();
+			GUI_UC_SetEncodeUTF8();
+			GUI_SetFont(&GUI_FontYAHE32);	
+			GUI_SetTextAlign(GUI_TA_HORIZONTAL|GUI_TA_LEFT);
+			char devMode[16]={0};
+			while(!GetDevMode(devMode))
+			{
+				GUI_Clear();
+				//GUI_DispStringHCenterAt("Device noline,Please check!",200,50);
+				GUI_DispStringHCenterAt("è®¾å¤‡æœªè”æœºï¼Œè¯·æ£€æŸ¥!",200,50);
+				GUI_Delay(500);
+			}
+					
+			//CreateKeyboard();//åˆ›å»ºè½¯é”®ç›˜
+			CreateNumKeyForm();
+			StatusParaStruct appStatus;
+			while(true)
+			{
+				bool isExitWhile=false;				
+				GUI_Clear();
+				appStatus =GetCurrStatus();
+				switch(appStatus.DevStatus)
+				{
+					case NoGetStatus: //æ²¡æœ‰è¯»å–åˆ°å½“å‰çŠ¶æ€
+						GUI_DispStringHCenterAt("æ²¡æœ‰è¯»å–åˆ°è®¾å¤‡ç¨‹åºå½“å‰çŠ¶æ€",200,50);
+						break;
+					case DeviceIniting: //è®¾å¤‡åˆå§‹åŒ–ä¸­
+
+						break;					
+					case DevReady: //è®¾å¤‡å‡†å¤‡å°±ç»ª,è¿›å…¥å·¥ä½œä¸»ç•Œé¢
+					case DevWorking: //è®¾å¤‡æ­£åœ¨å·¥ä½œ
+						CreateWorkForm();
+						isExitWhile=true;
+						break;
+					case DevScram: //æ€¥åœä¸­
+						
+						break;
+					case RegWait: //æ³¨å†Œç å½•å…¥,è¿›å…¥æ³¨å†Œç å½•å…¥ç•Œé¢
+						//CreateLoginForm();						
+						//GUI_DispStringHCenterAt(appStatus.StatusDescribe,200,50);
+						CreateRegister();
+						isExitWhile=true;
+						break;
+					case USBInsert: //USBå·²æ’å…¥
+						
+						break;
+					default:
+						GUI_DispStringHCenterAt(appStatus.StatusDescribe,200,50);
+						break;
+				}
+				if(isExitWhile) break;
+				GUI_Delay(500);
+			}
+			//TestPictureFontDisplay();    
 		}
+    while(1)
+    {
+        GUI_Delay(100);
+    }
 }
 
 /*************************** End of file ****************************/

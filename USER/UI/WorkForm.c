@@ -221,12 +221,12 @@ void DoEvent_WorkForm(WM_MESSAGE * pMsg)
 		case btnOK_WorkForm:
 			switch(NCode)
 			{
-				case WM_NOTIFICATION_CLICKED:
-					GUI_EndDialog(pMsg->hWin, 0);
-					CreateMotorPara();
+				case WM_NOTIFICATION_CLICKED:					
 					break;
-				case WM_NOTIFICATION_RELEASED:
+				case WM_NOTIFICATION_RELEASED:                    
 					//DO:按钮已被释放（弹起）
+                    GUI_EndDialog(pMsg->hWin, 0);
+					CreateMotorPara();
 					break;
 			}
 			break;

@@ -172,13 +172,14 @@ void InitDialog_NumKeyForm(WM_MESSAGE * pMsg)
 }
 
 
+static WM_HWIN _thisForm;
+static WM_HWIN _callForm=NULL;
+WM_HWIN _callCtrHandle=NULL;
+WM_HWIN _txtInputHandle=NULL;
 char _clickBuff[5];
 char _inputBuff[256];
 int _inputbuffIndex=0;
 int _inputCount=0;  //已录入字符的长度
-WM_HWIN _callForm=NULL;
-WM_HWIN _callCtrHandle=NULL;
-WM_HWIN _txtInputHandle=NULL;
 int _colIndex=0;
 int _rowIndex=0;
 
@@ -379,18 +380,16 @@ static void _cbDialog(WM_MESSAGE * pMsg)
     }
 }
 
-static WM_HWIN _keyBoardForm;
-
 //设备键盘为居中
 void SetKeyboardCenter(WM_HWIN callForm)
 {
     int fW = WM_GetWindowSizeX(callForm);
-    int kW = WM_GetWindowSizeX(_keyBoardForm);
+    int kW = WM_GetWindowSizeX(_thisForm);
     int fH = WM_GetWindowSizeY(callForm);
-    int kH = WM_GetWindowSizeY(_keyBoardForm);
+    int kH = WM_GetWindowSizeY(_thisForm);
     int x0=(fW-kW)/2;
     int y0=(fH-kH)/2;
-    WM_MoveTo(_keyBoardForm, x0, y0);
+    WM_MoveTo(_thisForm, x0, y0);
 }
 
 void ShowNumKeyboard(WM_HWIN callForm,OneStrParaHandler inputed)
@@ -403,7 +402,7 @@ void ShowNumKeyboard(WM_HWIN callForm,OneStrParaHandler inputed)
     WM_HideWindow(callForm);
     SetKeyboardCenter(callForm);
     WM_SetFocus(_txtInputHandle);
-    WM_ShowWindow(_keyBoardForm);
+    WM_ShowWindow(_thisForm);
 }
 
 void ShowNumKeyboard1(WM_HWIN callForm,SetCtrTextHandler1 SetCtrTextFunc,int controlID)
@@ -417,7 +416,7 @@ void ShowNumKeyboard1(WM_HWIN callForm,SetCtrTextHandler1 SetCtrTextFunc,int con
     WM_HideWindow(callForm);
     SetKeyboardCenter(callForm);
     WM_SetFocus(_txtInputHandle);
-    WM_ShowWindow(_keyBoardForm);
+    WM_ShowWindow(_thisForm);
 }
 
 void ShowNumKeyboard2(WM_HWIN callForm,SetCtrTextHandler2 SetCtrTextFunc,int controlID,int colIndex,int rowIndex)
@@ -433,14 +432,14 @@ void ShowNumKeyboard2(WM_HWIN callForm,SetCtrTextHandler2 SetCtrTextFunc,int con
     WM_HideWindow(callForm);
     SetKeyboardCenter(callForm);
     WM_SetFocus(_txtInputHandle);
-    WM_ShowWindow(_keyBoardForm);
+    WM_ShowWindow(_thisForm);
 }
 
 WM_HWIN CreateNumKeyForm(void)
 {
-    _keyBoardForm = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
-    _txtInputHandle=WM_GetDialogItem(_keyBoardForm,txtData_NumKeyForm);
-    WM_HideWin(_keyBoardForm);
-    return _keyBoardForm;
+    _thisForm = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
+    _txtInputHandle=WM_GetDialogItem(_thisForm,txtData_NumKeyForm);
+    WM_HideWin(_thisForm);
+    return _thisForm;
 }
 

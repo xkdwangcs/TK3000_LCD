@@ -1,36 +1,9 @@
-/*********************************************************************
-*                SEGGER Microcontroller GmbH & Co. KG                *
-*        Solutions for real time microcontroller applications        *
-**********************************************************************
-*                                                                    *
-*        (c) 1996 - 2015  SEGGER Microcontroller GmbH & Co. KG       *
-*                                                                    *
-*        Internet: www.segger.com    Support:  support@segger.com    *
-*                                                                    *
-**********************************************************************
-
-** emWin V5.28 - Graphical user interface for embedded applications **
-emWin is protected by international copyright laws.   Knowledge of the
-source code may not be used to write a similar product.  This file may
-only  be used  in accordance  with  a license  and should  not be  re-
-distributed in any way. We appreciate your understanding and fairness.
-----------------------------------------------------------------------
-File        : GUIDEMO_Start.c
-Purpose     : GUIDEMO initialization
-----------------------------------------------------------------------
-*/
 #include "MainTask.h"
 #include "bsp_touch.h"
 #include "LCDPara.h"
 #include "FileOperate.h"
 #include "XBFFont.h"
 #include "CMD.h"
-
-/*********************************************************************
-*
-*       MainTask
-*/
-extern WM_HWIN CreateWorkForm(void);
 
 void TouchCalibrationTask()
 {
@@ -67,7 +40,9 @@ void TouchCalibrationTask()
         GUI_Delay(1);
     }
 }
-extern WM_HWIN CreateUSBOpre(void);
+
+WM_HWIN _currForm=NULL;
+
 void MainTask(void)
 {
 	GUI_Init();//初始化emWin/ucGUI	
@@ -100,7 +75,7 @@ void MainTask(void)
 	}
 	else
 	{
-			CloseFile(&fil,_xbfLibName);
+			CloseFile(&fil,_xbfLibName32);
 			UseXBF();
 			GUI_UC_SetEncodeUTF8();
 			GUI_SetFont(&GUI_FontYAHE32);	
@@ -116,6 +91,8 @@ void MainTask(void)
 					
 			//CreateKeyboard();//创建软键盘
 			CreateNumKeyForm();
+            CreateMessageBox();
+            CreateMessageBox_NoBtn();
 			StatusParaStruct appStatus;
 			while(true)
 			{
@@ -132,15 +109,13 @@ void MainTask(void)
 						break;					
 					case DevReady: //设备准备就绪,进入工作主界面
 					case DevWorking: //设备正在工作
-						CreateWorkForm();
+						_currForm=CreateWorkForm();
 						isExitWhile=true;
 						break;
 					case DevScram: //急停中
-						
+						ShowMessageBox_NoBut("设备已急停，请弹出【急停按钮】再继续！");
 						break;
 					case RegWait: //注册码录入,进入注册码录入界面
-						//CreateLoginForm();						
-						//GUI_DispStringHCenterAt(appStatus.StatusDescribe,200,50);
 						CreateRegister();
 						isExitWhile=true;
 						break;
@@ -161,6 +136,4 @@ void MainTask(void)
         GUI_Delay(100);
     }
 }
-
-/*************************** End of file ****************************/
 
