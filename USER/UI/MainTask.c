@@ -41,8 +41,6 @@ void TouchCalibrationTask()
     }
 }
 
-WM_HWIN _currForm=NULL;
-
 void MainTask(void)
 {
 	GUI_Init();//初始化emWin/ucGUI	
@@ -80,6 +78,8 @@ void MainTask(void)
 			GUI_UC_SetEncodeUTF8();
 			GUI_SetFont(&GUI_FontYAHE32);	
 			GUI_SetTextAlign(GUI_TA_HORIZONTAL|GUI_TA_LEFT);
+            //TestPictureFontDisplay();    
+        
 			char devMode[16]={0};
 			while(!GetDevMode(devMode))
 			{
@@ -94,11 +94,18 @@ void MainTask(void)
             CreateMessageBox();
             CreateMessageBox_NoBtn();
 			StatusParaStruct appStatus;
+            DeviceStatusEnum lastStatus=0xFF;
 			while(true)
 			{
 				bool isExitWhile=false;				
 				GUI_Clear();
 				appStatus =GetCurrStatus();
+                if(appStatus.DevStatus==lastStatus)
+                {
+                    GUI_Delay(500);
+                    continue;
+                }
+                lastStatus=appStatus.DevStatus;
 				switch(appStatus.DevStatus)
 				{
 					case NoGetStatus: //没有读取到当前状态
@@ -109,11 +116,12 @@ void MainTask(void)
 						break;					
 					case DevReady: //设备准备就绪,进入工作主界面
 					case DevWorking: //设备正在工作
-						_currForm=CreateWorkForm();
+						CreateWorkForm();
 						isExitWhile=true;
 						break;
 					case DevScram: //急停中
 						ShowMessageBox_NoBut("设备已急停，请弹出【急停按钮】再继续！");
+                        //CreateMessageBox_NoBtn();
 						break;
 					case RegWait: //注册码录入,进入注册码录入界面
 						CreateRegister();
@@ -128,12 +136,11 @@ void MainTask(void)
 				}
 				if(isExitWhile) break;
 				GUI_Delay(500);
-			}
-			//TestPictureFontDisplay();    
+			}			
 		}
     while(1)
     {
-        GUI_Delay(100);
+        GUI_Delay(200);
     }
 }
 

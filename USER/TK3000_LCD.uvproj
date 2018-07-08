@@ -553,6 +553,11 @@
               <FileType>1</FileType>
               <FilePath>.\emWin\UI_Public\XBFFont.c</FilePath>
             </File>
+            <File>
+              <FileName>UIPublic.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\emWin\UI_Public\UIPublic.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

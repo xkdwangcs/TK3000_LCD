@@ -23,7 +23,7 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 { TEXT_CreateIndirect,"机器码",lbDevCode_Register,120,69,111,33,0, 0x0, 0 },
 { EDIT_CreateIndirect,"",txtDevCode_Register,237,64,265,44,0, 0x0, 0 },
 { TEXT_CreateIndirect,"注册码",lbRegCode_Register,120,137,111,33,0, 0x0, 0 },
-{ EDIT_CreateIndirect,"",txtRegCode_Register,237,125,265,56,0, 0x0, 0 },
+{ EDIT_CreateIndirect,"",txtRegCode_Register,237,125,265,86,0, 0x0, 0 },
 { TEXT_CreateIndirect,"*",lbMsg_Register,95,235,433,41,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"注册",btnReg_Register,391,322,111,40,0, 0x0, 0 },
 };
@@ -54,9 +54,10 @@ static void InitForm(WM_MESSAGE * pMsg){
 
     hItem = WM_GetDialogItem(pMsg->hWin,txtDevCode_Register);
     EDIT_SetText(hItem, SysParameter.DevNumCalc);
-    EDIT_SetFont(hItem, &GUI_FontYAHE32);
+    //EDIT_SetFont(hItem, &GUI_FontYAHE32);
+    EDIT_SetFont(hItem, GUI_FONT_32_ASCII);
     EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
-    EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00FFFFE1);
+    EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00E1FFFF); 
     EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
     EDIT_SetMaxLen(hItem, 50); //字符最大长度
     EDIT_EnableBlink(hItem, 500, 0); //光标不闪烁
@@ -71,7 +72,8 @@ static void InitForm(WM_MESSAGE * pMsg){
 
     hItem = WM_GetDialogItem(pMsg->hWin,txtRegCode_Register);
     EDIT_SetText(hItem, "");
-    EDIT_SetFont(hItem, &GUI_FontYAHE32);
+    //EDIT_SetFont(hItem, &GUI_FontYAHE32);
+    EDIT_SetFont(hItem, GUI_FONT_32_ASCII);
     EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00FFFFFF);
     EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
@@ -80,11 +82,11 @@ static void InitForm(WM_MESSAGE * pMsg){
 
     hItem = WM_GetDialogItem(pMsg->hWin,lbMsg_Register);
     TEXT_SetText(hItem,"设备有效使用日期已过，请注册设备！");
-    TEXT_SetFont(hItem,&GUI_FontYAHE24);
+    TEXT_SetFont(hItem,&GUI_FontYAHE32);
     TEXT_SetTextAlign(hItem,GUI_TA_VCENTER|GUI_TA_LEFT);
     TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//自动换行
     TEXT_SetBkColor(hItem,0x00F0F0F0);
-    TEXT_SetTextColor(hItem,0x00FF0000);
+    TEXT_SetTextColor(hItem,0x0000FF);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnReg_Register);
     BUTTON_SetFont(hItem, &GUI_FontYAHE32);
@@ -169,6 +171,7 @@ static void _cbDialog(WM_MESSAGE * pMsg)
 WM_HWIN CreateRegister(void) {
     WM_HWIN hWin;
     hWin = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);	
+    SetFormCenterScreen(hWin);
     return hWin;
 }
  

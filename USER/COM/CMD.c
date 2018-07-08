@@ -48,6 +48,7 @@ void SRQProcess(void)
 				break;
 			case DevScram: //急停中
 				ShowMessageBox_NoBut("设备已急停，请弹出【急停按钮】再继续！");
+                //CreateMessageBox_NoBtn();
 				break;
 			case USBInsert: //USB已插入
 				//ShowUSBForm();
@@ -92,7 +93,7 @@ void ReadDataDelay()
 			{
 				break;
 			}
-			Delay_ms_Tick(10);
+			Delay_ms_Tick(100);
 		}
 }
 

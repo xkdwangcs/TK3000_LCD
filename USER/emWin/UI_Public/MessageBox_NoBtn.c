@@ -28,7 +28,7 @@ static WM_HWIN _callForm=NULL;
 
 
 //初始化窗体相关控件
-static void InitDialog_MessageBox(WM_MESSAGE * pMsg){
+static void InitForm(WM_MESSAGE * pMsg){
     WM_HWIN hItem = pMsg->hWin;
     FRAMEWIN_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     //FRAMEWIN_SetTitleHeight(hItem,28);
@@ -47,7 +47,7 @@ static void InitDialog_MessageBox(WM_MESSAGE * pMsg){
 
 
 //控件事件处理函数
-static void DoEvent_MessageBox(WM_MESSAGE * pMsg)
+static void DoEvent(WM_MESSAGE * pMsg)
 {
     int Id = WM_GetId(pMsg->hWinSrc);
     int NCode = pMsg->Data.v;
@@ -65,49 +65,41 @@ static void _cbDialog(WM_MESSAGE * pMsg)
     switch (pMsg->MsgId)
 	{
 		case WM_INIT_DIALOG:
-			InitDialog_MessageBox(pMsg);
+			InitForm(pMsg);
 			break;
 		case WM_NOTIFY_PARENT:
-			DoEvent_MessageBox(pMsg);
+			DoEvent(pMsg);
 			break;
     }
 }
 
-WM_HWIN CreateMessageBox_NoBtn(void) {
-    //是否换一种方式创建？？？
+WM_HWIN CreateMessageBox_NoBtn(void) 
+{
     _thisForm = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
-    //_thisForm=GUI_M
     WM_HideWin(_thisForm);
     return _thisForm;
 }
 
-//设备消息框为居中
-static void SetMsgBoxCenter()
-{
-    int fW = 800;//WM_GetWindowSizeX(callForm);
-    int kW = WM_GetWindowSizeX(_thisForm);
-    int fH = 480;//WM_GetWindowSizeY(callForm);
-    int kH = WM_GetWindowSizeY(_thisForm);
-    int x0=(fW-kW)/2;
-    int y0=(fH-kH)/2;
-    WM_MoveTo(_thisForm, x0, y0);
-}
-
-extern WM_HWIN _currForm;
+//extern WM_HWIN _currForm;
 void ShowMessageBox_NoBut(char* msg)
 {
-    //_callForm=callForm;
-    GUI_HWIN currForm = WM_GetFocussedWindow();
-    currForm=WM_GetPrevSibling(_thisForm);//WM_GetDesktopWindow();
+//    GUI_HWIN showedForm = WM_GetFocussedWindow();
+//    showedForm=WM_GetDesktopWindow();
+//    showedForm= WM_GetParent(_thisForm);
+//    showedForm=WM_GetPrevSibling(_thisForm); 
     
-    if(currForm!=NULL)
+    GUI_HWIN showedForm= WM_GetNextSibling(_thisForm); //这个可以获取当前已经显示的窗体    
+    if(showedForm!=NULL)
     {
-        GUI_EndDialog(_currForm,0);
+        //这三个函数的功能似乎一样
+        GUI_EndDialog(showedForm,0);
         //WM_HideWindow(currForm);
+        //WM_HideWin(currForm);
     }
     WM_HWIN hItem = WM_GetDialogItem(_thisForm,lbMsg_MessageBox);
     TEXT_SetText(hItem,msg);
-    SetMsgBoxCenter();
+    SetFormCenterScreen(_thisForm);
     WM_ShowWindow(_thisForm);
+    //WM_BringToTop(_thisForm); //设置当前窗体为顶层
 }
 

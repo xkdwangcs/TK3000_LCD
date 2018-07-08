@@ -80,8 +80,7 @@ void DisPackage(void)
 {
 	u16 packLeng = 0;
 	u16 tailAddr=0;
-	_recvStartIndex=0;
-  _cmdRecvBuff.RecvOK=false;
+	_recvStartIndex=0;  
   for(int i=0;i<5;i++)
   {
       u16 num=0;
@@ -130,7 +129,8 @@ void DisPackage(void)
       cmdRecvP[packLeng - 1]=0;
       _cmdRecvBuff.DataLeng=cmdDataLeng;
       _recvStartIndex= GetAddrReal(_recvStartIndex+packLeng);
-      _cmdRecvBuff.RecvOK=true;
+      if(StrCMP(_cmdRecvBuff.CmdName,_cmdSendBuff.CmdName))
+        _cmdRecvBuff.RecvOK=true;
       CMDAnalysis();
       //试探后面是否还有数据包
       isHavePack=false;
@@ -187,6 +187,7 @@ void ResponseSendData(char* func, u16 cmdDataLeng)
 //向指定的串口发送组包后的数据
 void SendBytes_Pack(char* func,char* cmdName, u8* cmdData,u16 cmdLeng)
 {
+    _cmdRecvBuff.RecvOK=false;
 	u16 leng=Package(func,cmdName,cmdData,cmdLeng);
 	SendBytes_COM1((u8*)&_cmdSendBuff,leng);
 }
@@ -194,6 +195,7 @@ void SendBytes_Pack(char* func,char* cmdName, u8* cmdData,u16 cmdLeng)
 //向指定的串口发送组包后的数据
 void SendChars_Pack(char* func,char* cmdName, char* cmdData)
 {
+    _cmdRecvBuff.RecvOK=false;
 	u16 leng=Package(func,cmdName,(u8*)cmdData,strlen(cmdData));
 	SendBytes_COM1((u8*)&_cmdSendBuff,leng);
 }

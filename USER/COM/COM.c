@@ -128,13 +128,13 @@ void InitUSART_COM1(void)
 	//一种模式：DMA发送，串口中断接收
 	//	USART_DMACmd(COMName1,USART_DMAReq_Tx,ENABLE); 		//开启串口DMA发送
 	//	USART_ITConfig(COMName1, USART_IT_RXNE, ENABLE); 	//使用中断方式接收。使能串口接收中断
-	//	USART_Cmd(COMName1, ENABLE);											//开启串口
+	//	USART_Cmd(COMName1, ENABLE);						//开启串口
 
 	//二种模式：DMA发送，DMA接收
-	//DMA_ITConfig(RecvDMAStream1, DMA_IT_TC, ENABLE); //DMA传输完成中断
-	USART_ITConfig(COMName1, USART_IT_IDLE, ENABLE);  //开启串口1空闲IDEL 中断
-	USART_DMACmd(COMName1, USART_DMAReq_Tx, ENABLE);  //开启串口DMA发送
-	USART_DMACmd(COMName1, USART_DMAReq_Rx, ENABLE);  //开启串口DMA接收
+	//DMA_ITConfig(RecvDMAStream1, DMA_IT_TC, ENABLE);      //DMA传输完成中断
+	USART_ITConfig(COMName1, USART_IT_IDLE, ENABLE);        //开启串口1空闲IDEL 中断
+	USART_DMACmd(COMName1, USART_DMAReq_Tx, ENABLE);        //开启串口DMA发送
+	USART_DMACmd(COMName1, USART_DMAReq_Rx, ENABLE);        //开启串口DMA接收
 	USART_Cmd(COMName1, ENABLE);											//开启串口
 }
 
