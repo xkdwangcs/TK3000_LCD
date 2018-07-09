@@ -1,4 +1,6 @@
+#include "UIPublic.h"
 #include  "DIALOG.h"
+
 
 
 //设置相对于父窗体居中

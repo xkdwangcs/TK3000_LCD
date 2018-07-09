@@ -7,6 +7,7 @@
 
 #include  "DIALOG.h"
 #include <string.h>
+#include "UIPublic.h"
 
 #define NumKeyForm (GUI_ID_USER +0x00)
 #define btn0_NumKeyForm (GUI_ID_USER +0x01)
@@ -207,14 +208,8 @@ static void InitForm(WM_MESSAGE * pMsg){
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00FFFFFF);
     EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
     EDIT_SetMaxLen(hItem, 50); //字符最大长度
-    EDIT_EnableBlink(hItem, 500, 0); //光标不闪烁
+    EDIT_EnableBlink(hItem, 500, 1); //光标不闪烁
 }
-
-//带一个字符串作为参数的函数指针
-typedef void (*OneStrParaHandler)(char* para);
-//设置控件录入字符的函数指针
-typedef void (*SetCtrTextHandler1)(int ctrID,char* para);
-typedef void (*SetCtrTextHandler2)(int ctrID,int colIndex,int rowIndex,char* para);
 
 static WM_HWIN _thisForm;
 static WM_HWIN _callForm=NULL;
@@ -429,6 +424,14 @@ static void _cbDialog(WM_MESSAGE * pMsg)
     }
 }
 
+WM_HWIN CreateNumKeyForm(void)
+{
+    _thisForm = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
+    _txtInputHandle=WM_GetDialogItem(_thisForm,txtData_NumKeyForm);
+    WM_HideWin(_thisForm);
+    return _thisForm;
+}
+
 void ShowNumKeyboard(WM_HWIN callForm,OneStrParaHandler inputed)
 {
     _setCtrTextEvent1=NULL;
@@ -471,12 +474,3 @@ void ShowNumKeyboard2(WM_HWIN callForm,SetCtrTextHandler2 SetCtrTextFunc,int con
     WM_SetFocus(_txtInputHandle);
     WM_ShowWindow(_thisForm);
 }
-
-WM_HWIN CreateNumKeyForm(void)
-{
-    _thisForm = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
-    _txtInputHandle=WM_GetDialogItem(_thisForm,txtData_NumKeyForm);
-    WM_HideWin(_thisForm);
-    return _thisForm;
-}
-
