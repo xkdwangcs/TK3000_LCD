@@ -504,11 +504,6 @@
               <FilePath>.\UI\WorkForm.c</FilePath>
             </File>
             <File>
-              <FileName>MotorParaDLG.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\UI\MotorParaDLG.c</FilePath>
-            </File>
-            <File>
               <FileName>USBFunc_Ctr.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\UI\USBFunc_Ctr.c</FilePath>
@@ -517,6 +512,16 @@
               <FileName>Register.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\UI\Register.c</FilePath>
+            </File>
+            <File>
+              <FileName>MotorControl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\UI\MotorControl.c</FilePath>
+            </File>
+            <File>
+              <FileName>WelcomeForm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\UI\WelcomeForm.c</FilePath>
             </File>
           </Files>
         </Group>

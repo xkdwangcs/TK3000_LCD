@@ -1,213 +1,277 @@
-
-/*****************************************
+﻿/*****************************************
 *
 * 肖应强设计的GUIBuilder生成的文件
-* 2018.05.16
+* V2.02 (2018.07.07)
 *
 ******************************************/
 
 #include  "DIALOG.h"
-//#include "AxisControl.h"
-#include "CMD.h"
-#include "XBFFont.h"
 
 
 #define WorkForm (GUI_ID_USER +0x00)
-#define labZ_WorkForm (GUI_ID_USER +0x01)
-#define labY_WorkForm (GUI_ID_USER +0x02)
-#define labX_WorkForm (GUI_ID_USER +0x03)
-#define txtZ_WorkForm (GUI_ID_USER +0x04)
-#define txtY_WorkForm (GUI_ID_USER +0x05)
-#define txtX_WorkForm (GUI_ID_USER +0x06)
-#define btnYfront_WorkForm (GUI_ID_USER +0x07)
-#define btnYback_WorkForm (GUI_ID_USER +0x08)
-#define btnXright_WorkForm (GUI_ID_USER +0x09)
-#define btnXleft_WorkForm (GUI_ID_USER +0x0A)
-#define btnZdown_WorkForm (GUI_ID_USER +0x0B)
-#define btnZup_WorkForm (GUI_ID_USER +0x0C)
-#define btnCancel_WorkForm (GUI_ID_USER +0x0D)
-#define btnOK_WorkForm (GUI_ID_USER +0x0E)
+#define lbX_WorkForm (GUI_ID_USER +0x01)
+#define txtX_WorkForm (GUI_ID_USER +0x02)
+#define lbY1_WorkForm (GUI_ID_USER +0x03)
+#define txtY1_WorkForm (GUI_ID_USER +0x04)
+#define lbY2_WorkForm (GUI_ID_USER +0x05)
+#define txtY2_WorkForm (GUI_ID_USER +0x06)
+#define lbZ_WorkForm (GUI_ID_USER +0x07)
+#define txtZ_WorkForm (GUI_ID_USER +0x08)
+#define label4_WorkForm (GUI_ID_USER +0x09)
+#define cmbFileSelect_WorkForm (GUI_ID_USER +0x0A)
+#define mEditMsg_WorkForm (GUI_ID_USER +0x0B)
+#define label1_WorkForm (GUI_ID_USER +0x0C)
+#define txtDevStatus_WorkForm (GUI_ID_USER +0x0D)
+#define label8_WorkForm (GUI_ID_USER +0x0E)
+#define label10_WorkForm (GUI_ID_USER +0x0F)
+#define txtWorkSpeed_WorkForm (GUI_ID_USER +0x10)
+#define btnJQKQ_WorkForm (GUI_ID_USER +0x11)
+#define btnDDQJ_WorkForm (GUI_ID_USER +0x12)
+#define btnFileEdit_WorkForm (GUI_ID_USER +0x13)
+#define btnParaSet_WorkForm (GUI_ID_USER +0x14)
+#define btnReset_WorkForm (GUI_ID_USER +0x15)
+#define txtTotalNum_WorkForm (GUI_ID_USER +0x16)
+#define btnManual_WorkForm (GUI_ID_USER +0x17)
+#define btnLeftStart_WorkForm (GUI_ID_USER +0x18)
+#define btnRightStart_WorkForm (GUI_ID_USER +0x19)
+#define btnStop_WorkForm (GUI_ID_USER +0x1A)
 
 
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
-{ FRAMEWIN_CreateIndirect,"欢迎使用拓控产品",WorkForm,0,0,800,480,0, 0x0, 0 },
-{ TEXT_CreateIndirect,"Z",labZ_WorkForm,150,109,21,22,0, 0x0, 0 },
-{ TEXT_CreateIndirect,"Y",labY_WorkForm,150,70,21,22,0, 0x0, 0 },
-{ TEXT_CreateIndirect,"X",labX_WorkForm,150,31,21,22,0, 0x0, 0 },
-{ EDIT_CreateIndirect,"",txtZ_WorkForm,177,104,153,32,0, 0x0, 0 },
-{ EDIT_CreateIndirect,"",txtY_WorkForm,177,66,153,32,0, 0x0, 0 },
-{ EDIT_CreateIndirect,"",txtX_WorkForm,177,27,153,32,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"Yfront",btnYfront_WorkForm,618,187,89,89,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"Yback",btnYback_WorkForm,618,14,89,89,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"Xright",btnXright_WorkForm,597,109,110,72,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"Xleft",btnXleft_WorkForm,481,109,110,72,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"Zdown",btnZdown_WorkForm,481,187,89,89,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"Zup",btnZup_WorkForm,481,14,89,89,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"取消",btnCancel_WorkForm,260,359,110,49,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"确定",btnOK_WorkForm,129,359,110,49,0, 0x0, 0 },
+{ FRAMEWIN_CreateIndirect,"TK3000_自动点胶控制系统 V1.00",WorkForm,0,0,795,475,0, 0x0, 0 },
+{ TEXT_CreateIndirect,"X",lbX_WorkForm,89,19,27,27,0, 0x0, 0 },
+{ EDIT_CreateIndirect,"0.001",txtX_WorkForm,129,15,140,35,0, 0x0, 0 },
+{ TEXT_CreateIndirect,"Y1",lbY1_WorkForm,89,57,41,27,0, 0x0, 0 },
+{ EDIT_CreateIndirect,"0.001",txtY1_WorkForm,129,52,140,35,0, 0x0, 0 },
+{ TEXT_CreateIndirect,"Y2",lbY2_WorkForm,89,94,41,27,0, 0x0, 0 },
+{ EDIT_CreateIndirect,"0.001",txtY2_WorkForm,129,89,140,35,0, 0x0, 0 },
+{ TEXT_CreateIndirect,"Z",lbZ_WorkForm,89,131,27,27,0, 0x0, 0 },
+{ EDIT_CreateIndirect,"0.001",txtZ_WorkForm,129,126,140,35,0, 0x0, 0 },
+{ TEXT_CreateIndirect,"工作文件",label4_WorkForm,420,26,110,31,0, 0x0, 0 },
+{ DROPDOWN_CreateIndirect,"",cmbFileSelect_WorkForm,514,22,246,39,0, 0x0, 0 },
+{ MULTIEDIT_CreateIndirect,"",mEditMsg_WorkForm,85,173,285,187,0, 0x0, 0 },
+{ TEXT_CreateIndirect,"设备状态",label1_WorkForm,419,70,110,31,0, 0x0, 0 },
+{ EDIT_CreateIndirect,"准备就绪",txtDevStatus_WorkForm,514,66,156,39,0, 0x0, 0 },
+{ TEXT_CreateIndirect,"总加工数",label8_WorkForm,420,112,110,31,0, 0x0, 0 },
+{ TEXT_CreateIndirect,"工作速度",label10_WorkForm,420,152,110,31,0, 0x0, 0 },
+{ EDIT_CreateIndirect,"100%",txtWorkSpeed_WorkForm,514,150,156,35,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"胶枪开启",btnJQKQ_WorkForm,423,227,123,54,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"点动出胶",btnDDQJ_WorkForm,423,291,123,54,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"文件编辑",btnFileEdit_WorkForm,608,231,122,54,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"参数设置",btnParaSet_WorkForm,608,291,122,54,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"复位",btnReset_WorkForm,85,376,106,54,0, 0x0, 0 },
+{ EDIT_CreateIndirect,"13",txtTotalNum_WorkForm,514,110,156,35,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"手动",btnManual_WorkForm,220,376,106,54,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"左启动",btnLeftStart_WorkForm,355,376,129,54,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"右启动",btnRightStart_WorkForm,513,376,122,54,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"停止",btnStop_WorkForm,664,376,106,54,0, 0x0, 0 },
 };
 
 
+extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE24;
+extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE32;
+extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE36;
+extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE40;
+
+
 //初始化窗体相关控件
-void InitDialog_WorkForm(WM_MESSAGE * pMsg){
+static void InitForm(WM_MESSAGE * pMsg){
     WM_HWIN hItem = pMsg->hWin;
     FRAMEWIN_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     FRAMEWIN_SetFont(hItem, &GUI_FontYAHE24);
-	FRAMEWIN_SetTextColor(hItem, 0x008000FF); //加这句，点击按钮会闪烁?(经验证开启存储设备就不闪了）
+    FRAMEWIN_SetClientColor(hItem,0x00A9A9A9);
+    FRAMEWIN_SetTextColor(hItem, 0x00000000);
 
-    hItem = WM_GetDialogItem(pMsg->hWin,labZ_WorkForm);
-    TEXT_SetText(hItem,"Z");
-    TEXT_SetFont(hItem,&GUI_Font24_ASCII);
-    TEXT_SetTextAlign(hItem,GUI_TA_VCENTER|GUI_TA_LEFT);
-	TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_HCENTER);
-
-    hItem = WM_GetDialogItem(pMsg->hWin,labY_WorkForm);
-    TEXT_SetText(hItem,"Y");
-    TEXT_SetFont(hItem,&GUI_Font24_ASCII);
-    TEXT_SetTextAlign(hItem,GUI_TA_VCENTER|GUI_TA_LEFT);
-
-    hItem = WM_GetDialogItem(pMsg->hWin,labX_WorkForm);
+    hItem = WM_GetDialogItem(pMsg->hWin,lbX_WorkForm);
     TEXT_SetText(hItem,"X");
-    TEXT_SetFont(hItem,&GUI_Font24_ASCII);
-    TEXT_SetTextAlign(hItem,GUI_TA_VCENTER|GUI_TA_LEFT);
-
-    hItem = WM_GetDialogItem(pMsg->hWin,txtZ_WorkForm);
-    EDIT_SetText(hItem, "");
-    EDIT_SetFont(hItem, GUI_FONT_24_ASCII);
-    EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
-
-    hItem = WM_GetDialogItem(pMsg->hWin,txtY_WorkForm);
-    EDIT_SetText(hItem, "");
-    EDIT_SetFont(hItem, GUI_FONT_24_ASCII);
-    EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+    TEXT_SetFont(hItem,GUI_FONT_24_ASCII);
+    TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//自动换行
+    TEXT_SetBkColor(hItem,0x00A9A9A9);
+    TEXT_SetTextColor(hItem,0x00FFFFFF);
 
     hItem = WM_GetDialogItem(pMsg->hWin,txtX_WorkForm);
-    EDIT_SetText(hItem, "");
+    EDIT_SetText(hItem, "0.001");
     EDIT_SetFont(hItem, GUI_FONT_24_ASCII);
-    EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+    EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_LEFT);
+    EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00C0C0FF);
+    EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
+    EDIT_SetMaxLen(hItem, 50); //字符最大长度
+    EDIT_EnableBlink(hItem, 500, 0); //光标不闪烁
 
-    hItem = WM_GetDialogItem(pMsg->hWin,btnYfront_WorkForm);
-    BUTTON_SetFont(hItem, GUI_FONT_16_ASCII);
+    hItem = WM_GetDialogItem(pMsg->hWin,lbY1_WorkForm);
+    TEXT_SetText(hItem,"Y1");
+    TEXT_SetFont(hItem,GUI_FONT_24_ASCII);
+    TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//自动换行
+    TEXT_SetBkColor(hItem,0x00A9A9A9);
+    TEXT_SetTextColor(hItem,0x00FFFFFF);
 
-    hItem = WM_GetDialogItem(pMsg->hWin,btnYback_WorkForm);
-    BUTTON_SetFont(hItem, GUI_FONT_16_ASCII);
+    hItem = WM_GetDialogItem(pMsg->hWin,txtY1_WorkForm);
+    EDIT_SetText(hItem, "0.001");
+    EDIT_SetFont(hItem, GUI_FONT_24_ASCII);
+    EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_LEFT);
+    EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00C0FFC0);
+    EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
+    EDIT_SetMaxLen(hItem, 50); //字符最大长度
+    EDIT_EnableBlink(hItem, 500, 0); //光标不闪烁
 
-    hItem = WM_GetDialogItem(pMsg->hWin,btnXright_WorkForm);
-    BUTTON_SetFont(hItem, GUI_FONT_16_ASCII);
+    hItem = WM_GetDialogItem(pMsg->hWin,lbY2_WorkForm);
+    TEXT_SetText(hItem,"Y2");
+    TEXT_SetFont(hItem,GUI_FONT_24_ASCII);
+    TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//自动换行
+    TEXT_SetBkColor(hItem,0x00A9A9A9);
+    TEXT_SetTextColor(hItem,0x00FFFFFF);
 
-    hItem = WM_GetDialogItem(pMsg->hWin,btnXleft_WorkForm);
-    BUTTON_SetFont(hItem, GUI_FONT_16_ASCII);
+    hItem = WM_GetDialogItem(pMsg->hWin,txtY2_WorkForm);
+    EDIT_SetText(hItem, "0.001");
+    EDIT_SetFont(hItem, GUI_FONT_24_ASCII);
+    EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_LEFT);
+    EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00C0FFC0);
+    EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
+    EDIT_SetMaxLen(hItem, 50); //字符最大长度
+    EDIT_EnableBlink(hItem, 500, 0); //光标不闪烁
 
-    hItem = WM_GetDialogItem(pMsg->hWin,btnZdown_WorkForm);
-    BUTTON_SetFont(hItem, GUI_FONT_16_ASCII);	
+    hItem = WM_GetDialogItem(pMsg->hWin,lbZ_WorkForm);
+    TEXT_SetText(hItem,"Z");
+    TEXT_SetFont(hItem,GUI_FONT_24_ASCII);
+    TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//自动换行
+    TEXT_SetBkColor(hItem,0x00A9A9A9);
+    TEXT_SetTextColor(hItem,0x00FFFFFF);
 
-    hItem = WM_GetDialogItem(pMsg->hWin,btnZup_WorkForm);
-    BUTTON_SetFont(hItem, GUI_FONT_16_ASCII);
+    hItem = WM_GetDialogItem(pMsg->hWin,txtZ_WorkForm);
+    EDIT_SetText(hItem, "0.001");
+    EDIT_SetFont(hItem, GUI_FONT_24_ASCII);
+    EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_LEFT);
+    EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00FFC0C0);
+    EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
+    EDIT_SetMaxLen(hItem, 50); //字符最大长度
+    EDIT_EnableBlink(hItem, 500, 0); //光标不闪烁
 
-    hItem = WM_GetDialogItem(pMsg->hWin,btnCancel_WorkForm);
+    hItem = WM_GetDialogItem(pMsg->hWin,label4_WorkForm);
+    TEXT_SetText(hItem,"工作文件");
+    TEXT_SetFont(hItem,&GUI_FontYAHE24);
+    TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//自动换行
+    TEXT_SetBkColor(hItem,0x00A9A9A9);
+    TEXT_SetTextColor(hItem,0x00FFFFFF);
+
+    hItem = WM_GetDialogItem(pMsg->hWin,cmbFileSelect_WorkForm);
+    //DROPDOWN_SetListHeight(hItem, 39);
+    DROPDOWN_SetFont(hItem, &GUI_FontYAHE24);
+
+    hItem = WM_GetDialogItem(pMsg->hWin,mEditMsg_WorkForm);
+    MULTIEDIT_SetText(hItem, "");
+    MULTIEDIT_SetFont(hItem, &GUI_FontYAHE24);
+
+    hItem = WM_GetDialogItem(pMsg->hWin,label1_WorkForm);
+    TEXT_SetText(hItem,"设备状态");
+    TEXT_SetFont(hItem,&GUI_FontYAHE24);
+    TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//自动换行
+    TEXT_SetBkColor(hItem,0x00A9A9A9);
+    TEXT_SetTextColor(hItem,0x00FFFFFF);
+
+    hItem = WM_GetDialogItem(pMsg->hWin,txtDevStatus_WorkForm);
+    EDIT_SetText(hItem, "准备就绪");
+    EDIT_SetFont(hItem, &GUI_FontYAHE24);
+    EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_LEFT);
+    EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00FFFFFF);
+    EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
+    EDIT_SetMaxLen(hItem, 50); //字符最大长度
+    EDIT_EnableBlink(hItem, 500, 0); //光标不闪烁
+
+    hItem = WM_GetDialogItem(pMsg->hWin,label8_WorkForm);
+    TEXT_SetText(hItem,"总加工数");
+    TEXT_SetFont(hItem,&GUI_FontYAHE24);
+    TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//自动换行
+    TEXT_SetBkColor(hItem,0x00A9A9A9);
+    TEXT_SetTextColor(hItem,0x00FFFFFF);
+
+    hItem = WM_GetDialogItem(pMsg->hWin,label10_WorkForm);
+    TEXT_SetText(hItem,"工作速度");
+    TEXT_SetFont(hItem,&GUI_FontYAHE24);
+    TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//自动换行
+    TEXT_SetBkColor(hItem,0x00A9A9A9);
+    TEXT_SetTextColor(hItem,0x00FFFFFF);
+
+    hItem = WM_GetDialogItem(pMsg->hWin,txtWorkSpeed_WorkForm);
+    EDIT_SetText(hItem, "100%");
+    EDIT_SetFont(hItem, GUI_FONT_24_ASCII);
+    EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_HCENTER);
+    EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00C0FFC0);
+    EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
+    EDIT_SetMaxLen(hItem, 50); //字符最大长度
+    EDIT_EnableBlink(hItem, 500, 0); //光标不闪烁
+
+    hItem = WM_GetDialogItem(pMsg->hWin,btnJQKQ_WorkForm);
     BUTTON_SetFont(hItem, &GUI_FontYAHE24);
+    BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00A9A9A9);
+    BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
-    hItem = WM_GetDialogItem(pMsg->hWin,btnOK_WorkForm);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE24);	
+    hItem = WM_GetDialogItem(pMsg->hWin,btnDDQJ_WorkForm);
+    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
+    BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00A9A9A9);
+    BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
+
+    hItem = WM_GetDialogItem(pMsg->hWin,btnFileEdit_WorkForm);
+    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
+    BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00A9A9A9);
+    BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00008000);
+
+    hItem = WM_GetDialogItem(pMsg->hWin,btnParaSet_WorkForm);
+    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
+    BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00A9A9A9);
+    BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00008000);
+
+    hItem = WM_GetDialogItem(pMsg->hWin,btnReset_WorkForm);
+    BUTTON_SetFont(hItem, &GUI_FontYAHE32);
+    BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00A9A9A9);
+    BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00008000);
+
+    hItem = WM_GetDialogItem(pMsg->hWin,txtTotalNum_WorkForm);
+    EDIT_SetText(hItem, "13");
+    EDIT_SetFont(hItem, GUI_FONT_24_ASCII);
+    EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_LEFT);
+    EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00FFFFFF);
+    EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
+    EDIT_SetMaxLen(hItem, 50); //字符最大长度
+    EDIT_EnableBlink(hItem, 500, 0); //光标不闪烁
+
+    hItem = WM_GetDialogItem(pMsg->hWin,btnManual_WorkForm);
+    BUTTON_SetFont(hItem, &GUI_FontYAHE32);
+    BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00A9A9A9);
+    BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
+
+    hItem = WM_GetDialogItem(pMsg->hWin,btnLeftStart_WorkForm);
+    BUTTON_SetFont(hItem, &GUI_FontYAHE32);
+    BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00A9A9A9);
+    BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
+
+    hItem = WM_GetDialogItem(pMsg->hWin,btnRightStart_WorkForm);
+    BUTTON_SetFont(hItem, &GUI_FontYAHE32);
+    BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00A9A9A9);
+    BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
+
+    hItem = WM_GetDialogItem(pMsg->hWin,btnStop_WorkForm);
+    BUTTON_SetFont(hItem, &GUI_FontYAHE32);
+    BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00FFFFFF);
+    BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x000000FF);
 }
 
 
 //控件事件处理函数
-void DoEvent_WorkForm(WM_MESSAGE * pMsg)
+static void DoEvent(WM_MESSAGE * pMsg)
 {
     int Id = WM_GetId(pMsg->hWinSrc);
     int NCode = pMsg->Data.v;
     switch(Id)
     {
-		case btnYfront_WorkForm:
-			switch(NCode)
-			{
-				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
-        AxisPTRun("Y","FFX");	
-					break;
-				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
-        AxisPTStop("Y");
-					break;
-			}
-			break;
-		case btnYback_WorkForm:
-			switch(NCode)
-			{
-				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
-        AxisPTRun("Y","ZFX");	
-					break;
-				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
-        AxisPTStop("Y");
-					break;
-			}
-			break;
-		case btnXright_WorkForm:
-			switch(NCode)
-			{
-				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
-					//SendKeyStatus("XRight=Down");
-           AxisPTRun("X","ZFX");
-          //MoveToCoord(X,10,true); 
-//          for(u8 i=0;i<5;i++)
-//          {
-//              MoveToCoord(X,300,true);
-//              MoveToCoord(X,5,true);
-//          }        
-					break;
-				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
-					//SendKeyStatus("XRight=UP");
-          AxisPTStop("X");
-					break;
-			}
-			break;
-		case btnXleft_WorkForm:
-			switch(NCode)
-			{
-				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
-					//SendKeyStatus("XLeft=Down");
-          AxisPTRun("X","FFX");	
-					break;
-				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
-					//SendKeyStatus("XLeft=UP");
-          AxisPTStop("X");
-					break;
-			}
-			break;
-		case btnZdown_WorkForm:
-			switch(NCode)
-			{
-				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
-        AxisPTRun("Z","ZFX");	
-					break;
-				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
-        AxisPTStop("Z");
-					break;
-			}
-			break;
-		case btnZup_WorkForm:
-			switch(NCode)
-			{
-				case WM_NOTIFICATION_CLICKED:
-          AxisPTRun("Z","FFX");	
-					//DO:按钮已被点击
-					break;
-				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
-        AxisPTStop("Z");
-					break;
-			}
-			break;
-		case btnCancel_WorkForm:
+		case txtX_WorkForm:
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
@@ -216,17 +280,219 @@ void DoEvent_WorkForm(WM_MESSAGE * pMsg)
 				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
 					break;
+				case WM_NOTIFICATION_VALUE_CHANGED:
+					//DO:控件的值已改变
+					break;
 			}
 			break;
-		case btnOK_WorkForm:
+		case txtY1_WorkForm:
 			switch(NCode)
 			{
-				case WM_NOTIFICATION_CLICKED:					
+				case WM_NOTIFICATION_CLICKED:
+					//DO:按钮已被点击
 					break;
-				case WM_NOTIFICATION_RELEASED:                    
+				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
-                    GUI_EndDialog(pMsg->hWin, 0);
-					CreateMotorPara();
+					break;
+				case WM_NOTIFICATION_VALUE_CHANGED:
+					//DO:控件的值已改变
+					break;
+			}
+			break;
+		case txtY2_WorkForm:
+			switch(NCode)
+			{
+				case WM_NOTIFICATION_CLICKED:
+					//DO:按钮已被点击
+					break;
+				case WM_NOTIFICATION_RELEASED:
+					//DO:按钮已被释放（弹起）
+					break;
+				case WM_NOTIFICATION_VALUE_CHANGED:
+					//DO:控件的值已改变
+					break;
+			}
+			break;
+		case txtZ_WorkForm:
+			switch(NCode)
+			{
+				case WM_NOTIFICATION_CLICKED:
+					//DO:按钮已被点击
+					break;
+				case WM_NOTIFICATION_RELEASED:
+					//DO:按钮已被释放（弹起）
+					break;
+				case WM_NOTIFICATION_VALUE_CHANGED:
+					//DO:控件的值已改变
+					break;
+			}
+			break;
+		case cmbFileSelect_WorkForm:
+			switch(NCode)
+			{
+				case WM_NOTIFICATION_CLICKED:
+					//DO:按钮已被点击
+					break;
+				case WM_NOTIFICATION_RELEASED:
+					//DO:按钮已被释放（弹起）
+					break;
+				case WM_NOTIFICATION_SEL_CHANGED:
+					//DO:选择的值已发生改变
+					break;
+			}
+			break;
+		case mEditMsg_WorkForm:
+			switch(NCode)
+			{
+				case WM_NOTIFICATION_CLICKED:
+					//DO:按钮已被点击
+					break;
+				case WM_NOTIFICATION_RELEASED:
+					//DO:按钮已被释放（弹起）
+					break;
+				case WM_NOTIFICATION_VALUE_CHANGED:
+					//DO:控件的值已改变
+					break;
+			}
+			break;
+		case txtDevStatus_WorkForm:
+			switch(NCode)
+			{
+				case WM_NOTIFICATION_CLICKED:
+					//DO:按钮已被点击
+					break;
+				case WM_NOTIFICATION_RELEASED:
+					//DO:按钮已被释放（弹起）
+					break;
+				case WM_NOTIFICATION_VALUE_CHANGED:
+					//DO:控件的值已改变
+					break;
+			}
+			break;
+		case txtWorkSpeed_WorkForm:
+			switch(NCode)
+			{
+				case WM_NOTIFICATION_CLICKED:
+					//DO:按钮已被点击
+					break;
+				case WM_NOTIFICATION_RELEASED:
+					//DO:按钮已被释放（弹起）
+					break;
+				case WM_NOTIFICATION_VALUE_CHANGED:
+					//DO:控件的值已改变
+					break;
+			}
+			break;
+		case btnJQKQ_WorkForm:
+			switch(NCode)
+			{
+				case WM_NOTIFICATION_CLICKED:
+					//DO:按钮已被点击
+					break;
+				case WM_NOTIFICATION_RELEASED:
+					//DO:按钮已被释放（弹起）
+					break;
+			}
+			break;
+		case btnDDQJ_WorkForm:
+			switch(NCode)
+			{
+				case WM_NOTIFICATION_CLICKED:
+					//DO:按钮已被点击
+					break;
+				case WM_NOTIFICATION_RELEASED:
+					//DO:按钮已被释放（弹起）
+					break;
+			}
+			break;
+		case btnFileEdit_WorkForm:
+			switch(NCode)
+			{
+				case WM_NOTIFICATION_CLICKED:
+					//DO:按钮已被点击
+					break;
+				case WM_NOTIFICATION_RELEASED:
+					//DO:按钮已被释放（弹起）
+					break;
+			}
+			break;
+		case btnParaSet_WorkForm:
+			switch(NCode)
+			{
+				case WM_NOTIFICATION_CLICKED:
+					//DO:按钮已被点击
+					break;
+				case WM_NOTIFICATION_RELEASED:
+					//DO:按钮已被释放（弹起）
+					break;
+			}
+			break;
+		case btnReset_WorkForm:
+			switch(NCode)
+			{
+				case WM_NOTIFICATION_CLICKED:
+					//DO:按钮已被点击
+					break;
+				case WM_NOTIFICATION_RELEASED:
+					//DO:按钮已被释放（弹起）
+					break;
+			}
+			break;
+		case txtTotalNum_WorkForm:
+			switch(NCode)
+			{
+				case WM_NOTIFICATION_CLICKED:
+					//DO:按钮已被点击
+					break;
+				case WM_NOTIFICATION_RELEASED:
+					//DO:按钮已被释放（弹起）
+					break;
+				case WM_NOTIFICATION_VALUE_CHANGED:
+					//DO:控件的值已改变
+					break;
+			}
+			break;
+		case btnManual_WorkForm:
+			switch(NCode)
+			{
+				case WM_NOTIFICATION_CLICKED:
+					//DO:按钮已被点击
+					break;
+				case WM_NOTIFICATION_RELEASED:
+					//DO:按钮已被释放（弹起）
+					break;
+			}
+			break;
+		case btnLeftStart_WorkForm:
+			switch(NCode)
+			{
+				case WM_NOTIFICATION_CLICKED:
+					//DO:按钮已被点击
+					break;
+				case WM_NOTIFICATION_RELEASED:
+					//DO:按钮已被释放（弹起）
+					break;
+			}
+			break;
+		case btnRightStart_WorkForm:
+			switch(NCode)
+			{
+				case WM_NOTIFICATION_CLICKED:
+					//DO:按钮已被点击
+					break;
+				case WM_NOTIFICATION_RELEASED:
+					//DO:按钮已被释放（弹起）
+					break;
+			}
+			break;
+		case btnStop_WorkForm:
+			switch(NCode)
+			{
+				case WM_NOTIFICATION_CLICKED:
+					//DO:按钮已被点击
+					break;
+				case WM_NOTIFICATION_RELEASED:
+					//DO:按钮已被释放（弹起）
 					break;
 			}
 			break;
@@ -242,18 +508,18 @@ static void _cbDialog(WM_MESSAGE * pMsg)
     switch (pMsg->MsgId)
 	{
 		case WM_INIT_DIALOG:
-			InitDialog_WorkForm(pMsg);
+			InitForm(pMsg);
 			break;
 		case WM_NOTIFY_PARENT:
-			DoEvent_WorkForm(pMsg);
+			DoEvent(pMsg);
 			break;
     }
 }
 
 
 WM_HWIN CreateWorkForm(void) {
-    WM_HWIN hWin;  
+    WM_HWIN hWin;
     hWin = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
     return hWin;
 }
- 
+

@@ -91,6 +91,7 @@ void MainTask(void)
 					
 			//CreateKeyboard();//创建软键盘
 			CreateNumKeyForm();
+            CreateFullKeyForm();
             CreateMessageBox();
             CreateMessageBox_NoBtn();
 			StatusParaStruct appStatus;
@@ -136,7 +137,7 @@ void MainTask(void)
 				}
 				if(isExitWhile) break;
 				GUI_Delay(500);
-			}			
+			}	
 		}
     while(1)
     {

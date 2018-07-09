@@ -700,6 +700,11 @@ static void DoEvent(WM_MESSAGE * pMsg)
 				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
 					WM_HideWin(pMsg->hWin);
+                    //WM_DeleteWindow(pMsg->hWin);
+//                    WM_ValidateWindow(WM_HBKWIN);
+//                    GUI_Exec();
+//                    GUI_SetBkColor(GUI_BLUE);
+//                    GUI_Clear();
                     WM_ShowWindow(_callForm);
 					break;
 			}
@@ -743,19 +748,6 @@ WM_HWIN CreateFullKeyForm(void)
     _txtInputHandle=WM_GetDialogItem(_thisForm,txtInputData_FullKeyForm);
     WM_HideWin(_thisForm);
     return _thisForm;
-}
-
-
-//设置相对于LCD居中
-void SetFormCenterScreen(WM_HWIN thisForm)
-{
-    int fW = 800;//WM_GetWindowSizeX(prentForm);
-    int kW = WM_GetWindowSizeX(thisForm);
-    int fH = 480;//WM_GetWindowSizeY(prentForm);
-    int kH = WM_GetWindowSizeY(thisForm);
-    int x0=(fW-kW)/2;
-    int y0=(fH-kH)/2;
-    WM_MoveTo(thisForm, x0, y0);
 }
 
 

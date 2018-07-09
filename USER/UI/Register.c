@@ -108,8 +108,8 @@ void DoEvent_Register(WM_MESSAGE * pMsg)
 			case WM_NOTIFICATION_CLICKED:				
         break;
 			case WM_NOTIFICATION_RELEASED:
-			//弹出数字键盘
-			ShowNumKeyboard1(pMsg->hWin,EDIT_SetText,Id);
+			//ShowNumKeyboard1(pMsg->hWin,EDIT_SetText,Id);
+            ShowFullKeyboard1(pMsg->hWin,EDIT_SetText,Id);
         break;
 			case WM_NOTIFICATION_VALUE_CHANGED:
 			break;
