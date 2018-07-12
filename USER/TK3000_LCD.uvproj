@@ -519,9 +519,14 @@
               <FilePath>.\UI\MotorControl.c</FilePath>
             </File>
             <File>
-              <FileName>WelcomeForm.c</FileName>
+              <FileName>WelcomForm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\UI\WelcomeForm.c</FilePath>
+              <FilePath>.\UI\WelcomForm.c</FilePath>
+            </File>
+            <File>
+              <FileName>WindowDLG.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\UI\WindowDLG.c</FilePath>
             </File>
           </Files>
         </Group>

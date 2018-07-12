@@ -65,8 +65,10 @@ void MainTask(void)
 //	GUI_Delay(1000);	
 	
 	FIL fil;
-	FRESULT rst=OpenFile(_xbfLibName32,FA_READ,&fil);
-	if(rst!=FR_OK)
+    FATFS fs;
+    FRESULT res = f_mount(&fs,"0:/",0);
+	res=OpenFile(_xbfLibName32,FA_READ,&fil);
+	if(res!=FR_OK)
 	{
 		GUI_SetFont(&GUI_Font24_ASCII);	
 		GUI_DispStringHCenterAt("Plase copy XBF file to disk!",200,50);		
@@ -96,7 +98,13 @@ void MainTask(void)
             CreateMessageBox_NoBtn();
 			StatusParaStruct appStatus;
             DeviceStatusEnum lastStatus=0xFF;
-			while(true)
+            
+             //CreateWindow();
+            //显示欢迎界面
+            CreateWelcomForm();
+           //GUI_Delay(1000);                      
+            
+			/*while(true)
 			{
 				bool isExitWhile=false;				
 				GUI_Clear();
@@ -113,8 +121,8 @@ void MainTask(void)
 						GUI_DispStringHCenterAt("没有读取到设备程序当前状态",200,50);
 						break;
 					case DeviceIniting: //设备初始化中
-
-						break;					
+                        CreateWelcomForm();
+                        GUI_Delay(1000);				
 					case DevReady: //设备准备就绪,进入工作主界面
 					case DevWorking: //设备正在工作
 						CreateWorkForm();
@@ -137,7 +145,7 @@ void MainTask(void)
 				}
 				if(isExitWhile) break;
 				GUI_Delay(500);
-			}	
+			}	*/
 		}
     while(1)
     {

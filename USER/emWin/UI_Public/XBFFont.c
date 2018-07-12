@@ -106,7 +106,7 @@ static int _cbGetData40(U32 Off, U16 NumBytes, void * pVoid, void * pBuffer)
 void UseXBF(void) 
 {
 	FRESULT result;
-	result = f_mount(&fontfs,"0:/",0);
+	//result = f_mount(&fontfs,"0:/",0);
 	
 	result = f_open(&Fontfile16, _xbfLibName16, FA_OPEN_EXISTING | FA_READ | FA_OPEN_ALWAYS);
 	if (result == FR_OK)

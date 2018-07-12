@@ -88,6 +88,11 @@ bool CopyAllFile_Dir(char* sourcDir,char* destDir,bool isCoverFile,OneStrParamet
 //判断磁盘是否未格式化，如果是，则格式化
 void PDFormatFlash(void);
 
+//获取文件大小
+int GetFileSize(char* fileName);
+//读整个文件
+bool ReadFile(char* fileName,u8* readBuff);
+
 #ifdef __cplusplus
 }
 #endif

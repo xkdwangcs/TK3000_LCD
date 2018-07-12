@@ -54,7 +54,7 @@ void ShowBMP(char* bmpFileName,u8 mode,u32 x,u32 y,int member,int denom)
 	GUI_HMEM hMem;
 	char* picBuffer;
 	
-	result = f_mount(&fs,_disk,0);
+	//result = f_mount(&fs,_disk,0);
 	result = f_open(&_picFile, bmpFileName, FA_OPEN_EXISTING | FA_READ | FA_OPEN_ALWAYS);
 	if (result != FR_OK)
 	{
@@ -102,7 +102,7 @@ void ShowBMP(char* bmpFileName,u8 mode,u32 x,u32 y,int member,int denom)
 	}
 	GUI_ALLOC_Free(hMem);							//释放内存
 	f_close(&_picFile);								//关闭BMPFile文件
-	result  = f_mount(0, _disk, 0);		
+	//result  = f_mount(0, _disk, 0);		
 }
 
 //在指定位置显示无需加载到RAM中的BMP图片(需文件系统支持！对于小RAM，推荐使用此方法！)
@@ -116,11 +116,11 @@ void ShowBMP(char* bmpFileName,u8 mode,u32 x,u32 y,int member,int denom)
 //denom:缩放比例的分母项
 void ShowBMPEx(char* bmpFileName,u8 mode,u32 x0,u32 y0,int member,int denom)
 {
-	FATFS fs;
+	//FATFS fs;
 	FRESULT result;
 	int XSize,YSize;
 	float Xflag,Yflag;	
-	result = f_mount(&fs,_disk,0);
+	//result = f_mount(&fs,_disk,0);
 	result = f_open(&_picFile,(const TCHAR*)bmpFileName,FA_READ);	//打开文件
 	//文件打开错误
 	if(result != FR_OK) 	
@@ -156,7 +156,7 @@ void ShowBMPEx(char* bmpFileName,u8 mode,u32 x0,u32 y0,int member,int denom)
 			break;
 	}
 	result  = f_close(&_picFile);		//关闭BMPFile文件
-	result  = f_mount(0, _disk, 0);
+	//result  = f_mount(0, _disk, 0);
 }
 
 //左上角开始画图，无缩放
@@ -187,7 +187,7 @@ void ShowJPEG(char* jpegFileName,u8 mode,u32 x,u32 y,int member,int denom)
 	char* picBuffer;
 	GUI_JPEG_INFO JpegInfo;
 	
-	result = f_mount(&fs,_disk,0);
+	//result = f_mount(&fs,_disk,0);
 	result = f_open(&_picFile, jpegFileName, FA_OPEN_EXISTING | FA_READ | FA_OPEN_ALWAYS);
 	if (result != FR_OK)
 	{
@@ -195,7 +195,7 @@ void ShowJPEG(char* jpegFileName,u8 mode,u32 x,u32 y,int member,int denom)
 	}
 	u32 picSize=_picFile.obj.objsize;
 	// 申请一块内存空间 并且将其清零 
-  hMem = GUI_ALLOC_AllocZero(picSize);//(1024*512);
+    hMem = GUI_ALLOC_AllocZero(picSize);//(1024*512);
 	// 将申请到内存的句柄转换成指针类型 
 	picBuffer = GUI_ALLOC_h2p(hMem);
 	// 读取图片到缓冲中
@@ -234,7 +234,7 @@ void ShowJPEG(char* jpegFileName,u8 mode,u32 x,u32 y,int member,int denom)
 	}
 	GUI_ALLOC_Free(hMem);							//释放内存
 	result  = f_close(&_picFile);		//关闭文件
-	result  = f_mount(0, _disk, 0);
+	//result  = f_mount(0, _disk, 0);
 }
 
 
@@ -255,7 +255,7 @@ void ShowJPEGEx(char* jpegFileName,u8 mode,u32 x0,u32 y0,int member,int denom)
 	float Xflag,Yflag;
 	GUI_JPEG_INFO JpegInfo;
 	
-	result = f_mount(&fs,_disk,0);
+	//result = f_mount(&fs,_disk,0);
 	result = f_open(&_picFile,(const TCHAR*)jpegFileName,FA_READ);	//打开文件
 	//文件打开错误
 	if(result != FR_OK) 
@@ -293,7 +293,7 @@ void ShowJPEGEx(char* jpegFileName,u8 mode,u32 x0,u32 y0,int member,int denom)
 			break;
 	}
 	result  = f_close(&_picFile);		//关闭文件
-	result  = f_mount(0, _disk, 0);
+	//result  = f_mount(0, _disk, 0);
 }	
 
 /****************************************************************/
@@ -307,7 +307,7 @@ void ShowPNG(char* pngFilename, u16 x0, u16 y0)
 		GUI_HMEM hMem;
 		char* picBuff;
 		
-		result = f_mount(&fs,_disk,0);	
+		//result = f_mount(&fs,_disk,0);	
 		result = f_open(&_picFile, pngFilename, FA_OPEN_EXISTING | FA_READ | FA_OPEN_ALWAYS);
 		if (result != FR_OK)
 		{
@@ -327,7 +327,7 @@ void ShowPNG(char* pngFilename, u16 x0, u16 y0)
 		}
 		GUI_ALLOC_Free(hMem);
 		f_close(&_picFile);
-		result  = f_mount(0, _disk, 0);
+		//result  = f_mount(0, _disk, 0);
 }
 
 //行显示PNG图片时，获取数据的回调函数
@@ -354,7 +354,7 @@ void ShowPNGEx(char* pngFilename, u16 x0, u16 y0)
 	FATFS fs;
 	FRESULT result;
 	int v=0;
-	result = f_mount(&fs,_disk,0);	
+	//result = f_mount(&fs,_disk,0);	
 	result = f_open(&_picFile, pngFilename, FA_OPEN_EXISTING | FA_READ | FA_OPEN_ALWAYS);
 	if (result != FR_OK)
 	{
@@ -362,7 +362,7 @@ void ShowPNGEx(char* pngFilename, u16 x0, u16 y0)
 	}	
 	v = GUI_PNG_DrawEx(GetPNGPicData, &_picFile, x0, y0);
 	result  = f_close(&_picFile);
-	result  = f_mount(0, _disk, 0);
+	//result  = f_mount(0, _disk, 0);
 }
 
 /*****************************************************/
@@ -379,7 +379,7 @@ void ShowGIF(const char* gifFilename)
 	GUI_GIF_INFO InfoGif1;
 	GUI_GIF_IMAGE_INFO InfoGif2;
 	
-	result = f_mount(&fs,_disk,0);		
+	//result = f_mount(&fs,_disk,0);		
 	result = f_open(&_picFile, gifFilename, FA_OPEN_EXISTING | FA_READ | FA_OPEN_ALWAYS);
 	if (result != FR_OK)
 	{
@@ -422,7 +422,7 @@ void ShowGIF(const char* gifFilename)
 	}
 		GUI_ALLOC_Free(hMem);
 		f_close(&_picFile);
-		result  = f_mount(0, _disk, 0);
+		//result  = f_mount(0, _disk, 0);
 }
 
 //GIF图片显示
@@ -498,30 +498,29 @@ void TestPictureFontDisplay(void)
 		ShowBMPEx(bmpFileName,0,10,	78,	1,1);
 		GUI_Delay(1000);
 		GUI_Clear();	
-	
-		GUI_DispStringHCenterAt("在LCD中间显示一张缩小1/2的无需加载的BMP图片",400,50);
+			
 		ShowBMPEx(bmpFileName,1,0,	0,	1,2);
+        GUI_DispStringHCenterAt("在LCD中间显示一张缩小1/2的无需加载的BMP图片",400,50);
 		GUI_Delay(1000);
 		GUI_Clear();
-	
-		GUI_DispStringHCenterAt("在LCD中间显示一张扩大4/3倍的无需加载的BMP图片",400,50);
+			
+            GUI_DispStringHCenterAt("放在图片显示之前不行",400,50);
 		ShowBMPEx(bmpFileName,1,0,	0,	4,3);
 		GUI_Delay(1000);
 		GUI_Clear();		
-		
-		char* jpgFileName="0:/Pic/11.jpg";
-		GUI_DispStringHCenterAt("在LCD中间显示一张扩大2倍的无需加载的JPEG图片",240,50);
+				
 		ShowJPEGEx("0:/Pic/001.jpg",1,0,0,2,1);
+        GUI_DispStringHCenterAt("在LCD中间显示一张扩大2倍的无需加载的JPEG图片",240,50);
 		GUI_Delay(1000);
 		GUI_Clear();
-	
-		GUI_DispStringHCenterAt("在LCD中间显示一张缩小1/2的无需加载的JPEG图片",240,10);
+			
 		ShowJPEGEx("0:/Pic/002.jpg",1,0,0,1,2);
+        GUI_DispStringHCenterAt("在LCD中间显示一张缩小1/2的无需加载的JPEG图片",240,10);
 		GUI_Delay(1000);
-		GUI_Clear();
-        
-    GUI_DispStringHCenterAt("在LCD中间显示一张缩小1/4的无需加载的JPEG图片",240,20);
-    ShowJPEGEx("0:/Pic/003.jpg",1,0,0,1,1);
+		GUI_Clear();        
+    
+        ShowJPEGEx("0:/Pic/003.jpg",1,0,0,1,1);
+        GUI_DispStringHCenterAt("在LCD中间显示一张缩小1/4的无需加载的JPEG图片",240,20);
 		GUI_Delay(1000);
 		GUI_Clear();
 		

@@ -211,13 +211,14 @@ FRESULT OpenFile(char* fileName,u8 openMode,FIL* file)
     FATFS fs;
     DIR dirs;
     u32 re;
-    char* diskStr=GetDiskStrByFullPath(fileName);
-	FRESULT res = f_mount(&fs,diskStr,0);
-	if (res != FR_OK)
-		return res;
+    FRESULT res;
+   // char* diskStr=GetDiskStrByFullPath(fileName);
+	//FRESULT res = f_mount(&fs,diskStr,0);
+	//if (res != FR_OK)
+		//return res;
 	res = f_open(file,fileName,openMode);
-    if(res!=FR_OK && res!=FR_EXIST)
-        f_mount(NULL, diskStr, 0); 
+    //if(res!=FR_OK && res!=FR_EXIST)
+        //f_mount(NULL, diskStr, 0); 
     return res;
 }
 
@@ -225,8 +226,8 @@ FRESULT OpenFile(char* fileName,u8 openMode,FIL* file)
 FRESULT CloseFile(FIL* file,char* fileName)
 {
     FRESULT res = f_close(file);
-    char* diskStr=GetDiskStrByFullPath(fileName);
-    res  = f_mount(NULL, diskStr, 0); 
+    //char* diskStr=GetDiskStrByFullPath(fileName);
+    //res  = f_mount(NULL, diskStr, 0); 
     return res;
 }
 
@@ -364,7 +365,54 @@ void ReadBytesFormFile(char* fileName,u8* readBuff,u32 startIndex,u32 readLenght
         }
 	}
 	res = f_close(&file);
-	res  = f_mount(NULL, diskStr, 0);
+	res = f_mount(NULL, diskStr, 0);
+}
+
+//获取文件大小
+int GetFileSize(char* fileName)
+{
+    FATFS fs;
+    FIL	file;
+    u32 re;
+    FRESULT res;
+    char* diskStr=GetDiskStrByFullPath(fileName);
+	//res = f_mount(&fs,diskStr,0); 
+	res = f_open(&file,fileName,FA_READ);
+	if (res == FR_OK)
+	{
+        res = f_close(&file);
+        return file.obj.objsize;
+    }
+    res = f_close(&file);
+    return 0;
+}
+
+//读整个文件
+bool ReadFile(char* fileName,u8* readBuff)
+{
+    FATFS fs;
+	FIL	file;
+    u32 re;
+    FRESULT res;
+    char* diskStr=GetDiskStrByFullPath(fileName);
+	//res = f_mount(&fs,diskStr,0);//不能加载，否则读取会出错 
+	res = f_open(&file,fileName,FA_READ);
+	if (res == FR_OK)
+	{
+		u32 fsize=file.obj.objsize;//文件大小
+        //u32 buffSize=sizeof(readBuff);
+        /*if(fsize>buffSize)
+        {
+            res = f_close(&file);
+            //res  = f_mount(NULL, diskStr, 0);
+            return false;
+        }*/
+        //memset(readBuff,0,buffSize);
+        res = f_read(&file,readBuff,fsize,&re);
+	}
+	res = f_close(&file);
+    //res  = f_mount(NULL, diskStr, 0);
+    return true;
 }
 
 //删除指定文件相关内容。startIndex:从0开始的索引，开始删除的位置；count:要删除的字节个数
@@ -655,7 +703,7 @@ void PDFormatFlash(void)
 	char* diskStr=GetDiskStrByFullPath(fn);   
 	bool isFormat=false;
 	u32 reindex;
-  FIL file;
+    FIL file;
 	FATFS fs;
 	u8 res = f_mount(&fs,diskStr,0);
 	res = f_open(&file,fn,FA_READ | FA_WRITE | FA_CREATE_NEW);
