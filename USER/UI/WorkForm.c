@@ -1,4 +1,4 @@
-﻿/*****************************************
+/*****************************************
 *
 * 肖应强设计的GUIBuilder生成的文件
 * V2.02 (2018.07.07)
@@ -496,9 +496,6 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 			}
 			break;
-		default:
-			WM_DefaultProc(pMsg);
-			break;
     }
 }
 
@@ -513,6 +510,9 @@ static void _cbDialog(WM_MESSAGE * pMsg)
 		case WM_NOTIFY_PARENT:
 			DoEvent(pMsg);
 			break;
+		default:
+		    WM_DefaultProc(pMsg);
+		    break;
     }
 }
 

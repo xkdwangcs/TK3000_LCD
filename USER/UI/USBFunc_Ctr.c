@@ -82,9 +82,6 @@ void DoEvent_USBOpre(WM_MESSAGE * pMsg)
 					break;
 			}
 			break;
-		default:
-			WM_DefaultProc(pMsg);
-			break;
     }
 }
 
@@ -99,6 +96,9 @@ static void _cbDialog(WM_MESSAGE * pMsg)
 		case WM_NOTIFY_PARENT:
 			DoEvent_USBOpre(pMsg);
 			break;
+		default:
+		    WM_DefaultProc(pMsg);
+		    break;
     }
 }
 

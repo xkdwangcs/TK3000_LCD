@@ -523,11 +523,6 @@
               <FileType>1</FileType>
               <FilePath>.\UI\WelcomForm.c</FilePath>
             </File>
-            <File>
-              <FileName>WindowDLG.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\UI\WindowDLG.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
