@@ -387,8 +387,36 @@ int GetFileSize(char* fileName)
     return 0;
 }
 
+const u32 _fullFileMaxSize=0x64000;
+u8 _fullFileBuff[_fullFileMaxSize]__at(FullFileBuffAddr);
 //读整个文件
-bool ReadFile(char* fileName,u8* readBuff)
+u8* ReadFullFile(char* fileName,int* fileSize)
+{
+    FATFS fs;
+	FIL	file;
+    u32 re;
+    FRESULT res;
+    char* diskStr=GetDiskStrByFullPath(fileName);
+	//res = f_mount(&fs,diskStr,0);//不能加载，否则读取会出错 
+	res = f_open(&file,fileName,FA_READ);
+	if (res == FR_OK)
+	{
+		u32 fsize=file.obj.objsize;//文件大小
+        * fileSize=fsize;
+        if(fsize>_fullFileMaxSize)
+        {
+            res = f_close(&file);
+            return NULL;
+        }
+        memset(_fullFileBuff,0,_fullFileMaxSize);
+        res = f_read(&file,_fullFileBuff,fsize,&re);
+	}
+	res = f_close(&file);
+    return _fullFileBuff;
+}
+
+//读整个文件
+bool ReadFullFile1(char* fileName,u8* readBuff)
 {
     FATFS fs;
 	FIL	file;

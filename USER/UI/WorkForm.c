@@ -5,7 +5,7 @@
 *
 ******************************************/
 
-#include  "DIALOG.h"
+#include "DIALOG.h"
 
 
 #define WorkForm (GUI_ID_USER +0x00)
@@ -38,7 +38,7 @@
 
 
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
-{ FRAMEWIN_CreateIndirect,"TK3000_自动点胶控制系统 V1.00",WorkForm,0,0,795,475,0, 0x0, 0 },
+{ FRAMEWIN_CreateIndirect,"TK3000_自动点胶控制系统 V1.00",WorkForm,0,0,800,480,0, 0x0, 0 },
 { TEXT_CreateIndirect,"X",lbX_WorkForm,89,19,27,27,0, 0x0, 0 },
 { EDIT_CreateIndirect,"0.001",txtX_WorkForm,129,15,140,35,0, 0x0, 0 },
 { TEXT_CreateIndirect,"Y1",lbY1_WorkForm,89,57,41,27,0, 0x0, 0 },
@@ -48,19 +48,19 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 { TEXT_CreateIndirect,"Z",lbZ_WorkForm,89,131,27,27,0, 0x0, 0 },
 { EDIT_CreateIndirect,"0.001",txtZ_WorkForm,129,126,140,35,0, 0x0, 0 },
 { TEXT_CreateIndirect,"工作文件",label4_WorkForm,420,26,110,31,0, 0x0, 0 },
-{ DROPDOWN_CreateIndirect,"",cmbFileSelect_WorkForm,514,22,246,39,0, 0x0, 0 },
+{ DROPDOWN_CreateIndirect,"",cmbFileSelect_WorkForm,524,22,246,39,0, 0x0, 0 },
 { MULTIEDIT_CreateIndirect,"",mEditMsg_WorkForm,85,173,285,187,0, 0x0, 0 },
 { TEXT_CreateIndirect,"设备状态",label1_WorkForm,419,70,110,31,0, 0x0, 0 },
-{ EDIT_CreateIndirect,"准备就绪",txtDevStatus_WorkForm,514,66,156,39,0, 0x0, 0 },
+{ EDIT_CreateIndirect,"准备就绪",txtDevStatus_WorkForm,524,66,156,39,0, 0x0, 0 },
 { TEXT_CreateIndirect,"总加工数",label8_WorkForm,420,112,110,31,0, 0x0, 0 },
 { TEXT_CreateIndirect,"工作速度",label10_WorkForm,420,152,110,31,0, 0x0, 0 },
-{ EDIT_CreateIndirect,"100%",txtWorkSpeed_WorkForm,514,150,156,35,0, 0x0, 0 },
+{ EDIT_CreateIndirect,"100%",txtWorkSpeed_WorkForm,524,150,156,35,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"胶枪开启",btnJQKQ_WorkForm,423,227,123,54,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"点动出胶",btnDDQJ_WorkForm,423,291,123,54,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"文件编辑",btnFileEdit_WorkForm,608,231,122,54,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"参数设置",btnParaSet_WorkForm,608,291,122,54,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"复位",btnReset_WorkForm,85,376,106,54,0, 0x0, 0 },
-{ EDIT_CreateIndirect,"13",txtTotalNum_WorkForm,514,110,156,35,0, 0x0, 0 },
+{ EDIT_CreateIndirect,"13",txtTotalNum_WorkForm,524,110,156,35,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"手动",btnManual_WorkForm,220,376,106,54,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"左启动",btnLeftStart_WorkForm,355,376,129,54,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"右启动",btnRightStart_WorkForm,513,376,122,54,0, 0x0, 0 },
@@ -159,12 +159,22 @@ static void InitForm(WM_MESSAGE * pMsg){
     TEXT_SetTextColor(hItem,0x00FFFFFF);
 
     hItem = WM_GetDialogItem(pMsg->hWin,cmbFileSelect_WorkForm);
-    //DROPDOWN_SetListHeight(hItem, 39);
     DROPDOWN_SetFont(hItem, &GUI_FontYAHE24);
+    DROPDOWN_SetAutoScroll(hItem, 1);//设置自动滚动条
+    DROPDOWN_SetListHeight(hItem, 100);
 
     hItem = WM_GetDialogItem(pMsg->hWin,mEditMsg_WorkForm);
-    MULTIEDIT_SetText(hItem, "");
     MULTIEDIT_SetFont(hItem, &GUI_FontYAHE24);
+    //MULTIEDIT_CI_READONLY:只读模式，MULTIEDIT_CI_EDIT：编辑模式
+    MULTIEDIT_SetTextColor(hItem, MULTIEDIT_CI_READONLY, 0x00000000);  //设置文本颜色
+    MULTIEDIT_SetBkColor(hItem, MULTIEDIT_CI_READONLY, 0x00FFFFFF); //设置背景色
+    MULTIEDIT_SetAutoScrollV(hItem, 1); //使用能垂直滚动条
+    MULTIEDIT_SetInsertMode(hItem, 0);//禁止插入模式
+    MULTIEDIT_SetWrapWord(hItem); //启用换行模式
+    MULTIEDIT_SetReadOnly(hItem, 1); //启用只读模式
+    MULTIEDIT_SetBufferSize(hItem,1024);  //此长度限定方法好像没用
+    //MULTIEDIT_SetMaxLen(hItem,200);       //此长度限定方法好像没用
+    MULTIEDIT_AddText(hItem, "OneText");
 
     hItem = WM_GetDialogItem(pMsg->hWin,label1_WorkForm);
     TEXT_SetText(hItem,"设备状态");
@@ -413,6 +423,8 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
+                    WM_HideWin(pMsg->hWin); 
+                    ShowMotorPTForm(pMsg->hWin,400,5);
 					break;
 			}
 			break;
@@ -522,4 +534,4 @@ WM_HWIN CreateWorkForm(void) {
     hWin = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
     return hWin;
 }
-
+ 

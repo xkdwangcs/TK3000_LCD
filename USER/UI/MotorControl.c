@@ -27,7 +27,7 @@
 
 
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
-{ FRAMEWIN_CreateIndirect,"电机点动控制",MotorControl,0,0,327,443,0, 0x0, 0 },
+{ FRAMEWIN_CreateIndirect,"电机点动控制",MotorControl,0,0,332,448,0, 0x0, 0 },
 { TEXT_CreateIndirect,"X:",lbX_MotorControl,26,7,36,29,0, 0x0, 0 },
 { TEXT_CreateIndirect,"Y:",lbY_MotorControl,26,44,33,29,0, 0x0, 0 },
 { TEXT_CreateIndirect,"Z:",lbZ_MotorControl,26,81,34,29,0, 0x0, 0 },
@@ -51,6 +51,9 @@ extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE32;
 extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE36;
 extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE40;
 
+
+static WM_HWIN _thisForm;
+static WM_HWIN _callForm=NULL;
 
 //初始化窗体相关控件
 static void InitForm(WM_MESSAGE * pMsg){
@@ -115,11 +118,12 @@ static void InitForm(WM_MESSAGE * pMsg){
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,cmbSpeedType_MotorControl);
-    //DROPDOWN_SetListHeight(hItem, 39);
     DROPDOWN_SetFont(hItem, &GUI_FontYAHE24);
     DROPDOWN_AddString(hItem, "慢");
     DROPDOWN_AddString(hItem, "中");
     DROPDOWN_AddString(hItem, "快");
+    DROPDOWN_SetAutoScroll(hItem, 1);//设置自动滚动条
+    DROPDOWN_SetListHeight(hItem, 100);
 
     hItem = WM_GetDialogItem(pMsg->hWin,edtSDPer_MotorControl);
     EDIT_SetText(hItem, "100%");
@@ -131,10 +135,11 @@ static void InitForm(WM_MESSAGE * pMsg){
     EDIT_EnableBlink(hItem, 500, 0); //光标不闪烁
 
     hItem = WM_GetDialogItem(pMsg->hWin,cmbPTSelect_MotorControl);
-    //DROPDOWN_SetListHeight(hItem, 39);
     DROPDOWN_SetFont(hItem, &GUI_FontYAHE24);
     DROPDOWN_AddString(hItem, "左平台");
     DROPDOWN_AddString(hItem, "右平台");
+    DROPDOWN_SetAutoScroll(hItem, 1);//设置自动滚动条
+    DROPDOWN_SetListHeight(hItem, 100);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnOK_MotorControl);
     BUTTON_SetFont(hItem, &GUI_FontYAHE24);
@@ -165,9 +170,11 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			{
 				case WM_NOTIFICATION_CLICKED:
 					//DO:按钮已被点击
+                    AxisPTRun("X","FFX");	
 					break;
 				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
+                    AxisPTStop("X");
 					break;
 			}
 			break;
@@ -176,9 +183,17 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			{
 				case WM_NOTIFICATION_CLICKED:
 					//DO:按钮已被点击
+                    AxisPTRun("X","ZFX");
+                  //MoveToCoord(X,10,true); 
+        //          for(u8 i=0;i<5;i++)
+        //          {
+        //              MoveToCoord(X,300,true);
+        //              MoveToCoord(X,5,true);
+        //          }
 					break;
 				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
+                    AxisPTStop("X");
 					break;
 			}
 			break;
@@ -187,9 +202,11 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			{
 				case WM_NOTIFICATION_CLICKED:
 					//DO:按钮已被点击
+                    AxisPTRun("Y","ZFX");
 					break;
 				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
+                    AxisPTStop("Y");
 					break;
 			}
 			break;
@@ -198,9 +215,11 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			{
 				case WM_NOTIFICATION_CLICKED:
 					//DO:按钮已被点击
+                    AxisPTRun("Y","FFX");
 					break;
 				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
+                    AxisPTStop("Y");
 					break;
 			}
 			break;
@@ -209,9 +228,11 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			{
 				case WM_NOTIFICATION_CLICKED:
 					//DO:按钮已被点击
+                    AxisPTRun("Z","FFX");	
 					break;
 				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
+                    AxisPTStop("Z");
 					break;
 			}
 			break;
@@ -220,9 +241,11 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			{
 				case WM_NOTIFICATION_CLICKED:
 					//DO:按钮已被点击
+                    AxisPTRun("Z","ZFX");
 					break;
 				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
+                    AxisPTStop("Z");
 					break;
 			}
 			break;
@@ -287,6 +310,7 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
+                    GUI_EndDialog(pMsg->hWin,0);
 					break;
 			}
 			break;
@@ -321,10 +345,18 @@ static void _cbDialog(WM_MESSAGE * pMsg)
     }
 }
 
-
-WM_HWIN CreateMotorControl(void) {
-    WM_HWIN hWin;
-    hWin = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
-    return hWin;
+WM_HWIN CreateMotorControl(void) 
+{
+    _thisForm = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
+    WM_HideWin(_thisForm);
+    return _thisForm;
 }
  
+//在指定的（x0,y0)位置显示电机点动控制窗体
+void ShowMotorPTForm(WM_HWIN callForm,int x0,int y0)
+{
+    _callForm=callForm;
+    WM_MoveTo(_thisForm, x0, y0);
+    WM_ShowWin(_thisForm);
+}
+

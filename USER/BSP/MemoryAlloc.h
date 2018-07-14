@@ -24,6 +24,7 @@
 //#include "MatrixCoordEdit.h"
 //#include "Controls.h"
 //#include "SCurve_Table.h"
+#include "bsp_fsmc_sram.h"
 		 
 #define FLASH_SECTOR_SIZE 4096	 
 	 
@@ -39,13 +40,13 @@
 
 
 /***************CCMRAM******************/
-#define CCMBaseAddr 	0x10000000 	//CCM内存的起始地址
+#define CCMBaseAddr 	    0x10000000 	//CCM内存的起始地址
 #define CCMSize				0x10000 	//CCM内存大小：64KB	 
 
 //#define FlashBuffAddr   				CCMBaseAddr 
 //#define FlashTestBuffAddr   		FlashBuffAddr+sizeof(s_usLUT)
 #define FileBuffAddr    				CCMBaseAddr //FlashTestBuffAddr+sizeof(s_ucTempBuf) 
-#define DicBuffAddr							FileBuffAddr+ FLASH_SECTOR_SIZE //字典结构缓存地址
+#define DicBuffAddr						FileBuffAddr+ FLASH_SECTOR_SIZE //字典结构缓存地址
 #define ComSendBuffAddr					DicBuffAddr+sizeof(_dic)				//串口发送缓存地址
 #define ComRecvBuffAddr					ComSendBuffAddr+_comBuffLeng			//串口接收缓存地址
 #define picBuffAddr							ComRecvBuffAddr+_comBuffLeng			//emWin刷图片缓存
@@ -53,6 +54,9 @@
 
 
 /*****************ExtRAM****************/
+#define FullFileBuffAddr 	EXT_SRAM_ADDR 							//读写整个文件缓存，400KB
+#define GUIBuffAddr         ((uint32_t)0x68064000)//FullFileBuffAddr+0x64000                        //GUI缓存
+
 //#define WorkParaAddr 		ExtSRAM_ADDR 								//工作参数起始地址
 //#define DefaultParaAddr 	WorkParaAddr+sizeof(Parameter) 				//默认参数起始地址
 //#define LeftCoordAddr 		DefaultParaAddr+ sizeof(Parameter)  		//左平台坐标列表起始地址

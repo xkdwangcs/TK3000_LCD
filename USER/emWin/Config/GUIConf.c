@@ -33,7 +33,7 @@ Purpose     : Display controller initialization
 
 #include "GUI.h"
 #include "bsp_tft_lcd.h"
-#include "bsp_fsmc_sram.h"
+#include "MemoryAlloc.h"
 
 
 /*********************************************************************
@@ -48,7 +48,7 @@ Purpose     : Display controller initialization
 #define EX_SRAM   1  /*1 used extern sram, 0 used internal sram */
 
 #if EX_SRAM
-#define GUI_NUMBYTES  (1024*1024*2)
+#define GUI_NUMBYTES  (1024*1024*1.5) //2
 #else
 #define GUI_NUMBYTES  (100*1024)
 #endif
@@ -74,7 +74,7 @@ void GUI_X_Config(void)
 {
 #if EX_SRAM
 	static U32 *aMemory;
-	aMemory = (U32 *)EXT_SRAM_ADDR;
+	aMemory = (U32 *)GUIBuffAddr;//EXT_SRAM_ADDR;
 	
 	/*  Assign memory to emWin */
 	GUI_ALLOC_AssignMemory(aMemory, GUI_NUMBYTES);

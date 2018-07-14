@@ -86,25 +86,22 @@ void MainTask(void)
 			while(!GetDevMode(devMode))
 			{
 				GUI_Clear();
-				//GUI_DispStringHCenterAt("Device noline,Please check!",200,50);
 				GUI_DispStringHCenterAt("设备未联机，请检查!",200,50);
 				GUI_Delay(500);
-			}
-					
-			//CreateKeyboard();//创建软键盘
-			CreateNumKeyForm();
-            CreateFullKeyForm();
-            CreateMessageBox();
-            CreateMessageBox_NoBtn();
+			}					
+			CreateNumKeyForm();                  //创建数字键盘
+            CreateFullKeyForm();                    //创建全键盘
+            CreateMessageBox();                   //创建有按钮对话框
+            CreateMessageBox_NoBtn();      //创建无按钮对话框
+            CreateMotorControl();                   //创建电机点动窗体
 			StatusParaStruct appStatus;
             DeviceStatusEnum lastStatus=0xFF;
             
-             //CreateWindow();
             //显示欢迎界面
-            CreateWelcomForm();
-           //GUI_Delay(1000);                      
-            
-			/*while(true)
+            WM_HWIN welForm = CreateWelcomForm();
+            GUI_Delay(2000);                      
+            GUI_EndDialog(welForm,0);
+			while(true)
 			{
 				bool isExitWhile=false;				
 				GUI_Clear();
@@ -145,7 +142,7 @@ void MainTask(void)
 				}
 				if(isExitWhile) break;
 				GUI_Delay(500);
-			}	*/
+			}	
 		}
     while(1)
     {

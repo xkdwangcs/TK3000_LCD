@@ -91,7 +91,10 @@ void PDFormatFlash(void);
 //获取文件大小
 int GetFileSize(char* fileName);
 //读整个文件
-bool ReadFile(char* fileName,u8* readBuff);
+u8* ReadFullFile(char* fileName,int* fileSize);
+
+//读整个文件
+bool ReadFullFile1(char* fileName,u8* readBuff);
 
 #ifdef __cplusplus
 }
