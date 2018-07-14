@@ -423,8 +423,8 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
-                    WM_HideWin(pMsg->hWin); 
-                    ShowMotorPTForm(pMsg->hWin,400,5);
+          WM_HideWin(pMsg->hWin); 
+          ShowMotorPTForm(pMsg->hWin,400,5);
 					break;
 			}
 			break;

@@ -183,17 +183,17 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			{
 				case WM_NOTIFICATION_CLICKED:
 					//DO:按钮已被点击
-                    AxisPTRun("X","ZFX");
-                  //MoveToCoord(X,10,true); 
-        //          for(u8 i=0;i<5;i++)
-        //          {
-        //              MoveToCoord(X,300,true);
-        //              MoveToCoord(X,5,true);
-        //          }
+          AxisPTRun("X","ZFX");
+//           MoveToCoord(X,10,true); 
+//           for(u8 i=0;i<5;i++)
+//           {
+//               MoveToCoord(X,300,true);
+//               MoveToCoord(X,5,true);
+//           }
 					break;
 				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
-                    AxisPTStop("X");
+          AxisPTStop("X");
 					break;
 			}
 			break;
