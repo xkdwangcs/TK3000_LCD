@@ -6,7 +6,7 @@
 ******************************************/
 
 #include "DIALOG.h"
-
+#include "CMD.h"
 
 #define WorkForm (GUI_ID_USER +0x00)
 #define lbX_WorkForm (GUI_ID_USER +0x01)
@@ -273,6 +273,24 @@ static void InitForm(WM_MESSAGE * pMsg){
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x000000FF);
 }
 
+static WM_HWIN _txtXCoord=NULL;
+static WM_HWIN _txtY1Coord=NULL;
+static WM_HWIN _txtY2Coord=NULL;
+static WM_HWIN _txtZCoord=NULL;
+static char* _coordFormat = "%.3f";//坐标格式化字符
+static void ShowCurrCoord()
+{
+    for(int i=0;i<1000;i++)
+    {
+        MultiAxisCoordStruct* coord = GetCurrCoord();
+       EDIT_SetText(_txtXCoord,ConvertFloatToAsciiFormat (coord->X1,_coordFormat));
+        EDIT_SetText(_txtY1Coord,ConvertFloatToAsciiFormat(coord->Y1,_coordFormat));
+        EDIT_SetText(_txtY2Coord,ConvertFloatToAsciiFormat(coord->Y2,_coordFormat));
+        EDIT_SetText(_txtZCoord,ConvertFloatToAsciiFormat(coord->Z1,_coordFormat));
+        GUI_Delay(1000);
+    }
+}
+
 
 //控件事件处理函数
 static void DoEvent(WM_MESSAGE * pMsg)
@@ -532,6 +550,11 @@ static void _cbDialog(WM_MESSAGE * pMsg)
 WM_HWIN CreateWorkForm(void) {
     WM_HWIN hWin;
     hWin = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
+     _txtXCoord=WM_GetDialogItem(hWin,txtX_WorkForm);
+    _txtY1Coord=WM_GetDialogItem(hWin,txtY1_WorkForm);
+    _txtY2Coord=WM_GetDialogItem(hWin,txtY2_WorkForm);
+    _txtZCoord=WM_GetDialogItem(hWin,txtZ_WorkForm);
+    ShowCurrCoord();
     return hWin;
 }
  

@@ -31,6 +31,16 @@ typedef struct
 	DeviceStatusEnum DevStatus;  	//设备状态
 	char StatusDescribe[100];	//状态描述字符串
 } StatusParaStruct;
+
+typedef struct
+{
+	float X1;
+    float X2;
+	float Y1;
+	float Y2;
+	float Z1;
+    float Z2;
+}MultiAxisCoordStruct;//多轴坐标，主要用于实时坐标
 	 
 //RDD相关命令的处理
 void RDDProcess(void);
@@ -53,6 +63,8 @@ void AxisPTRun(char* axisID,char* fx);
 void AxisPTStop(char* axisID);
 //在设备上进行注册
 void RegisterDevice(char* regNum);
+//获取当前实时坐标
+MultiAxisCoordStruct* GetCurrCoord();
 
 
 	 

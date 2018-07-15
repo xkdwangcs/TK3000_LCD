@@ -6,31 +6,37 @@
 ******************************************/
 
 #include  "DIALOG.h"
-
+#include "CMD.h"
 
 #define MotorControl (GUI_ID_USER +0x00)
 #define lbX_MotorControl (GUI_ID_USER +0x01)
-#define lbY_MotorControl (GUI_ID_USER +0x02)
-#define lbZ_MotorControl (GUI_ID_USER +0x03)
-#define btnXLeft_MotorControl (GUI_ID_USER +0x04)
-#define btnXRight_MotorControl (GUI_ID_USER +0x05)
-#define btnYBack_MotorControl (GUI_ID_USER +0x06)
-#define btnYFront_MotorControl (GUI_ID_USER +0x07)
-#define btnZUp_MotorControl (GUI_ID_USER +0x08)
-#define btnZDown_MotorControl (GUI_ID_USER +0x09)
-#define cmbSpeedType_MotorControl (GUI_ID_USER +0x0A)
-#define edtSDPer_MotorControl (GUI_ID_USER +0x0B)
-#define cmbPTSelect_MotorControl (GUI_ID_USER +0x0C)
-#define btnOK_MotorControl (GUI_ID_USER +0x0D)
-#define btnCancel_MotorControl (GUI_ID_USER +0x0E)
-#define btnReset_MotorControl (GUI_ID_USER +0x0F)
+#define edtX_MotorControl (GUI_ID_USER +0x02)
+#define lbY_MotorControl (GUI_ID_USER +0x03)
+#define edtY_MotorControl (GUI_ID_USER +0x04)
+#define lbZ_MotorControl (GUI_ID_USER +0x05)
+#define edtZ_MotorControl (GUI_ID_USER +0x06)
+#define btnXLeft_MotorControl (GUI_ID_USER +0x07)
+#define btnXRight_MotorControl (GUI_ID_USER +0x08)
+#define btnYBack_MotorControl (GUI_ID_USER +0x09)
+#define btnYFront_MotorControl (GUI_ID_USER +0x0A)
+#define btnZUp_MotorControl (GUI_ID_USER +0x0B)
+#define btnZDown_MotorControl (GUI_ID_USER +0x0C)
+#define cmbSpeedType_MotorControl (GUI_ID_USER +0x0D)
+#define edtSDPer_MotorControl (GUI_ID_USER +0x0E)
+#define cmbPTSelect_MotorControl (GUI_ID_USER +0x0F)
+#define btnOK_MotorControl (GUI_ID_USER +0x10)
+#define btnCancel_MotorControl (GUI_ID_USER +0x11)
+#define btnReset_MotorControl (GUI_ID_USER +0x12)
 
 
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 { FRAMEWIN_CreateIndirect,"电机点动控制",MotorControl,0,0,332,448,0, 0x0, 0 },
 { TEXT_CreateIndirect,"X:",lbX_MotorControl,26,7,36,29,0, 0x0, 0 },
+{ EDIT_CreateIndirect,"100.256",edtX_MotorControl,65,3,123,35,0, 0x0, 0 },
 { TEXT_CreateIndirect,"Y:",lbY_MotorControl,26,44,33,29,0, 0x0, 0 },
+{ EDIT_CreateIndirect,"100.256",edtY_MotorControl,65,41,123,35,0, 0x0, 0 },
 { TEXT_CreateIndirect,"Z:",lbZ_MotorControl,26,81,34,29,0, 0x0, 0 },
+{ EDIT_CreateIndirect,"100.256",edtZ_MotorControl,65,79,123,35,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"X左",btnXLeft_MotorControl,15,204,140,64,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"X右",btnXRight_MotorControl,177,204,140,64,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"Y后",btnYBack_MotorControl,15,127,92,72,0, 0x0, 0 },
@@ -71,6 +77,15 @@ static void InitForm(WM_MESSAGE * pMsg){
     TEXT_SetBkColor(hItem,0x00A9A9A9);
     TEXT_SetTextColor(hItem,0x00FFFFFF);
 
+    hItem = WM_GetDialogItem(pMsg->hWin,edtX_MotorControl);
+    EDIT_SetText(hItem, "100.256");
+    EDIT_SetFont(hItem, GUI_FONT_24_ASCII);
+    EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_LEFT);
+    EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00C0C0FF);
+    EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
+    EDIT_SetMaxLen(hItem, 50); //字符最大长度
+    EDIT_EnableBlink(hItem, 500, 0); //光标不闪烁
+
     hItem = WM_GetDialogItem(pMsg->hWin,lbY_MotorControl);
     TEXT_SetText(hItem,"Y:");
     TEXT_SetFont(hItem,GUI_FONT_24_ASCII);
@@ -79,6 +94,15 @@ static void InitForm(WM_MESSAGE * pMsg){
     TEXT_SetBkColor(hItem,0x00A9A9A9);
     TEXT_SetTextColor(hItem,0x00FFFFFF);
 
+    hItem = WM_GetDialogItem(pMsg->hWin,edtY_MotorControl);
+    EDIT_SetText(hItem, "100.256");
+    EDIT_SetFont(hItem, GUI_FONT_24_ASCII);
+    EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_LEFT);
+    EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00C0FFC0);
+    EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
+    EDIT_SetMaxLen(hItem, 50); //字符最大长度
+    EDIT_EnableBlink(hItem, 500, 0); //光标不闪烁
+
     hItem = WM_GetDialogItem(pMsg->hWin,lbZ_MotorControl);
     TEXT_SetText(hItem,"Z:");
     TEXT_SetFont(hItem,GUI_FONT_24_ASCII);
@@ -86,6 +110,15 @@ static void InitForm(WM_MESSAGE * pMsg){
     TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//自动换行
     TEXT_SetBkColor(hItem,0x00A9A9A9);
     TEXT_SetTextColor(hItem,0x00FFFFFF);
+
+    hItem = WM_GetDialogItem(pMsg->hWin,edtZ_MotorControl);
+    EDIT_SetText(hItem, "100.256");
+    EDIT_SetFont(hItem, GUI_FONT_24_ASCII);
+    EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_LEFT);
+    EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00FFC0C0);
+    EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
+    EDIT_SetMaxLen(hItem, 50); //字符最大长度
+    EDIT_EnableBlink(hItem, 500, 0); //光标不闪烁
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnXLeft_MotorControl);
     BUTTON_SetFont(hItem, &GUI_FontYAHE32);
@@ -299,6 +332,8 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
+                    WM_HideWin(pMsg->hWin);
+                    WM_ShowWin(_callForm);
 					break;
 			}
 			break;
@@ -310,7 +345,8 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
-                    GUI_EndDialog(pMsg->hWin,0);
+                    WM_HideWin(pMsg->hWin);
+                    WM_ShowWin(_callForm);
 					break;
 			}
 			break;
@@ -345,9 +381,28 @@ static void _cbDialog(WM_MESSAGE * pMsg)
     }
 }
 
+static WM_HWIN _txtXCoord=NULL;
+static WM_HWIN _txtYCoord=NULL;
+static WM_HWIN _txtZCoord=NULL;
+static char* _coordFormat = "%.3f";//坐标格式化字符
+static void ShowCurrCoord()
+{
+    for(int i=0;i<1000;i++)
+    {
+        MultiAxisCoordStruct* coord = GetCurrCoord();
+        EDIT_SetText(_txtXCoord,ConvertFloatToAsciiFormat (coord->X1,_coordFormat));
+        EDIT_SetText(_txtYCoord,ConvertFloatToAsciiFormat(coord->Y1,_coordFormat));
+        EDIT_SetText(_txtZCoord,ConvertFloatToAsciiFormat(coord->Z1,_coordFormat));
+        GUI_Delay(1000);
+    }
+}
+
 WM_HWIN CreateMotorControl(void) 
 {
     _thisForm = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
+    _txtXCoord=WM_GetDialogItem(_thisForm,edtX_MotorControl);
+    _txtYCoord=WM_GetDialogItem(_thisForm,edtY_MotorControl);
+    _txtZCoord=WM_GetDialogItem(_thisForm,edtZ_MotorControl);
     WM_HideWin(_thisForm);
     return _thisForm;
 }
@@ -358,5 +413,6 @@ void ShowMotorPTForm(WM_HWIN callForm,int x0,int y0)
     _callForm=callForm;
     WM_MoveTo(_thisForm, x0, y0);
     WM_ShowWin(_thisForm);
+    ShowCurrCoord();
 }
 

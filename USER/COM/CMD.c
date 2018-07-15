@@ -160,3 +160,13 @@ void RegisterDevice(char* regNum)
 	SendChars_Pack(_wrt,"RegisterDevice",regNum);
 }
 
+MultiAxisCoordStruct _currCoord;
+//获取当前实时坐标
+MultiAxisCoordStruct* GetCurrCoord()
+{
+    SendChars_Pack(_rdd,"CURRCOORD",NULL);
+    ReadDataDelay();
+    CopyBytes((u8*)&_currCoord,0,_cmdRecvBuff.CmdData,_cmdRecvBuff.DataLeng);
+    return &_currCoord;
+}
+
