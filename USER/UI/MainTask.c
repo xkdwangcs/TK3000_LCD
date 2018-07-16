@@ -5,6 +5,9 @@
 #include "XBFFont.h"
 #include "CMD.h"
 
+//读取到循环数据后引发
+LoopDataReadHandler LoopDataReaded;
+
 void TouchCalibrationTask()
 {
     GUI_PID_STATE PIDState;
@@ -144,9 +147,19 @@ void MainTask(void)
 				GUI_Delay(500);
 			}	
 		}
+    
+    static char loopCount=0;   
     while(1)
     {
-        GUI_Delay(200);
+        if(loopCount>=2)
+        {
+            loopCount=0;
+            LoopDataStruct loopData = GetLoopData();
+            if(LoopDataReaded!=NULL)
+                LoopDataReaded(loopData);
+        }
+        loopCount++;
+        GUI_Delay(100);
     }
 }
 

@@ -160,13 +160,13 @@ void RegisterDevice(char* regNum)
 	SendChars_Pack(_wrt,"RegisterDevice",regNum);
 }
 
-MultiAxisCoordStruct _currCoord;
-//获取当前实时坐标
-MultiAxisCoordStruct* GetCurrCoord()
+LoopDataStruct _loopData; 
+//获取要循环读取的数据
+LoopDataStruct GetLoopData()
 {
-    SendChars_Pack(_rdd,"CURRCOORD",NULL);
+    SendChars_Pack(_rdd,"LOOPDATA",NULL);
     ReadDataDelay();
-    CopyBytes((u8*)&_currCoord,0,_cmdRecvBuff.CmdData,_cmdRecvBuff.DataLeng);
-    return &_currCoord;
+    CopyBytes((u8*)&_loopData,0,_cmdRecvBuff.CmdData,_cmdRecvBuff.DataLeng);
+    return _loopData;
 }
 

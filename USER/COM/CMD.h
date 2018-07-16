@@ -12,6 +12,7 @@
 #include "Parameter.h"
 #include "SysParameter.h"
 #include "USBFunc_Ctr.h"	
+#include "DateTime.h"
 
 typedef enum
 {
@@ -41,6 +42,12 @@ typedef struct
 	float Z1;
     float Z2;
 }MultiAxisCoordStruct;//多轴坐标，主要用于实时坐标
+
+typedef struct
+{
+    MultiAxisCoordStruct RealCoord; //实时坐标
+    DataTimeStruct DataTime;        //控制器时间    
+}LoopDataStruct;//循环读取的数据结构
 	 
 //RDD相关命令的处理
 void RDDProcess(void);
@@ -63,8 +70,8 @@ void AxisPTRun(char* axisID,char* fx);
 void AxisPTStop(char* axisID);
 //在设备上进行注册
 void RegisterDevice(char* regNum);
-//获取当前实时坐标
-MultiAxisCoordStruct* GetCurrCoord();
+//获取要循环读取的数据
+LoopDataStruct GetLoopData();
 
 
 	 

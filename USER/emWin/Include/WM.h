@@ -89,7 +89,7 @@ extern "C" {     /* Make sure we have C-declarations in C++ programs */
 #endif
 
 /* Send a message if visibility of a window has changed */
-#ifndef   WM_SUPPORT_NOTIFY_VIS_CHANGED
+#ifndef   WM_SUPPORT_NOTIFY_VIS_CHANGED 
   #define WM_SUPPORT_NOTIFY_VIS_CHANGED 0
 #endif
 

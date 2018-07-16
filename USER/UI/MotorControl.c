@@ -6,7 +6,7 @@
 ******************************************/
 
 #include  "DIALOG.h"
-#include "CMD.h"
+#include "MainTask.h"
 
 #define MotorControl (GUI_ID_USER +0x00)
 #define lbX_MotorControl (GUI_ID_USER +0x01)
@@ -56,7 +56,6 @@ extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE24;
 extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE32;
 extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE36;
 extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE40;
-
 
 static WM_HWIN _thisForm;
 static WM_HWIN _callForm=NULL;
@@ -332,6 +331,7 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
+                    LoopDataReaded=NULL;
                     WM_HideWin(pMsg->hWin);
                     WM_ShowWin(_callForm);
 					break;
@@ -345,6 +345,7 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
+                    LoopDataReaded=NULL;
                     WM_HideWin(pMsg->hWin);
                     WM_ShowWin(_callForm);
 					break;
@@ -385,16 +386,12 @@ static WM_HWIN _txtXCoord=NULL;
 static WM_HWIN _txtYCoord=NULL;
 static WM_HWIN _txtZCoord=NULL;
 static char* _coordFormat = "%.3f";//坐标格式化字符
-static void ShowCurrCoord()
+static void ShowCurrCoord(LoopDataStruct loopData)
 {
-    for(int i=0;i<1000;i++)
-    {
-        MultiAxisCoordStruct* coord = GetCurrCoord();
-        EDIT_SetText(_txtXCoord,ConvertFloatToAsciiFormat (coord->X1,_coordFormat));
-        EDIT_SetText(_txtYCoord,ConvertFloatToAsciiFormat(coord->Y1,_coordFormat));
-        EDIT_SetText(_txtZCoord,ConvertFloatToAsciiFormat(coord->Z1,_coordFormat));
-        GUI_Delay(1000);
-    }
+    MultiAxisCoordStruct coord =loopData.RealCoord;
+    EDIT_SetText(_txtXCoord,ConvertFloatToAsciiFormat (coord.X1,_coordFormat));
+    EDIT_SetText(_txtYCoord,ConvertFloatToAsciiFormat(coord.Y1,_coordFormat));
+    EDIT_SetText(_txtZCoord,ConvertFloatToAsciiFormat(coord.Z1,_coordFormat));
 }
 
 WM_HWIN CreateMotorControl(void) 
@@ -413,6 +410,6 @@ void ShowMotorPTForm(WM_HWIN callForm,int x0,int y0)
     _callForm=callForm;
     WM_MoveTo(_thisForm, x0, y0);
     WM_ShowWin(_thisForm);
-    ShowCurrCoord();
+    LoopDataReaded=ShowCurrCoord;
 }
 
