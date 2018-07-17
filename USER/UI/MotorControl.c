@@ -68,6 +68,7 @@ static void InitForm(WM_MESSAGE * pMsg){
     FRAMEWIN_SetFont(hItem, &GUI_FontYAHE24);
     FRAMEWIN_SetClientColor(hItem,0x00A9A9A9);
     FRAMEWIN_SetTextColor(hItem, 0x00FFFFFF);
+	FRAMEWIN_SetMoveable(hItem,1); //设置窗体可拖动
 
     hItem = WM_GetDialogItem(pMsg->hWin,lbX_MotorControl);
     TEXT_SetText(hItem,"X:");

@@ -43,6 +43,7 @@ static void InitForm(WM_MESSAGE * pMsg){
     FRAMEWIN_SetFont(hItem, &GUI_FontYAHE24);
     FRAMEWIN_SetClientColor(hItem,0x00F0F0F0);
     FRAMEWIN_SetTextColor(hItem, 0x00000000);
+	FRAMEWIN_SetMoveable(hItem,1); //设置窗体可拖动
 
     hItem = WM_GetDialogItem(pMsg->hWin,lbDevCode_Register);
     TEXT_SetText(hItem,"机器码");
