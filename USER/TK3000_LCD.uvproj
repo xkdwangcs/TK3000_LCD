@@ -534,11 +534,6 @@
               <FilePath>.\emWin\UI_Public\pymb.c</FilePath>
             </File>
             <File>
-              <FileName>SoftKeyboard.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\emWin\UI_Public\SoftKeyboard.c</FilePath>
-            </File>
-            <File>
               <FileName>NumKeyForm.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\emWin\UI_Public\NumKeyForm.c</FilePath>

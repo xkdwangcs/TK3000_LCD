@@ -6,7 +6,7 @@
 ******************************************/
 
 #include "DIALOG.h"
-#include "CMD.h"
+#include "MainTask.h"
 
 #define WorkForm (GUI_ID_USER +0x00)
 #define lbX_WorkForm (GUI_ID_USER +0x01)
@@ -277,20 +277,27 @@ static WM_HWIN _txtXCoord=NULL;
 static WM_HWIN _txtY1Coord=NULL;
 static WM_HWIN _txtY2Coord=NULL;
 static WM_HWIN _txtZCoord=NULL;
+static WM_HWIN _txtTime=NULL;
 static char* _coordFormat = "%.3f";//坐标格式化字符
-static void ShowCurrCoord()
-{
-    for(int i=0;i<1000;i++)
-    {
-        MultiAxisCoordStruct* coord = GetCurrCoord();
-       EDIT_SetText(_txtXCoord,ConvertFloatToAsciiFormat (coord->X1,_coordFormat));
-        EDIT_SetText(_txtY1Coord,ConvertFloatToAsciiFormat(coord->Y1,_coordFormat));
-        EDIT_SetText(_txtY2Coord,ConvertFloatToAsciiFormat(coord->Y2,_coordFormat));
-        EDIT_SetText(_txtZCoord,ConvertFloatToAsciiFormat(coord->Z1,_coordFormat));
-        GUI_Delay(1000);
-    }
-}
 
+//char _dateStr[15];
+//char _timeStr[15];
+char _timeStr[30];
+
+static void ShowCurrCoord(LoopDataStruct loopData)
+{
+    MultiAxisCoordStruct coord = loopData.RealCoord;
+    EDIT_SetText(_txtXCoord,ConvertFloatToAsciiFormat (coord.X1,_coordFormat));
+    EDIT_SetText(_txtY1Coord,ConvertFloatToAsciiFormat(coord.Y1,_coordFormat));
+    EDIT_SetText(_txtY2Coord,ConvertFloatToAsciiFormat(coord.Y2,_coordFormat));
+    EDIT_SetText(_txtZCoord,ConvertFloatToAsciiFormat(coord.Z1,_coordFormat));
+    
+    DataTimeStruct dataTime=loopData.DataTime;
+    //sprintf(_dateStr,"20%02d-%02d-%02d", dataTime.Year, dataTime.Mon,dataTime.Day);
+	sprintf(_timeStr,"20%02d-%02d-%02d %0.2d:%0.2d:%0.2d",dataTime.Year, 
+        dataTime.Mon,dataTime.Day, dataTime.Hour, dataTime.Min, dataTime.Sec);    
+    MULTIEDIT_SetText(_txtTime,_timeStr);
+}
 
 //控件事件处理函数
 static void DoEvent(WM_MESSAGE * pMsg)
@@ -441,8 +448,8 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
-          WM_HideWin(pMsg->hWin); 
-          ShowMotorPTForm(pMsg->hWin,400,5);
+                    WM_HideWin(pMsg->hWin); 
+                    ShowMotorPTForm(pMsg->hWin,400,5);
 					break;
 			}
 			break;
@@ -550,11 +557,12 @@ static void _cbDialog(WM_MESSAGE * pMsg)
 WM_HWIN CreateWorkForm(void) {
     WM_HWIN hWin;
     hWin = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
-     _txtXCoord=WM_GetDialogItem(hWin,txtX_WorkForm);
+    _txtXCoord=WM_GetDialogItem(hWin,txtX_WorkForm);
     _txtY1Coord=WM_GetDialogItem(hWin,txtY1_WorkForm);
     _txtY2Coord=WM_GetDialogItem(hWin,txtY2_WorkForm);
     _txtZCoord=WM_GetDialogItem(hWin,txtZ_WorkForm);
-    ShowCurrCoord();
+    _txtTime=WM_GetDialogItem(hWin,mEditMsg_WorkForm);
+    LoopDataReaded=ShowCurrCoord;
     return hWin;
 }
  
