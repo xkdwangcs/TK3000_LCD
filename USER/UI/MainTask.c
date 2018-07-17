@@ -44,33 +44,10 @@ void TouchCalibrationTask()
     }
 }
 
-//桌面窗口回调函数
-static void _cbBkWindow(WM_MESSAGE * pMsg)
-{
-	WM_HWIN hWin = pMsg->hWin;
-	switch(pMsg->MsgId)
-	{
-		case WM_PAINT:
-			GUI_SetBkColor(GUI_BLACK);
-			GUI_Clear();
-			break;
-		default:
-			WM_DefaultProc(pMsg);
-	}
-}
-
 void MainTask(void)
 {
-	//使能窗口使用内存设备，这样可以有效避免闪烁, 
-	//放在GUI_Init前面就包括桌面窗口，如果放在后面就不包括桌面窗口
-	//放此处可以重绘掉背景无效窗体
-	WM_SetCreateFlags(WM_CF_MEMDEV); 
-	GUI_Init();//初始化emWin/ucGUI
-	//WM_SetCreateFlags(WM_CF_MEMDEV); //使能设备缓存，解决闪烁	
-	WM_SetDesktopColor(GUI_BLACK); //GUI_BLUE
-	//设置桌面窗口的回调函数,当把WM_SetCreateFlags放到GUI_Init()之前时，可以WM_SetDesktopColor替代
-	//WM_SetCallback(WM_HBKWIN,_cbBkWindow);
-	
+	GUI_Init();//初始化emWin/ucGUI	
+	WM_SetCreateFlags(WM_CF_MEMDEV); //使能设备缓存，解决闪烁	
 //  GUI_MEMDEV_Handle  hMem0 = GUI_MEMDEV_CreateEx(0, 0, 800, 480, GUI_MEMDEV_HASTRANS);
 //  GUI_MEMDEV_Select(hMem0);
 //  CreateWorkForm();
@@ -118,7 +95,7 @@ void MainTask(void)
 			CreateNumKeyForm();                  //创建数字键盘
             CreateFullKeyForm();                    //创建全键盘
             CreateMessageBox();                   //创建有按钮对话框
-            CreateMessageBox_NoBtn();      			//创建无按钮对话框
+            CreateMessageBox_NoBtn();      //创建无按钮对话框
             CreateMotorControl();                   //创建电机点动窗体
 			StatusParaStruct appStatus;
             DeviceStatusEnum lastStatus=0xFF;

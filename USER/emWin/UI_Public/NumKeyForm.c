@@ -80,7 +80,6 @@ static void InitForm(WM_MESSAGE * pMsg){
     FRAMEWIN_SetFont(hItem, &GUI_FontYAHE24);
     FRAMEWIN_SetClientColor(hItem,0x0090EE90);
     FRAMEWIN_SetTextColor(hItem, 0x00000000);
-	FRAMEWIN_SetMoveable(hItem,1); //设置窗体可拖动
 
     hItem = WM_GetDialogItem(pMsg->hWin,btn0_NumKeyForm);
     BUTTON_SetFont(hItem, GUI_FONT_32_ASCII);
