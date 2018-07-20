@@ -1,12 +1,13 @@
 /*****************************************
 *
 * 肖应强设计的GUIBuilder生成的文件
-* V2.02 (2018.07.07)
+* V2.03 (2018.07.17)
 *
 ******************************************/
 
-#include  "DIALOG.h"
+#include "DIALOG.h"
 #include "MainTask.h"
+
 
 #define MotorControl (GUI_ID_USER +0x00)
 #define lbX_MotorControl (GUI_ID_USER +0x01)
@@ -52,22 +53,20 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 };
 
 
+extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE14;
+extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE18;
 extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE24;
 extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE32;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE36;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE40;
 
-static WM_HWIN _thisForm;
-static WM_HWIN _callForm=NULL;
 
 //初始化窗体相关控件
 static void InitForm(WM_MESSAGE * pMsg){
     WM_HWIN hItem = pMsg->hWin;
     FRAMEWIN_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
-    FRAMEWIN_SetFont(hItem, &GUI_FontYAHE24);
+    FRAMEWIN_SetFont(hItem, &GUI_FontYAHE18);
     FRAMEWIN_SetClientColor(hItem,0x00A9A9A9);
     FRAMEWIN_SetTextColor(hItem, 0x00FFFFFF);
-    FRAMEWIN_SetMoveable(hItem,1); //设置窗体可拖动
+    FRAMEWIN_SetMoveable(hItem, 0);//窗体不可移动
 
     hItem = WM_GetDialogItem(pMsg->hWin,lbX_MotorControl);
     TEXT_SetText(hItem,"X:");
@@ -121,37 +120,37 @@ static void InitForm(WM_MESSAGE * pMsg){
     EDIT_EnableBlink(hItem, 500, 0); //光标不闪烁
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnXLeft_MotorControl);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE32);
+    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00C0C0FF);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnXRight_MotorControl);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE32);
+    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00C0C0FF);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnYBack_MotorControl);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE32);
+    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00C0FFC0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnYFront_MotorControl);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE32);
+    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00C0FFC0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnZUp_MotorControl);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE32);
+    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00FFC0C0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnZDown_MotorControl);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE32);
+    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00FFC0C0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,cmbSpeedType_MotorControl);
-    DROPDOWN_SetFont(hItem, &GUI_FontYAHE24);
+    DROPDOWN_SetFont(hItem, &GUI_FontYAHE18);
     DROPDOWN_AddString(hItem, "慢");
     DROPDOWN_AddString(hItem, "中");
     DROPDOWN_AddString(hItem, "快");
@@ -168,28 +167,30 @@ static void InitForm(WM_MESSAGE * pMsg){
     EDIT_EnableBlink(hItem, 500, 0); //光标不闪烁
 
     hItem = WM_GetDialogItem(pMsg->hWin,cmbPTSelect_MotorControl);
-    DROPDOWN_SetFont(hItem, &GUI_FontYAHE24);
+    DROPDOWN_SetFont(hItem, &GUI_FontYAHE18);
     DROPDOWN_AddString(hItem, "左平台");
     DROPDOWN_AddString(hItem, "右平台");
     DROPDOWN_SetAutoScroll(hItem, 1);//设置自动滚动条
     DROPDOWN_SetListHeight(hItem, 100);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnOK_MotorControl);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
+    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00A9A9A9);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnCancel_MotorControl);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
+    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00A9A9A9);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnReset_MotorControl);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
+    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00A9A9A9);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 }
 
+static WM_HWIN _thisForm;
+static WM_HWIN _callForm=NULL;
 
 //控件事件处理函数
 static void DoEvent(WM_MESSAGE * pMsg)

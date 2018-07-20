@@ -1,13 +1,14 @@
 /*****************************************
 *
 * 肖应强设计的GUIBuilder生成的文件
-* V2.02 (2018.07.07)
+* V2.03 (2018.07.17)
 *
 ******************************************/
 
-#include  "DIALOG.h"
+#include "DIALOG.h"
 #include <string.h>
 #include "UIPublic.h"
+
 
 #define NumKeyForm (GUI_ID_USER +0x00)
 #define btn0_NumKeyForm (GUI_ID_USER +0x01)
@@ -38,48 +39,45 @@
 
 
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
-{ FRAMEWIN_CreateIndirect,"数字键盘",NumKeyForm,0,0,545,405,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"0",btn0_NumKeyForm,0,213,130,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"1",btn1_NumKeyForm,0,161,130,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"2",btn2_NumKeyForm,132,161,130,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"3",btn3_NumKeyForm,264,161,130,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"4",btn4_NumKeyForm,0,109,130,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"5",btn5_NumKeyForm,132,109,130,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"6",btn6_NumKeyForm,264,109,130,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"7",btn7_NumKeyForm,0,57,130,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"8",btn8_NumKeyForm,132,57,130,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"9",btn9_NumKeyForm,264,57,130,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"-",btnJH_NumKeyForm,132,213,130,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"+",btnJH2_NumKeyForm,264,213,130,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"*",btnCH_NumKeyForm,1,265,130,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,":",btnMH_NumKeyForm,132,265,130,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,".",btnJH1_NumKeyForm,264,265,129,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,",",btnDH_NumKeyForm,396,265,133,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect," ",btnSpac_NumKeyForm,264,317,130,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"%",btnBFH_NumKeyForm,396,317,133,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"←",btnLeft_NumKeyForm,0,317,130,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"→",btnRight_NumKeyForm,132,317,130,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"Back",btnBack_NumKeyForm,396,57,133,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"Clear",btnClear_NumKeyForm,396,109,133,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"ESC",btnEsc_NumKeyForm,396,161,133,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"Enter",btnEnter_NumKeyForm,396,213,133,50,0, 0x0, 0 },
-{ EDIT_CreateIndirect,"",txtData_NumKeyForm,1,1,527,57,0, 0x0, 0 },
+{ WINDOW_CreateIndirect,"数字键盘",NumKeyForm,0,0,532,374,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"0",btn0_NumKeyForm,1,217,130,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"1",btn1_NumKeyForm,1,165,130,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"2",btn2_NumKeyForm,133,165,130,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"3",btn3_NumKeyForm,265,165,130,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"4",btn4_NumKeyForm,1,113,130,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"5",btn5_NumKeyForm,133,113,130,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"6",btn6_NumKeyForm,265,113,130,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"7",btn7_NumKeyForm,1,61,130,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"8",btn8_NumKeyForm,133,61,130,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"9",btn9_NumKeyForm,265,61,130,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"-",btnJH_NumKeyForm,133,217,130,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"+",btnJH2_NumKeyForm,265,217,130,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"*",btnCH_NumKeyForm,2,269,130,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,":",btnMH_NumKeyForm,133,269,130,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,".",btnJH1_NumKeyForm,265,269,129,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,",",btnDH_NumKeyForm,397,269,133,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect," ",btnSpac_NumKeyForm,265,321,130,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"%",btnBFH_NumKeyForm,397,321,133,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"←",btnLeft_NumKeyForm,1,321,130,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"→",btnRight_NumKeyForm,133,321,130,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"Back",btnBack_NumKeyForm,397,61,133,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"Clear",btnClear_NumKeyForm,397,113,133,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"ESC",btnEsc_NumKeyForm,397,165,133,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"Enter",btnEnter_NumKeyForm,397,217,133,50,0, 0x0, 0 },
+{ EDIT_CreateIndirect,"",txtData_NumKeyForm,2,2,527,57,0, 0x0, 0 },
 };
 
 
+extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE14;
+extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE18;
 extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE24;
 extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE32;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE36;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE40;
 
 
 //初始化窗体相关控件
 static void InitForm(WM_MESSAGE * pMsg){
     WM_HWIN hItem = pMsg->hWin;
-    FRAMEWIN_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
-    FRAMEWIN_SetFont(hItem, &GUI_FontYAHE24);
-    FRAMEWIN_SetClientColor(hItem,0x0090EE90);
-    FRAMEWIN_SetTextColor(hItem, 0x00000000);
+    WINDOW_SetBkColor(hItem,0x0090EE90);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btn0_NumKeyForm);
     BUTTON_SetFont(hItem, GUI_FONT_32_ASCII);
@@ -204,12 +202,13 @@ static void InitForm(WM_MESSAGE * pMsg){
     hItem = WM_GetDialogItem(pMsg->hWin,txtData_NumKeyForm);
     EDIT_SetText(hItem, "");
     EDIT_SetFont(hItem, GUI_FONT_32_ASCII);
-    EDIT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+    EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_LEFT);
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00FFFFFF);
     EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
     EDIT_SetMaxLen(hItem, 50); //字符最大长度
-    EDIT_EnableBlink(hItem, 500, 1); //光标不闪烁
+    EDIT_EnableBlink(hItem, 500, 1); //光标闪烁
 }
+
 
 static WM_HWIN _thisForm;
 static WM_HWIN _callForm=NULL;
@@ -405,9 +404,6 @@ void DoEvent(WM_MESSAGE * pMsg)
             break;
         }
         break;
-    default:
-        WM_DefaultProc(pMsg);
-        break;
     }
 }
 
@@ -415,11 +411,14 @@ static void _cbDialog(WM_MESSAGE * pMsg)
 {
     switch (pMsg->MsgId)
     {
-    case WM_INIT_DIALOG:
-        InitForm(pMsg);
-        break;
-    case WM_NOTIFY_PARENT:
-        DoEvent(pMsg);
+		case WM_INIT_DIALOG:
+			InitForm(pMsg);
+			break;
+		case WM_NOTIFY_PARENT:
+			DoEvent(pMsg);
+			break;
+	    default:
+        WM_DefaultProc(pMsg);
         break;
     }
 }

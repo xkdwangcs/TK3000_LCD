@@ -2,47 +2,52 @@
 #include "bsp_nand_flash.h"
 
 
-char* _xbfLibName16 = "0:/Font/YAHE16.xbf";
+char* _xbfLibName14 = "0:/Font/YAHE14.xbf";
+char* _xbfLibName18 = "0:/Font/YAHE18.xbf";
 char* _xbfLibName24 = "0:/Font/YAHE24.xbf";
 char* _xbfLibName32 = "0:/Font/YAHE32.xbf";
-char* _xbfLibName36 = "0:/Font/YAHE36.xbf";
-char* _xbfLibName40 = "0:/Font/YAHE40.xbf";
 
-GUI_FONT     GUI_FontYAHE16;
+GUI_FONT     GUI_FontYAHE14;
+GUI_FONT     GUI_FontYAHE18;
 GUI_FONT     GUI_FontYAHE24;
 GUI_FONT     GUI_FontYAHE32;
-GUI_FONT     GUI_FontYAHE36;
-GUI_FONT     GUI_FontYAHE40;
 
-GUI_XBF_DATA XBF_Data16;
+GUI_XBF_DATA XBF_Data14;
+GUI_XBF_DATA XBF_Data18;
 GUI_XBF_DATA XBF_Data24;
 GUI_XBF_DATA XBF_Data32;
-GUI_XBF_DATA XBF_Data36;
-GUI_XBF_DATA XBF_Data40;
 
 
 FRESULT result;
 UINT bw;
-FIL    Fontfile16;
+FIL    Fontfile14;
+FIL    Fontfile18;
 FIL    Fontfile24;
 FIL    Fontfile32;
-FIL    Fontfile36;
-FIL    Fontfile40;
 
 static	FATFS fontfs;
-static	FIL* FontFile16;
+static	FIL* FontFile14;
+static	FIL* FontFile18;
 static	FIL* FontFile24;
 static	FIL* FontFile32;
-static	FIL* FontFile36;
-static	FIL* FontFile40;
 
 
-static int _cbGetData16(U32 Off, U16 NumBytes, void * pVoid, void * pBuffer)
+static int _cbGetData14(U32 Off, U16 NumBytes, void * pVoid, void * pBuffer)
 {
-	FontFile16 = (FIL *)pVoid;
-	result =f_lseek(FontFile16, Off);
+	FontFile14 = (FIL *)pVoid;
+	result =f_lseek(FontFile14, Off);
 	if (result != FR_OK) return 1;
-	result = f_read(FontFile16, pBuffer, NumBytes, &bw);
+	result = f_read(FontFile14, pBuffer, NumBytes, &bw);
+	if (result != FR_OK) return 1; 
+	return 0;
+}
+
+static int _cbGetData18(U32 Off, U16 NumBytes, void * pVoid, void * pBuffer)
+{
+	FontFile18 = (FIL *)pVoid;
+	result =f_lseek(FontFile18, Off);
+	if (result != FR_OK) return 1;
+	result = f_read(FontFile18, pBuffer, NumBytes, &bw);
 	if (result != FR_OK) return 1; 
 	return 0;
 }
@@ -80,41 +85,27 @@ static int _cbGetData32(U32 Off, U16 NumBytes, void * pVoid, void * pBuffer)
 	return 0;
 }
 
-static int _cbGetData36(U32 Off, U16 NumBytes, void * pVoid, void * pBuffer)
-{
-	FontFile36 = (FIL *)pVoid;
-	result =f_lseek(FontFile36, Off);
-	if (result != FR_OK) return 1;
-	result = f_read(FontFile36, pBuffer, NumBytes, &bw);
-	if (result != FR_OK) return 1; 	
-	return 0;
-}
-
-static int _cbGetData40(U32 Off, U16 NumBytes, void * pVoid, void * pBuffer)
-{
-	FontFile40 = (FIL *)pVoid;
-	result =f_lseek(FontFile40, Off);
-	if (result != FR_OK) return 1;
-	result = f_read(FontFile40, pBuffer, NumBytes, &bw);
-	if (result != FR_OK) return 1; 	
-	return 0;
-}
-
-
-//使用XBF字体
-//这两个函数要放入调用文件中（如MainTask.c）？
-void UseXBF(void) 
+//初始化XBF字体
+void IniXBF(void) 
 {
 	FRESULT result;
 	//result = f_mount(&fontfs,"0:/",0);
 	
-	result = f_open(&Fontfile16, _xbfLibName16, FA_OPEN_EXISTING | FA_READ | FA_OPEN_ALWAYS);
+	result = f_open(&Fontfile14, _xbfLibName14, FA_OPEN_EXISTING | FA_READ | FA_OPEN_ALWAYS);
 	if (result == FR_OK)
 	{
 		/* 创建XBF字体 */
-		GUI_XBF_CreateFont(&GUI_FontYAHE16, &XBF_Data16,GUI_XBF_TYPE_PROP_AA4_EXT,
-							_cbGetData16, &Fontfile16); 
+		GUI_XBF_CreateFont(&GUI_FontYAHE14, &XBF_Data14,GUI_XBF_TYPE_PROP_AA4_EXT,
+							_cbGetData14, &Fontfile14); 
 	}		
+	
+	result = f_open(&Fontfile18, _xbfLibName18, FA_OPEN_EXISTING | FA_READ | FA_OPEN_ALWAYS);
+	if (result == FR_OK)
+	{
+		/* 创建XBF字体 */
+		GUI_XBF_CreateFont(&GUI_FontYAHE18, &XBF_Data18,GUI_XBF_TYPE_PROP_AA4_EXT,
+							_cbGetData18, &Fontfile18); 
+	}	
 	
 	result = f_open(&Fontfile24, _xbfLibName24, FA_OPEN_EXISTING | FA_READ | FA_OPEN_ALWAYS);
 	if (result == FR_OK)
@@ -130,20 +121,6 @@ void UseXBF(void)
 	{
 		GUI_XBF_CreateFont(&GUI_FontYAHE32,&XBF_Data32,GUI_XBF_TYPE_PROP_AA4_EXT, 
 						 _cbGetData32,&Fontfile32); 
-	}	
-	
-	result = f_open(&Fontfile36, _xbfLibName36, FA_OPEN_EXISTING | FA_READ | FA_OPEN_ALWAYS);
-	if (result == FR_OK)
-	{
-		GUI_XBF_CreateFont(&GUI_FontYAHE36,&XBF_Data36,GUI_XBF_TYPE_PROP_AA4_EXT, 
-						 _cbGetData36,&Fontfile36); 
-	}	
-	
-	result = f_open(&Fontfile40, _xbfLibName40, FA_OPEN_EXISTING | FA_READ | FA_OPEN_ALWAYS);
-	if (result == FR_OK)
-	{
-		GUI_XBF_CreateFont(&GUI_FontYAHE40,&XBF_Data40,GUI_XBF_TYPE_PROP_AA4_EXT, 
-						 _cbGetData40,&Fontfile40); 
 	}	
 	
 //	f_close(&Fontfile);							

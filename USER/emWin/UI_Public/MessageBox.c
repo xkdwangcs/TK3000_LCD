@@ -1,12 +1,11 @@
-
 /*****************************************
 *
 * 肖应强设计的GUIBuilder生成的文件
-* 2018.05.16
+* V2.03 (2018.07.17)
 *
 ******************************************/
 
-#include  "DIALOG.h"
+#include "DIALOG.h"
 
 
 #define MessageBox (GUI_ID_USER +0x00)
@@ -17,53 +16,52 @@
 
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 { FRAMEWIN_CreateIndirect,"提示",MessageBox,0,0,584,343,0, 0x0, 0 },
-{ TEXT_CreateIndirect,"这是消息框",lbMsg_MessageBox,48,52,483,136,0, 0x0, 0 },
+{ TEXT_CreateIndirect,"这是消息框",lbMsg_MessageBox,49,49,483,136,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"确定",btnOK_MessageBox,183,225,89,41,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"取消",btnCancel_MessageBox,307,225,89,41,0, 0x0, 0 },
 };
 
 
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE16;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE20;
+extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE14;
+extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE18;
 extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE24;
 extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE32;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE36;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE40;
-
-static WM_HWIN _thisForm;
-static WM_HWIN _callForm=NULL;
 
 
 //初始化窗体相关控件
-static void InitDialog_MessageBox(WM_MESSAGE * pMsg){
+static void InitForm(WM_MESSAGE * pMsg){
     WM_HWIN hItem = pMsg->hWin;
     FRAMEWIN_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
-    FRAMEWIN_SetFont(hItem, &GUI_FontYAHE24);
+    FRAMEWIN_SetFont(hItem, &GUI_FontYAHE18);
     FRAMEWIN_SetClientColor(hItem,0x00808080);
     FRAMEWIN_SetTextColor(hItem, 0x00FFFFFF);
+    FRAMEWIN_SetMoveable(hItem, 0);//窗体不可移动
 
     hItem = WM_GetDialogItem(pMsg->hWin,lbMsg_MessageBox);
     TEXT_SetText(hItem,"这是消息框");
-    TEXT_SetFont(hItem,&GUI_FontYAHE24);
+    TEXT_SetFont(hItem,&GUI_FontYAHE18);
     TEXT_SetTextAlign(hItem,GUI_TA_VCENTER|GUI_TA_HCENTER);
     TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//自动换行
     TEXT_SetBkColor(hItem,0x00808080);
     TEXT_SetTextColor(hItem,0x00FFFFFF);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnOK_MessageBox);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
-    BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00A9A9A9);
+    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00808080);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnCancel_MessageBox);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
-    BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00A9A9A9);
+    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00808080);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 }
 
 
+static WM_HWIN _thisForm;
+static WM_HWIN _callForm=NULL;
+
 //控件事件处理函数
-static void DoEvent_MessageBox(WM_MESSAGE * pMsg)
+static void DoEvent(WM_MESSAGE * pMsg)
 {
     int Id = WM_GetId(pMsg->hWinSrc);
     int NCode = pMsg->Data.v;
@@ -95,9 +93,6 @@ static void DoEvent_MessageBox(WM_MESSAGE * pMsg)
 					break;
 			}
 			break;
-		default:
-			WM_DefaultProc(pMsg);
-			break;
     }
 }
 
@@ -107,10 +102,13 @@ static void _cbDialog(WM_MESSAGE * pMsg)
     switch (pMsg->MsgId)
 	{
 		case WM_INIT_DIALOG:
-			InitDialog_MessageBox(pMsg);
+			InitForm(pMsg);
 			break;
 		case WM_NOTIFY_PARENT:
-			DoEvent_MessageBox(pMsg);
+			DoEvent(pMsg);
+			break;
+		default:
+			WM_DefaultProc(pMsg);
 			break;
     }
 }
@@ -122,25 +120,13 @@ WM_HWIN CreateMessageBox(void) {
     return _thisForm;
 }
 
-//设备消息框为居中
-static void SetMsgBoxCenter(WM_HWIN callForm)
-{
-    int fW = WM_GetWindowSizeX(callForm);
-    int kW = WM_GetWindowSizeX(_thisForm);
-    int fH = WM_GetWindowSizeY(callForm);
-    int kH = WM_GetWindowSizeY(_thisForm);
-    int x0=(fW-kW)/2;
-    int y0=(fH-kH)/2;
-    WM_MoveTo(_thisForm, x0, y0);
-}
-
 void ShowMessageBox(WM_HWIN callForm,char* msg)
 {
     _callForm=callForm;
     WM_HideWindow(callForm);
     WM_HWIN hItem = WM_GetDialogItem(_thisForm,lbMsg_MessageBox);
     TEXT_SetText(hItem,msg);
-    SetMsgBoxCenter(callForm);
+    SetFormCenterScreen(callForm);
     WM_ShowWindow(_thisForm);
 }
 

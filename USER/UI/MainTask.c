@@ -93,7 +93,7 @@ void MainTask(void)
 	FIL fil;
     FATFS fs;
     FRESULT res = f_mount(&fs,"0:/",0);
-	res=OpenFile(_xbfLibName32,FA_READ,&fil);
+	res=OpenFile(_xbfLibName18,FA_READ,&fil);
 	if(res!=FR_OK)
 	{
 		GUI_SetFont(&GUI_Font24_ASCII);	
@@ -101,10 +101,10 @@ void MainTask(void)
 	}
 	else
 	{
-			CloseFile(&fil,_xbfLibName32);
-			UseXBF();
+			CloseFile(&fil,_xbfLibName18);
+			IniXBF();
 			GUI_UC_SetEncodeUTF8();
-			GUI_SetFont(&GUI_FontYAHE32);	
+			GUI_SetFont(&GUI_FontYAHE18);	
 			GUI_SetTextAlign(GUI_TA_HORIZONTAL|GUI_TA_LEFT);
             //TestPictureFontDisplay();    
         

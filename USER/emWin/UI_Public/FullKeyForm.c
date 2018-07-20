@@ -1,11 +1,11 @@
 /*****************************************
 *
 * 肖应强设计的GUIBuilder生成的文件
-* V2.02 (2018.07.07)
+* V2.03 (2018.07.17)
 *
 ******************************************/
 
-#include  "DIALOG.h"
+#include "DIALOG.h"
 #include <string.h>
 #include "UIPublic.h"
 
@@ -62,7 +62,7 @@
 
 
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
-{ FRAMEWIN_CreateIndirect,"全键盘",FullKeyForm,0,0,765,362,0, 0x0, 0 },
+{ WINDOW_CreateIndirect,"全键盘",FullKeyForm,0,0,754,329,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"0",btn0_FullKeyForm,587,67,63,50,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"1",btn1_FullKeyForm,2,67,63,50,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"2",btn2_FullKeyForm,67,67,63,50,0, 0x0, 0 },
@@ -77,27 +77,27 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 { BUTTON_CreateIndirect,"B",btnB_FullKeyForm,363,224,63,50,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"C",btnC_FullKeyForm,235,224,63,50,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"D",btnD_FullKeyForm,184,171,63,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"E",btnE_FullKeyForm,213,119,63,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"E",btnE_FullKeyForm,227,119,63,50,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"F",btnF_FullKeyForm,249,171,63,50,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"G",btnG_FullKeyForm,314,171,63,50,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"H",btnH_FullKeyForm,379,171,63,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"I",btnI_FullKeyForm,538,119,63,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"I",btnI_FullKeyForm,552,119,63,50,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"J",btnJ_FullKeyForm,444,171,63,50,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"K",btnK_FullKeyForm,509,171,63,50,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"L",btnL_FullKeyForm,574,171,63,50,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"M",btnM_FullKeyForm,491,224,63,50,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"N",btnN_FullKeyForm,427,224,63,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"O",btnO_FullKeyForm,603,119,63,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"P",btnP_FullKeyForm,668,119,62,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"Q",btnQ_FullKeyForm,83,119,63,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"R",btnR_FullKeyForm,278,119,63,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"O",btnO_FullKeyForm,617,119,63,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"P",btnP_FullKeyForm,682,119,62,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"Q",btnQ_FullKeyForm,97,119,63,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"R",btnR_FullKeyForm,292,119,63,50,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"S",btnS_FullKeyForm,119,171,63,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"T",btnT_FullKeyForm,343,119,63,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"U",btnU_FullKeyForm,473,119,63,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"T",btnT_FullKeyForm,357,119,63,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"U",btnU_FullKeyForm,487,119,63,50,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"V",btnV_FullKeyForm,299,224,63,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"W",btnW_FullKeyForm,148,119,63,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"W",btnW_FullKeyForm,162,119,63,50,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"X",btnX_FullKeyForm,171,224,63,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"Y",btnY_FullKeyForm,408,119,63,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"Y",btnY_FullKeyForm,422,119,63,50,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"Z",btnZ_FullKeyForm,107,224,63,50,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"",btnSpace_FullKeyForm,259,276,378,50,0, 0x0, 0 },
 { BUTTON_CreateIndirect,",",btnDH_FullKeyForm,555,224,63,50,0, 0x0, 0 },
@@ -107,7 +107,7 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 { BUTTON_CreateIndirect,"→",btnRight_FullKeyForm,87,276,84,50,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"En",btnInputType_FullKeyForm,172,276,84,50,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"Caps",btnCaps_FullKeyForm,2,224,104,50,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"Clear",btnClear_FullKeyForm,2,119,79,50,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"Clear",btnClear_FullKeyForm,2,119,89,50,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"Back",btnBack_FullKeyForm,652,67,100,50,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"Enter",btnEnter_FullKeyForm,640,171,112,50,0, 0x0, 0 },
 { BUTTON_CreateIndirect,"Esc",btnEsc_FullKeyForm,640,276,112,50,0, 0x0, 0 },
@@ -115,19 +115,16 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 };
 
 
+extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE14;
+extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE18;
 extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE24;
 extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE32;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE36;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE40;
 
 
 //初始化窗体相关控件
 static void InitForm(WM_MESSAGE * pMsg){
     WM_HWIN hItem = pMsg->hWin;
-    FRAMEWIN_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
-    FRAMEWIN_SetFont(hItem, &GUI_FontYAHE24);
-    FRAMEWIN_SetClientColor(hItem,0x00004000);
-    FRAMEWIN_SetTextColor(hItem, 0x00000000);
+    WINDOW_SetBkColor(hItem,0x00004000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btn0_FullKeyForm);
     BUTTON_SetFont(hItem, GUI_FONT_32_ASCII);
@@ -340,9 +337,9 @@ static void InitForm(WM_MESSAGE * pMsg){
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnInputType_FullKeyForm);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE32);
+    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00004000);
-    BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x000080FF);
+    BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00008000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnCaps_FullKeyForm);
     BUTTON_SetFont(hItem, GUI_FONT_32_ASCII);
@@ -371,12 +368,12 @@ static void InitForm(WM_MESSAGE * pMsg){
 
     hItem = WM_GetDialogItem(pMsg->hWin,txtInputData_FullKeyForm);
     EDIT_SetText(hItem, "");
-    EDIT_SetFont(hItem, &GUI_FontYAHE32);
+    EDIT_SetFont(hItem, &GUI_FontYAHE24);
     EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_LEFT);
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00FFFFFF);
     EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
     EDIT_SetMaxLen(hItem, 50); //字符最大长度
-    EDIT_EnableBlink(hItem, 500, 1); //光标不闪烁
+    EDIT_EnableBlink(hItem, 500, 1); //光标闪烁
 }
 
 static WM_HWIN _thisForm;

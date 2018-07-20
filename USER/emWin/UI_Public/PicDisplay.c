@@ -466,10 +466,8 @@ void TestPictureFontDisplay(void)
 	GUI_SetBkColor(GUI_BLUE);
 	GUI_SetColor(GUI_RED);
 	//GUI_SetFont(&GUI_Font24_ASCII);
-	//XBF字库的使用
-//	UseXBF();
 	GUI_UC_SetEncodeUTF8();
-	GUI_SetFont(&GUI_FontYAHE32);	
+	GUI_SetFont(&GUI_FontYAHE18);	
 	GUI_SetTextAlign(GUI_TA_HORIZONTAL|GUI_TA_LEFT);
 	//GUI_Clear();
 	
