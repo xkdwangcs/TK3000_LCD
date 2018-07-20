@@ -8,6 +8,13 @@
 //当前使用的串口号
 USART_TypeDef *currUSART = USART1;
 StatusParaStruct currStatus;
+FileListStruct _fileList;
+
+
+extern WM_HWIN CreateMsgBox_Nobt();
+extern WM_HWIN CreateMsgBox();
+extern void ShowMsg(char* msg);
+extern void ShowMsg_NoBt(char* msg);
 
 //RDD相关命令的处理
 void RDDProcess(void)
@@ -20,12 +27,6 @@ void WRTProcess(void)
 {
 
 }
-
-
-extern WM_HWIN CreateMsgBox_Nobt();
-extern WM_HWIN CreateMsgBox();
-extern void ShowMsg(char* msg);
-extern void ShowMsg_NoBt(char* msg);
 
 //SRQ相关命令的处理
 void SRQProcess(void)
@@ -169,4 +170,15 @@ LoopDataStruct GetLoopData()
     CopyBytes((u8*)&_loopData,0,_cmdRecvBuff.CmdData,_cmdRecvBuff.DataLeng);
     return _loopData;
 }
+
+//获取文件列表
+FileListStruct* GetFileList()
+{
+    SendChars_Pack(_rdd,"FILELIST",NULL);
+    ReadDataDelay();
+    CopyBytes((u8*)&_fileList,0,_cmdRecvBuff.CmdData,_cmdRecvBuff.DataLeng);
+    return &_fileList;
+}
+
+
 

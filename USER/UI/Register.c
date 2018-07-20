@@ -44,6 +44,7 @@ static void InitForm(WM_MESSAGE * pMsg){
     FRAMEWIN_SetTextColor(hItem, 0x00000000);
     FRAMEWIN_SetMoveable(hItem, 0);//窗体不可移动
 
+    GetSysParameter();
     hItem = WM_GetDialogItem(pMsg->hWin,lbDevCode_Register);
     TEXT_SetText(hItem,"机器码");
     TEXT_SetFont(hItem,&GUI_FontYAHE24);
@@ -53,8 +54,8 @@ static void InitForm(WM_MESSAGE * pMsg){
     TEXT_SetTextColor(hItem,0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,txtDevCode_Register);
-    EDIT_SetText(hItem, "");
-    EDIT_SetFont(hItem, &GUI_FontYAHE32);
+    EDIT_SetText(hItem, SysParameter.DevNumCalc);
+    EDIT_SetFont(hItem, GUI_FONT_32_ASCII);
     EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_LEFT);
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00E1FFFF);
     EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
@@ -70,7 +71,7 @@ static void InitForm(WM_MESSAGE * pMsg){
     TEXT_SetTextColor(hItem,0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,mEdtRegCode_Register);
-    MULTIEDIT_SetFont(hItem, GUI_FONT_24_ASCII);
+    MULTIEDIT_SetFont(hItem, GUI_FONT_32_ASCII);
     //MULTIEDIT_CI_READONLY:只读模式，MULTIEDIT_CI_EDIT：编辑模式
     MULTIEDIT_SetTextColor(hItem, MULTIEDIT_CI_READONLY, 0x00000000);  //设置文本颜色
     MULTIEDIT_SetBkColor(hItem, MULTIEDIT_CI_READONLY, 0x00FFFFFF); //设置背景色
@@ -80,10 +81,10 @@ static void InitForm(WM_MESSAGE * pMsg){
     MULTIEDIT_SetReadOnly(hItem, 1); //启用只读模式
     MULTIEDIT_SetBufferSize(hItem,1024);  //此长度限定方法好像没用
     //MULTIEDIT_SetMaxLen(hItem,200);       //此长度限定方法好像没用
-    MULTIEDIT_AddText(hItem, "*设备有效使用日期已过，请注册设备！");
+    MULTIEDIT_SetText(hItem, "");
 
     hItem = WM_GetDialogItem(pMsg->hWin,lbMsg_Register);
-    TEXT_SetText(hItem,"*");
+    TEXT_SetText(hItem,"*设备有效使用日期已过，请注册设备！");
     TEXT_SetFont(hItem,&GUI_FontYAHE18);
     TEXT_SetTextAlign(hItem,GUI_TA_VCENTER|GUI_TA_LEFT);
     TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//自动换行
@@ -127,7 +128,7 @@ static void DoEvent(WM_MESSAGE * pMsg)
 				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
 					//ShowNumKeyboard1(pMsg->hWin,EDIT_SetText,Id);
-					ShowFullKeyboard1(pMsg->hWin,EDIT_SetText,Id);
+					ShowFullKeyboard1(pMsg->hWin,MULTIEDIT_SetText,Id);
 					break;
 				case WM_NOTIFICATION_VALUE_CHANGED:
 					//DO:控件的值已改变
@@ -142,9 +143,9 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
-					hItem = WM_GetDialogItem(pMsg->hWin,txtDevCode_Register);
+					hItem = WM_GetDialogItem(pMsg->hWin,mEdtRegCode_Register);
 					char regNum[20]={0};
-					EDIT_GetText(hItem,regNum,20);
+					MULTIEDIT_GetText(hItem,regNum,20);
 					RegisterDevice(regNum);					
 					while(true)
 					{

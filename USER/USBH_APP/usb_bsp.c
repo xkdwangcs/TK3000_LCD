@@ -4,7 +4,7 @@
 #include "usbh_usr.h"
 #include "usbd_core.h"
 
-USBModeEnum _currUSBMode=HostMode;//DirverMode;//
+USBModeEnum _currUSBMode=DirverMode;//HostMode;//
 bool _isUSBInset=false;//U盘是否已经插入
 
 #define TIM_MSEC_DELAY                     0x01

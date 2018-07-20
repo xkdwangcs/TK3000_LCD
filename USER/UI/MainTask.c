@@ -67,7 +67,7 @@ void MainTask(void)
 	WM_SetCreateFlags(WM_CF_MEMDEV); 
 	GUI_Init();//初始化emWin/ucGUI
 	//WM_SetCreateFlags(WM_CF_MEMDEV); //使能设备缓存，解决闪烁	
-	WM_SetDesktopColor(GUI_BLACK); //GUI_BLUE
+	WM_SetDesktopColor(GUI_BLUE); //GUI_BLUE
 	//设置桌面窗口的回调函数,当把WM_SetCreateFlags放到GUI_Init()之前时，可以WM_SetDesktopColor替代
 	//WM_SetCallback(WM_HBKWIN,_cbBkWindow);
     
@@ -124,9 +124,9 @@ void MainTask(void)
             DeviceStatusEnum lastStatus=0xFF;
             
             //显示欢迎界面
-            WM_HWIN welForm = CreateWelcomForm();
-            GUI_Delay(2000);                      
-            GUI_EndDialog(welForm,0);
+            //WM_HWIN welForm = CreateWelcomForm();
+            //GUI_Delay(2000);                      
+            //GUI_EndDialog(welForm,0);
 			while(true)
 			{
 				bool isExitWhile=false;				

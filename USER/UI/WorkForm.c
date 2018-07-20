@@ -702,10 +702,17 @@ static void DoEvent(WM_MESSAGE * pMsg)
 
 static void _cbDialog(WM_MESSAGE * pMsg)
 {
+    WM_HWIN hItem;
     switch (pMsg->MsgId)
 	{
 		case WM_INIT_DIALOG:
 			InitForm(pMsg);
+            FileListStruct* fileList=GetFileList();
+            hItem=WM_GetDialogItem(pMsg->hWin,cmbFileSelect_WorkForm);
+            for(int i=0;i<fileList->FileCount;i++)
+            {
+                DROPDOWN_AddString(hItem,fileList->FileList[i].FileName);
+            }
 			break;
 		case WM_NOTIFY_PARENT:
 			DoEvent(pMsg);

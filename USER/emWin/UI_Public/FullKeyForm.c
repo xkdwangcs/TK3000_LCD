@@ -124,7 +124,7 @@ extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE32;
 //初始化窗体相关控件
 static void InitForm(WM_MESSAGE * pMsg){
     WM_HWIN hItem = pMsg->hWin;
-    WINDOW_SetBkColor(hItem,0x00004000);
+    WINDOW_SetBkColor(hItem,0x0090EE90);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btn0_FullKeyForm);
     BUTTON_SetFont(hItem, GUI_FONT_32_ASCII);
@@ -720,9 +720,6 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 			}
 			break;
-		default:
-			WM_DefaultProc(pMsg);
-			break;
     }
 }
 
@@ -735,6 +732,9 @@ static void _cbDialog(WM_MESSAGE * pMsg)
 			break;
 		case WM_NOTIFY_PARENT:
 			DoEvent(pMsg);
+			break;
+        default:
+			WM_DefaultProc(pMsg);
 			break;
     }
 }

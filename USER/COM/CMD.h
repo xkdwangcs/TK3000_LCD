@@ -48,6 +48,22 @@ typedef struct
     MultiAxisCoordStruct RealCoord; //实时坐标
     DataTimeStruct DataTime;        //控制器时间    
 }LoopDataStruct;//循环读取的数据结构
+
+
+typedef struct
+{
+	char FileName[32];	//文件名称	
+	u16 CoordCount;		//坐标总数
+	u16 LeftCoordCount;	//左平台坐标数
+	u16 RightCoordCount;//右平台坐标数
+    int DateTime; //排序用
+} CoordFileAttri;//坐标文件属性结构体
+
+typedef struct
+{
+    u16 FileCount;
+    CoordFileAttri FileList[20];    
+}FileListStruct; //文件管理相关数据
 	 
 //RDD相关命令的处理
 void RDDProcess(void);
@@ -72,8 +88,8 @@ void AxisPTStop(char* axisID);
 void RegisterDevice(char* regNum);
 //获取要循环读取的数据
 LoopDataStruct GetLoopData();
-
-
+//获取文件列表
+FileListStruct* GetFileList();
 	 
 #ifdef __cplusplus
 }
