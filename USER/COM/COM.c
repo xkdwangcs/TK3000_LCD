@@ -17,7 +17,7 @@ void USART1_NVIC_Configuration(void)
 
 	//串口中断优先级配置
 	NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;	//使能串口1的中断
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority =1;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority =2;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);

@@ -4,28 +4,14 @@
 #ifdef __cplusplus
  extern "C" {
 #endif 
-
-/******************
-* IS61LV25616
-********************/
-//对IS61LV25616/IS62WV25616,地址线范围为A0~A17 
-//对IS61LV51216/IS62WV51216,地址线范围为A0~A18
 	 
 #include "stm32f4xx.h"
 #include "absacc.h"
 #include "string.h"
-//#include "SPIFlashBase.h"
 #include "PublicFunction.h"
 #include "COM.h"
 #include "bsp_nand_flash.h"
-//#include "SRAM_SFMC.h"
-//#include "MotionProcFile.h"
-//#include "CoordFile.h"
-//#include "MatrixCoordEdit.h"
-//#include "Controls.h"
-//#include "SCurve_Table.h"
-#include "bsp_fsmc_sram.h"
-		 
+
 #define FLASH_SECTOR_SIZE 4096	 
 	 
 	 
@@ -49,27 +35,8 @@
 #define DicBuffAddr						FileBuffAddr+ FLASH_SECTOR_SIZE //字典结构缓存地址
 #define ComSendBuffAddr					DicBuffAddr+sizeof(_dic)				//串口发送缓存地址
 #define ComRecvBuffAddr					ComSendBuffAddr+_comBuffLeng			//串口接收缓存地址
-#define picBuffAddr							ComRecvBuffAddr+_comBuffLeng			//emWin刷图片缓存
+#define picBuffAddr						ComRecvBuffAddr+_comBuffLeng			//emWin刷图片缓存
 /***************CCMRAM END*****************/	 
-
-
-/*****************ExtRAM****************/
-#define FullFileBuffAddr 	EXT_SRAM_ADDR 							//读写整个文件缓存，400KB
-#define GUIBuffAddr         ((uint32_t)0x68064000)//FullFileBuffAddr+0x64000                        //GUI缓存
-
-//#define WorkParaAddr 		ExtSRAM_ADDR 								//工作参数起始地址
-//#define DefaultParaAddr 	WorkParaAddr+sizeof(Parameter) 				//默认参数起始地址
-//#define LeftCoordAddr 		DefaultParaAddr+ sizeof(Parameter)  		//左平台坐标列表起始地址
-//#define RightCoordAddr 		LeftCoordAddr+ sizeof(_coordListLeft)  		//右平台坐标列表起始地址
-//#define CoordFileAttriAddr  RightCoordAddr+sizeof(_coordListLeft) 		//坐标文件属性列表起始地址
-//#define LcdSendBuffAddr 	CoordFileAttriAddr+ sizeof(_fileList)		//显示屏发送缓存起始地址
-////#define LcdRecvBuffAddr 	LcdSendBuffAddr+sizeof(_DMASendBuff_COM3)	//显示屏接收缓存起始地址,点动原因接收不能放扩展内存
-//#define LcdSendCMDBuffAddr 	LcdSendBuffAddr+sizeof(_DMASendBuff_COM3)	//显示屏发送命令缓存起始地址
-//#define DrawCircleBuffAddr 	LcdSendCMDBuffAddr+sizeof(_lcdSendCmdBuf)	//画坐标图的列表缓存地址
-//#define MatrixCoordAddr		DrawCircleBuffAddr+sizeof(_drawPoints)		//矩阵操作坐标缓存
-//#define FileOPTempAddr		MatrixCoordAddr+sizeof(_matrixCoordList)	//文件操作删除插入临时缓存
-//#define MotionCurveBuff		FileOPTempAddr+sizeof(_tempArray)			//运动控制加减速缓存
-/**************ExtRAM END***************/	
 
 #ifdef __cplusplus
 }

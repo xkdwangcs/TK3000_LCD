@@ -3,37 +3,37 @@ UpdataDate:2016-08-31 22:10 XYQ
 ******************/
 
 #include "main.h"
+#include "FileOperate.h"
+#include "usbd_usr.h"
+#include "bsp_fmc_sdram.h"
+#include "bsp_i2c_gpio.h"
+#include "bsp_spi_bus.h"
+#include "bsp_beep.h"
+#include "bsp_nand_flash.h"
+//#include "bsp_nor_flash.h"
 #include "usbh_usr.h" 
 #include "usb_bsp.h"
 #include "MainTask.h"
-//#include "SPIFlashBase.h"
-#include "bsp_fsmc_sram.h"
-#include "FileOperate.h"
-#include "usbd_usr.h"
-//#include "bsp_beep.h"
-#include "bsp_nand_flash.h"
-//#include "bsp_nor_flash.h"
+#include "bsp_tft_429.h"
 
 void BSPInit(void)
 {
     //使能CRC 因为使用STemWin前必须要使能
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_CRC, ENABLE);
+    SystemCoreClockUpdate();	/* 根据PLL配置更新系统时钟频率变量 SystemCoreClock */
     InitUSART_COM1();
-    //bsp_InitSPIBus();	      	// 配置SPI总线
+    bsp_InitSPIBus();	      	// 配置SPI总线
     SysTick_Init();	        	// 初始化系统滴答定时器
-	//BEEP_InitHard();
-		bsp_InitExtSRAM();	
-		bool sramIsOK = bsp_TestExtSRAM();
-	//SPIFlashInit();  //可以在FATFS中初始化	
-	//SPIFlashChipErase();
-	//FormatDisk(SPI_FLASH); 
-	//bool flashIsOK = SPIFlashTest();
+	bsp_InitI2C();
+	BEEP_InitHard();
+	bsp_InitExtSDRAM();
+	//bool sramIsOK = bsp_TestExtSDRAM1();
+	NAND_Init();
 	//PDFormatFlash();	
-	//bsp_InitNorFlash();
-		NAND_Init();
-		//PDFormatFlash();	
-		LCD_InitHard();	        	// 初始化显示器硬件(配置GPIO和FSMC,给LCD发送初始化指令)
-		TOUCH_InitHard();
+    bsp_DetectLcdType();	// 检测触摸板和LCD面板型号, 结果存在全局变量 g_TouchType, g_LcdType 
+	//LCD_InitHard();	    // 初始化显示器硬件(配置GPIO和FSMC,给LCD发送初始化指令)
+	TOUCH_InitHard();
+    LCD_ConfigLTDC();       // 初始化配置LTDC
 
 	if(_currUSBMode==DirverMode)//HostMode;
 	{
@@ -73,7 +73,9 @@ int main(void)
 //		char* fn="0:/TestDir/abc.txt";
 //		CreateFileOnDisk(fn,true);
 //		WriteBytesToFile(fn,(u8*)str,0,strlen(str));
-    LCDBeep(1000);
+    //LCDBeep(100); 
+	//BEEP_Start(500,1,1);
+    //BEEP_Stop();
     MainTask();
   
   

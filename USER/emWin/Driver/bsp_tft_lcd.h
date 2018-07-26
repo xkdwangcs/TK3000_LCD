@@ -11,7 +11,6 @@
 *********************************************************************************************************
 */
 
-
 #ifndef _BSP_TFT_LCD_H
 #define _BSP_TFT_LCD_H
 
@@ -19,7 +18,6 @@
 
 #define BUTTON_BEEP()	BEEP_KeyTone();	/* 按键提示音 */
 //#define BUTTON_BEEP()	/* 无按键提示音 */
-
 
 /* 定义LCD显示区域的分辨率 */
 #define LCD_30_HEIGHT	240		/* 3.0寸宽屏 高度，单位：像素 */
@@ -47,6 +45,8 @@ enum
 #define CHIP_STR_8875	"RA8875"
 #define CHIP_STR_9488	"ILI9488"
 
+#define CHIP_STR_F429	"STM32F429"
+
 /*
 	LCD 颜色代码，CL_是Color的简写
 	16Bit由高位至低位， RRRR RGGG GGGB BBBB
@@ -57,9 +57,18 @@ enum
 	推荐使用迷你取色器软件获得你看到的界面颜色。
 */
 #define RGB(R,G,B)	(((R >> 3) << 11) | ((G >> 2) << 5) | (B >> 3))	/* 将8位R,G,B转化为 16位RGB565格式 */
+
+/* 解码出 R=8bit G=8bit B=8bit */
 #define RGB565_R(x)  ((x >> 8) & 0xF8)
 #define RGB565_G(x)  ((x >> 3) & 0xFC)
 #define RGB565_B(x)  ((x << 3) & 0xF8)
+
+/* 解码出 R=5bit G=6bit B=5bit */
+#define RGB565_R2(x)  ((x >> 11) & 0x1F)
+#define RGB565_G2(x)  ((x >> 5) & 0x3F)
+#define RGB565_B2(x)  ((x >> 0) & 0x1F)
+
+
 enum
 {
 	CL_WHITE        = RGB(255,255,255),	/* 白色 */
@@ -321,15 +330,9 @@ uint8_t LCD_ButtonTouchRelease(BUTTON_T *_btn, uint16_t _usX, uint16_t _usY);
 void LCD_InitButton(BUTTON_T *_btn, uint16_t _x, uint16_t _y, uint16_t _h, uint16_t _w, char *_pCaption, FONT_T *_pFont);
 
 /* 下面3个变量，主要用于使程序同时支持不同的屏 */
-extern uint16_t g_ChipID;			/* 驱动芯片ID */
 extern uint16_t g_LcdHeight;		/* 显示屏分辨率-高度 */
 extern uint16_t g_LcdWidth;			/* 显示屏分辨率-宽度 */
 extern uint8_t g_LcdDirection;		/* 显示方向.0，1，2，3 */
-
-//初始化LCD蜂鸣器
-void IniLCDBeep();
-//LCD蜂鸣。beeTime:时长(ms)
-void LCDBeep(u32 beepTime);
 
 #endif
 

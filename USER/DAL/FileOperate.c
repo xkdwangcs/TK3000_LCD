@@ -4,6 +4,7 @@
 #include "PublicFunction.h"
 #include "MemoryAlloc.h"
 #include "bsp_nand_flash.h"
+#include "bsp_fmc_sdram.h"
 
 u8 _fileBuff[FLASH_SECTOR_SIZE] __at(FileBuffAddr);
 //u8 _tempArray[FLASH_SECTOR_SIZE*4]__at(FileOPTempAddr);	

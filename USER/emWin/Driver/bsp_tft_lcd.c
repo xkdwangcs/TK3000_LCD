@@ -1,21 +1,68 @@
+/*
+*********************************************************************************************************
+*
+*	模块名称 : TFT液晶显示器驱动模块
+*	文件名称 : bsp_tft_lcd.c
+*	版    本 : V4.2
+*	说    明 : 支持3.0， 3.5， 4.3， 5.0， 7.0寸显示模块.
+*			  3.0寸的支持的LCD内部驱动芯片型号有: SPFD5420A、OTM4001A、R61509V
+*	修改记录 :
+*		版本号  日期       作者    说明
+*		v1.0    2011-08-21 armfly  ST固件库版本 V3.5.0版本。
+*					a) 取消访问寄存器的结构体，直接定义
+*		V2.0    2011-10-16 armfly  增加R61509V驱动，实现图标显示函数
+*		V2.1    2012-07-06 armfly  增加RA8875驱动，支持4.3寸屏
+*		V2.2    2012-07-13 armfly  改进LCD_DispStr函数，支持12点阵字符;修改LCD_DrawRect,解决差一个像素问题
+*		V2.3    2012-08-08 armfly  将底层芯片寄存器操作相关的函数放到单独的文件，支持RA8875
+*   	V3.0    2013-05-20 增加图标结构; 修改	LCD_DrawIconActive  修改DispStr函数支持文本透明
+*		V3.1    2013-06-12 解决LCD_DispStr()函数BUG，如果内嵌字库中汉字个数多于256，则出现死循环。
+*		V3.2    2013-06-28 完善Label控件, 当显示字符串比之前短时，自动清除多余的文字
+*		V3.3    2013-06-29 FSMC初始化时，配置时序，写时序和读时序分开设置。 LCD_FSMCConfig 函数。
+*		V3.4    2013-07-06 增加显示32位带Alpha图标的函数 LCD_DrawIcon32
+*		V3.5    2013-07-24 增加显示32位带Alpha图片的函数 LCD_DrawBmp32
+*		V3.6    2013-07-30 修改 DispEdit() 支持12点阵汉字对齐
+*		V3.7    2014-09-06 修改 LCD_InitHard() 同时支持 RA8875-SPI接口和8080接口
+*		V3.8    2014-09-15 增加若干函数:
+*					（1） LCD_DispStrEx() 可以自动对齐自动填白的显示字符串函数
+*					（2） LCD_GetStrWidth() 计算字符串的像素宽度
+*		V3.9    2014-10-18
+*					(1) 增加 LCD_ButtonTouchDown() LCD_ButtonTouchRelease 判断触摸坐标并重绘按钮
+*					(2) 增加3.5寸LCD驱动
+*					(3) 增加 LCD_SetDirection() 函数，设置显示屏方向（横屏 竖屏动态切换）
+*		V4.0   2015-04-04 
+*				(1) 按钮、编辑框控件增加RA8875字体，内嵌字库和RA8875字库统一编码。字体代码增加 
+*				    FC_RA8875_16, FC_RA8875_24,	FC_RA8875_32
+*				(2) FONT_T结构体成员FontCode的类型由 uint16_t 修改为 FONT_CODE_E枚举，便于编译器查错;
+*				(3) 修改 LCD_DispStrEx(), 将读点阵的语句独立到函数：_LCD_ReadAsciiDot(), _LCD_ReadHZDot()
+*				(4) LCD_DispStr() 函数简化，直接调用 LCD_DispStrEx() 实现。
+*				(5) LCD_DispStrEx() 函数支持 RA8875字体。
+*				(6) LCD_ButtonTouchDown() 增加按键提示音
+*		V4.1   2015-04-18 
+*				(1) 添加RA885 ASCII字体的宽度表。LCD_DispStrEx() 函数可以支持RA8875 ASCII变长宽度计算。
+*				(2) 添加 LCD_HardReset(）函数，支持LCD复位由GPIO控制的产品。STM32-V5 不需要GPIO控制。
+*		V4.2   2015-07-23
+*				(1) 添加函数LCD_InitButton()
+*				(2) h文件中使能按键提示音 #define BUTTON_BEEP()	BEEP_KeyTone();
+*
+*	Copyright (C), 2015-2016, 安富莱电子 www.armfly.com
+*
+*********************************************************************************************************
+*/
+
 #include "bsp_tft_lcd.h"
 #include "fonts.h"
-#include "LCD_RA8875.h"
+#include "bsp_tft_429.h"
+#include "bsp_tim_pwm.h"
 #include "SysTick_Timer.h"
-#include "string.h"
-#include "Delay.h"
 
 /* 下面3个变量，主要用于使程序同时支持不同的屏 */
-uint16_t g_LcdHeight = 480;			/* 显示屏分辨率-高度 */
-uint16_t g_LcdWidth = 800;			/* 显示屏分辨率-宽度 */
+uint16_t g_LcdHeight = 240;			/* 显示屏分辨率-高度 */
+uint16_t g_LcdWidth = 400;			/* 显示屏分辨率-宽度 */
 uint8_t s_ucBright;					/* 背光亮度参数 */
-uint8_t g_LcdDirection;				/* 显示方向.0，1，2，3 */
+uint8_t g_LcdDirection = 0;				/* 显示方向.0，1，2，3 */
 
-static void LCD_CtrlLinesConfig(void);
-static void LCD_FSMCConfig(void);
-void LCD_SetPwmBackLight(uint8_t _bright);
-//初始化LCD蜂鸣器
-void IniLCDBeep();
+static void LCD_HardReset(void);
+static void LCD_SetPwmBackLight(uint8_t _bright);
 
 /*
 *********************************************************************************************************
@@ -27,217 +74,45 @@ void IniLCDBeep();
 */
 void LCD_InitHard(void)
 {
-	uint32_t id;
-	/* 配置LCD控制口线GPIO */
-	LCD_CtrlLinesConfig();
-	/* 配置FSMC接口，数据总线 */
-	LCD_FSMCConfig();
-	//LCD_HardReset();	/* 硬件复位 （STM32-V5 无需），针对其他GPIO控制LCD复位的产品 */
-	/* FSMC重置后必须加延迟才能访问总线设备  */
-	Delay_ms_Tick(20);
-	RA8875_InitHard();	/* 初始化RA8875芯片 */
+	LCD_HardReset();	/* 硬件复位 （STM32-V5, V6 无需），针对其他GPIO控制LCD复位的产品 */
+
+	LCD429_InitHard();
+	
 	LCD_SetDirection(0);
+
 	LCD_ClrScr(CL_BLACK);	/* 清屏，显示全黑 */
+
 	LCD_SetBackLight(BRIGHT_DEFAULT);	 /* 打开背光，设置为缺省亮度 */
-	IniLCDBeep();
-}
-
-//初始化LCD蜂鸣器
-void IniLCDBeep()
-{
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA,ENABLE);
-	GPIO_InitTypeDef GPIO_InitStructure;
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	GPIO_InitStructure.GPIO_Speed =GPIO_Speed_50MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
-	GPIO_ResetBits(GPIOA, GPIO_Pin_8);
-}
-
-//LCD蜂鸣。beeTime:时长(ms)
-void LCDBeep(u32 beepTime)
-{
-	//BUTTON_BEEP()
-	GPIO_SetBits(GPIOA, GPIO_Pin_8);
-	Delay_ms_Tick(beepTime);
-	GPIO_ResetBits(GPIOA, GPIO_Pin_8);
 }
 
 /*
 *********************************************************************************************************
-*	函 数 名: LCD_CtrlLinesConfig
-*	功能说明: 配置LCD控制口线，FSMC管脚设置为复用功能
+*	函 数 名: LCD_HardReset
+*	功能说明: 硬件复位. 针对复位口线由GPIO控制的产品。
 *	形    参: 无
 *	返 回 值: 无
 *********************************************************************************************************
 */
-/*
-	安富莱STM32-V5开发板接线方法:
-
-	PD0/FSMC_D2
-	PD1/FSMC_D3
-	PD4/FSMC_NOE		--- 读控制信号，OE = Output Enable ， N 表示低有效
-	PD5/FSMC_NWE		--- 写控制信号，WE = Output Enable ， N 表示低有效
-	PD8/FSMC_D13
-	PD9/FSMC_D14
-	PD10/FSMC_D15
-	PD13/FSMC_A18		--- 地址 RS
-	PD14/FSMC_D0
-	PD15/FSMC_D1
-
-	PE4/FSMC_A20		--- 和主片选一起译码
-	PE5/FSMC_A21		--- 和主片选一起译码
-	PE7/FSMC_D4
-	PE8/FSMC_D5
-	PE9/FSMC_D6
-	PE10/FSMC_D7
-	PE11/FSMC_D8
-	PE12/FSMC_D9
-	PE13/FSMC_D10
-	PE14/FSMC_D11
-	PE15/FSMC_D12
-
-	PG12/FSMC_NE4		--- 主片选（TFT, OLED 和 AD7606）
-
-	PC3/TP_INT			--- 触摸芯片中断 （对于RA8875屏，是RA8875输出的中断)  本例程未使用硬件中断
-
-	---- 下面是 TFT LCD接口其他信号 （FSMC模式不使用）----
-	PD3/LCD_BUSY		--- 触摸芯片忙       （RA8875屏是RA8875芯片的忙信号)
-	PF6/LCD_PWM			--- LCD背光PWM控制  （RA8875屏无需此脚，背光由RA8875控制)
-
-	PI10/TP_NCS			--- 触摸芯片的片选		(RA8875屏无需SPI接口触摸芯片）
-	PB3/SPI3_SCK		--- 触摸芯片SPI时钟		(RA8875屏无需SPI接口触摸芯片）
-	PB4/SPI3_MISO		--- 触摸芯片SPI数据线MISO(RA8875屏无需SPI接口触摸芯片）
-	PB5/SPI3_MOSI		--- 触摸芯片SPI数据线MOSI(RA8875屏无需SPI接口触摸芯片）
-*/
-static void LCD_CtrlLinesConfig(void)
+void LCD_HardReset(void)
 {
+#if 0	
 	GPIO_InitTypeDef GPIO_InitStructure;
 
-	/* 使能FSMC时钟 */
-	RCC_AHB3PeriphClockCmd(RCC_AHB3Periph_FSMC, ENABLE);
-
 	/* 使能 GPIO时钟 */
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD | RCC_AHB1Periph_GPIOE | RCC_AHB1Periph_GPIOG, ENABLE);
-
-	/* 设置 PD.00(D2), PD.01(D3), PD.04(NOE), PD.05(NWE), PD.08(D13), PD.09(D14),
-	 PD.10(D15), PD.14(D0), PD.15(D1) 为复用推挽输出 */
-
-	GPIO_PinAFConfig(GPIOD, GPIO_PinSource0, GPIO_AF_FSMC);
-	GPIO_PinAFConfig(GPIOD, GPIO_PinSource1, GPIO_AF_FSMC);
-	GPIO_PinAFConfig(GPIOD, GPIO_PinSource4, GPIO_AF_FSMC);
-	GPIO_PinAFConfig(GPIOD, GPIO_PinSource5, GPIO_AF_FSMC);
-	GPIO_PinAFConfig(GPIOD, GPIO_PinSource8, GPIO_AF_FSMC);
-	GPIO_PinAFConfig(GPIOD, GPIO_PinSource9, GPIO_AF_FSMC);
-	GPIO_PinAFConfig(GPIOD, GPIO_PinSource10, GPIO_AF_FSMC);
-	GPIO_PinAFConfig(GPIOD, GPIO_PinSource14, GPIO_AF_FSMC);
-	GPIO_PinAFConfig(GPIOD, GPIO_PinSource15, GPIO_AF_FSMC);
-
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_4 | GPIO_Pin_5 |
-	                            GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 | GPIO_Pin_14 |
-	                            GPIO_Pin_15;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
+	
+	/* 配置背光GPIO为推挽输出模式 */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
 	GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_NOPULL;
-	GPIO_Init(GPIOD, &GPIO_InitStructure);
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
-	/* 设置 PE.07(D4), PE.08(D5), PE.09(D6), PE.10(D7), PE.11(D8), PE.12(D9), PE.13(D10),
-	 PE.14(D11), PE.15(D12) 为复用推挽输出 */
-
-	GPIO_PinAFConfig(GPIOE, GPIO_PinSource4 , GPIO_AF_FSMC);
-	GPIO_PinAFConfig(GPIOE, GPIO_PinSource5 , GPIO_AF_FSMC);
-
-	GPIO_PinAFConfig(GPIOE, GPIO_PinSource7 , GPIO_AF_FSMC);
-	GPIO_PinAFConfig(GPIOE, GPIO_PinSource8 , GPIO_AF_FSMC);
-	GPIO_PinAFConfig(GPIOE, GPIO_PinSource9 , GPIO_AF_FSMC);
-	GPIO_PinAFConfig(GPIOE, GPIO_PinSource10 , GPIO_AF_FSMC);
-	GPIO_PinAFConfig(GPIOE, GPIO_PinSource11 , GPIO_AF_FSMC);
-	GPIO_PinAFConfig(GPIOE, GPIO_PinSource12 , GPIO_AF_FSMC);
-	GPIO_PinAFConfig(GPIOE, GPIO_PinSource13 , GPIO_AF_FSMC);
-	GPIO_PinAFConfig(GPIOE, GPIO_PinSource14 , GPIO_AF_FSMC);
-	GPIO_PinAFConfig(GPIOE, GPIO_PinSource15 , GPIO_AF_FSMC);
-
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 |
-	                            GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 |
-	                            GPIO_Pin_15;
-	GPIO_Init(GPIOE, &GPIO_InitStructure);
-
-	/* 设置 PD.13(A18 (RS))  为复用推挽输出 */
-	GPIO_PinAFConfig(GPIOD, GPIO_PinSource13, GPIO_AF_FSMC);
-
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
-	GPIO_Init(GPIOD, &GPIO_InitStructure);
-
-	/* 设置 PG12 (LCD/CS)) 为复用推挽输出 */
-	GPIO_PinAFConfig(GPIOG, GPIO_PinSource12, GPIO_AF_FSMC);
-
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
-	GPIO_Init(GPIOG, &GPIO_InitStructure);
-}
-
-/*
-*********************************************************************************************************
-*	函 数 名: LCD_FSMCConfig
-*	功能说明: 配置FSMC并口访问时序
-*	形    参: 无
-*	返 回 值: 无
-*********************************************************************************************************
-*/
-static void LCD_FSMCConfig(void)
-{
-	FSMC_NORSRAMInitTypeDef  init;
-	FSMC_NORSRAMTimingInitTypeDef  timingWrite;
-	FSMC_NORSRAMTimingInitTypeDef  timingRead;
-
-	/*-- FSMC Configuration ------------------------------------------------------*/
-	/*----------------------- SRAM Bank 4 ----------------------------------------*/
-	/* FSMC_Bank1_NORSRAM4 configuration */
-	/* 摄像头DMA麻点，需设置 4 0 5 2 0 0 */
-	timingWrite.FSMC_AddressSetupTime = 4;
-	timingWrite.FSMC_AddressHoldTime = 0;
-	timingWrite.FSMC_DataSetupTime = 6;
-	timingWrite.FSMC_BusTurnAroundDuration = 1;
-	timingWrite.FSMC_CLKDivision = 0;
-	timingWrite.FSMC_DataLatency = 0;
-	timingWrite.FSMC_AccessMode = FSMC_AccessMode_A;
-
-	timingRead.FSMC_AddressSetupTime = 4;
-	timingRead.FSMC_AddressHoldTime = 0;
-	timingRead.FSMC_DataSetupTime = 8;
-	timingRead.FSMC_BusTurnAroundDuration = 1;
-	timingRead.FSMC_CLKDivision = 0;
-	timingRead.FSMC_DataLatency = 0;
-	timingRead.FSMC_AccessMode = FSMC_AccessMode_A;
-	/*
-	 LCD configured as follow:
-	    - Data/Address MUX = Disable
-	    - Memory Type = SRAM
-	    - Data Width = 16bit
-	    - Write Operation = Enable
-	    - Extended Mode = Enable
-	    - Asynchronous Wait = Disable
-	*/
-	init.FSMC_Bank = FSMC_Bank1_NORSRAM4;
-	init.FSMC_DataAddressMux = FSMC_DataAddressMux_Disable;
-	init.FSMC_MemoryType = FSMC_MemoryType_SRAM;
-	init.FSMC_MemoryDataWidth = FSMC_MemoryDataWidth_16b;
-	init.FSMC_BurstAccessMode = FSMC_BurstAccessMode_Disable;
-	init.FSMC_AsynchronousWait = FSMC_AsynchronousWait_Disable;
-	init.FSMC_WaitSignalPolarity = FSMC_WaitSignalPolarity_Low;
-	init.FSMC_WrapMode = FSMC_WrapMode_Disable;
-	init.FSMC_WaitSignalActive = FSMC_WaitSignalActive_BeforeWaitState;
-	init.FSMC_WriteOperation = FSMC_WriteOperation_Enable;
-	init.FSMC_WaitSignal = FSMC_WaitSignal_Disable;
-	init.FSMC_ExtendedMode = FSMC_ExtendedMode_Disable;
-	init.FSMC_WriteBurst = FSMC_WriteBurst_Disable;
-	init.FSMC_ReadWriteTimingStruct = &timingRead;
-	init.FSMC_WriteTimingStruct = &timingWrite;
-	FSMC_NORSRAMInit(&init);
-	/* - BANK 1 (of NOR/SRAM Bank 1~4) is enabled */
-	FSMC_NORSRAMCmd(FSMC_Bank1_NORSRAM4, ENABLE);
+	GPIO_ResetBits(GPIOB, GPIO_Pin_1);
+	Delay_ms_Tick(20);
+	GPIO_SetBits(GPIOB, GPIO_Pin_1);
+#endif	
 }
 
 /*
@@ -249,8 +124,8 @@ static void LCD_FSMCConfig(void)
 *********************************************************************************************************
 */
 void LCD_GetChipDescribe(char *_str)
-{
-		strcpy(_str, CHIP_STR_8875);
+{	
+	LCD429_GetChipDescribe(_str);
 }
 
 /*
@@ -289,7 +164,7 @@ uint16_t LCD_GetWidth(void)
 */
 void LCD_DispOn(void)
 {
-		RA8875_DispOn();
+	;
 }
 
 /*
@@ -302,7 +177,7 @@ void LCD_DispOn(void)
 */
 void LCD_DispOff(void)
 {
-		RA8875_DispOff();
+	;
 }
 
 /*
@@ -315,7 +190,7 @@ void LCD_DispOff(void)
 */
 void LCD_ClrScr(uint16_t _usColor)
 {
-		RA8875_ClrScr(_usColor);
+	LCD429_ClrScr(_usColor);
 }
 
 /*
@@ -670,8 +545,6 @@ void LCD_DispStrEx(uint16_t _usX, uint16_t _usY, char *_ptr, FONT_T *_tFont, uin
 	uint16_t x, y;
 	uint16_t offset;
 	uint16_t str_width;	/* 字符串实际宽度  */
-	uint8_t ra8875_use = 0;
-	uint8_t ra8875_font_code = 0;
 
 	switch (_tFont->FontCode)
 	{
@@ -694,21 +567,6 @@ void LCD_DispStrEx(uint16_t _usX, uint16_t _usY, char *_ptr, FONT_T *_tFont, uin
 			font_height = 32;
 			font_width = 32;
 			break;					
-		
-		case FC_RA8875_16:
-			ra8875_font_code = RA_FONT_16;
-			ra8875_use = 1;	/* 表示用RA8875字库 */
-			break;
-			
-		case FC_RA8875_24:
-			ra8875_font_code = RA_FONT_24;
-			ra8875_use = 1;	/* 表示用RA8875字库 */
-			break;
-						
-		case FC_RA8875_32:
-			ra8875_font_code = RA_FONT_32;
-			ra8875_use = 1;	/* 表示用RA8875字库 */
-			break;
 	}
 	
 	str_width = LCD_GetStrWidth(_ptr, _tFont);	/* 计算字符串实际宽度(RA8875内部ASCII点阵宽度为变长 */
@@ -742,14 +600,7 @@ void LCD_DispStrEx(uint16_t _usX, uint16_t _usY, char *_ptr, FONT_T *_tFont, uin
 		LCD_Fill_Rect(_usX + str_width, _usY, LCD_GetFontHeight(_tFont), _Width - str_width - offset,  _tFont->BackColor);
 	}
 	
-	if (ra8875_use == 1)	/* 使用RA8875外挂的字库芯片 */
-	{
-		RA8875_SetFrontColor(_tFont->FrontColor);			/* 设置字体前景色 */
-		RA8875_SetBackColor(_tFont->BackColor);				/* 设置字体背景色 */
-		RA8875_SetFont(ra8875_font_code, 0, _tFont->Space);	/* 字体代码，行间距，字间距 */
-		RA8875_DispStr(_usX, _usY, _ptr);
-	}
-	else	/* 使用CPU内部字库. 点阵信息由CPU读取 */
+	/* 使用CPU内部字库. 点阵信息由CPU读取 */
 	{
 		/* 开始循环处理字符 */
 		while (*_ptr != 0)
@@ -820,7 +671,7 @@ void LCD_DispStrEx(uint16_t _usX, uint16_t _usY, char *_ptr, FONT_T *_tFont, uin
 */
 void LCD_PutPixel(uint16_t _usX, uint16_t _usY, uint16_t _usColor)
 {
-		RA8875_PutPixel(_usX, _usY, _usColor);
+	LCD429_PutPixel(_usX, _usY, _usColor);
 }
 
 /*
@@ -835,7 +686,10 @@ void LCD_PutPixel(uint16_t _usX, uint16_t _usY, uint16_t _usColor)
 */
 uint16_t LCD_GetPixel(uint16_t _usX, uint16_t _usY)
 {
-		return RA8875_GetPixel(_usX, _usY);
+	uint16_t usRGB;
+
+	usRGB = LCD429_GetPixel(_usX, _usY);
+	return usRGB;
 }
 
 /*
@@ -851,7 +705,7 @@ uint16_t LCD_GetPixel(uint16_t _usX, uint16_t _usY)
 */
 void LCD_DrawLine(uint16_t _usX1 , uint16_t _usY1 , uint16_t _usX2 , uint16_t _usY2 , uint16_t _usColor)
 {
-		RA8875_DrawLine(_usX1 , _usY1 , _usX2, _usY2 , _usColor);
+	LCD429_DrawLine(_usX1 , _usY1 , _usX2, _usY2 , _usColor);
 }
 
 /*
@@ -866,7 +720,9 @@ void LCD_DrawLine(uint16_t _usX1 , uint16_t _usY1 , uint16_t _usX2 , uint16_t _u
 */
 void LCD_DrawPoints(uint16_t *x, uint16_t *y, uint16_t _usSize, uint16_t _usColor)
 {
-	for (u16 i = 0 ; i < _usSize - 1; i++)
+	uint16_t i;
+
+	for (i = 0 ; i < _usSize - 1; i++)
 	{
 		LCD_DrawLine(x[i], y[i], x[i + 1], y[i + 1], _usColor);
 	}
@@ -885,7 +741,7 @@ void LCD_DrawPoints(uint16_t *x, uint16_t *y, uint16_t _usSize, uint16_t _usColo
 */
 void LCD_DrawRect(uint16_t _usX, uint16_t _usY, uint16_t _usHeight, uint16_t _usWidth, uint16_t _usColor)
 {
-		RA8875_DrawRect(_usX, _usY, _usHeight, _usWidth, _usColor);
+	LCD429_DrawRect(_usX, _usY, _usHeight, _usWidth, _usColor);
 }
 
 /*
@@ -901,7 +757,7 @@ void LCD_DrawRect(uint16_t _usX, uint16_t _usY, uint16_t _usHeight, uint16_t _us
 */
 void LCD_Fill_Rect(uint16_t _usX, uint16_t _usY, uint16_t _usHeight, uint16_t _usWidth, uint16_t _usColor)
 {
-		RA8875_FillRect(_usX, _usY, _usHeight, _usWidth, _usColor);
+	LCD429_FillRect(_usX, _usY, _usHeight, _usWidth, _usColor);
 }
 
 /*
@@ -916,7 +772,7 @@ void LCD_Fill_Rect(uint16_t _usX, uint16_t _usY, uint16_t _usHeight, uint16_t _u
 */
 void LCD_DrawCircle(uint16_t _usX, uint16_t _usY, uint16_t _usRadius, uint16_t _usColor)
 {
-		RA8875_DrawCircle(_usX, _usY, _usRadius, _usColor);
+	LCD429_DrawCircle(_usX, _usY, _usRadius, _usColor);
 }
 
 /*
@@ -933,7 +789,7 @@ void LCD_DrawCircle(uint16_t _usX, uint16_t _usY, uint16_t _usRadius, uint16_t _
 */
 void LCD_DrawBMP(uint16_t _usX, uint16_t _usY, uint16_t _usHeight, uint16_t _usWidth, uint16_t *_ptr)
 {
-		RA8875_DrawBMP(_usX, _usY, _usHeight, _usWidth, _ptr);
+	LCD429_DrawBMP(_usX, _usY, _usHeight, _usWidth, _ptr);
 }
 
 /*
@@ -946,40 +802,22 @@ void LCD_DrawBMP(uint16_t _usX, uint16_t _usY, uint16_t _usHeight, uint16_t _usW
 */
 void LCD_DrawWin(WIN_T *_pWin)
 {
-#if 1
-	uint16_t TitleHegiht= 20;
+	uint16_t TitleHegiht;
+
+	TitleHegiht = 20;
+
 	/* 绘制窗口外框 */
 	LCD_DrawRect(_pWin->Left, _pWin->Top, _pWin->Height, _pWin->Width, WIN_BORDER_COLOR);
 	LCD_DrawRect(_pWin->Left + 1, _pWin->Top + 1, _pWin->Height - 2, _pWin->Width - 2, WIN_BORDER_COLOR);
+
 	/* 窗口标题栏 */
 	LCD_Fill_Rect(_pWin->Left + 2, _pWin->Top + 2, TitleHegiht, _pWin->Width - 4, WIN_TITLE_COLOR);
+
 	/* 窗体填充 */
 	LCD_Fill_Rect(_pWin->Left + 2, _pWin->Top + TitleHegiht + 2, _pWin->Height - 4 - TitleHegiht,
 		_pWin->Width - 4, WIN_BODY_COLOR);
+
 	LCD_DispStr(_pWin->Left + 3, _pWin->Top + 2, _pWin->pCaption, _pWin->Font);
-#else
-	if (g_ChipID == IC_8875)
-	{
-		uint16_t TitleHegiht;
-		TitleHegiht = 28;
-		/* 绘制窗口外框 */
-		RA8875_DrawRect(_pWin->Left, _pWin->Top, _pWin->Height, _pWin->Width, WIN_BORDER_COLOR);
-		RA8875_DrawRect(_pWin->Left + 1, _pWin->Top + 1, _pWin->Height - 2, _pWin->Width - 2, WIN_BORDER_COLOR);
-		/* 窗口标题栏 */
-		RA8875_FillRect(_pWin->Left + 2, _pWin->Top + 2, TitleHegiht, _pWin->Width - 4, WIN_TITLE_COLOR);
-		/* 窗体填充 */
-		RA8875_FillRect(_pWin->Left + 2, _pWin->Top + TitleHegiht + 2, _pWin->Height - 4 - TitleHegiht, _pWin->Width - 4, WIN_BODY_COLOR);
-		//RA8875_SetFont(_pWin->Font.FontCode, 0, 0);
-		RA8875_SetFont(RA_FONT_24, 0, 0);
-		RA8875_SetBackColor(WIN_TITLE_COLOR);
-		RA8875_SetFrontColor(WIN_CAPTION_COLOR);
-		RA8875_DispStr(_pWin->Left + 3, _pWin->Top + 2, _pWin->Caption);
-	}
-	else
-	{
-		;
-	}
-#endif
 }
 
 
@@ -1195,6 +1033,7 @@ void LCD_DrawIcon32(const ICON_T *_tIcon, FONT_T *_tFont, uint8_t _ucFocusMode)
 		{
 			return;	/* 如果图标文本长度为0，则不显示 */
 		}
+
 		/* 计算文本的总宽度 */
 		if (_tFont->FontCode == FC_ST_12)		/* 12点阵 */
 		{
@@ -1204,6 +1043,8 @@ void LCD_DrawIcon32(const ICON_T *_tIcon, FONT_T *_tFont, uint8_t _ucFocusMode)
 		{
 			width = 8 * (len + _tFont->Space);
 		}
+
+
 		/* 水平居中 */
 		x = (_tIcon->Left + _tIcon->Width / 2) - width / 2;
 		y = _tIcon->Top + _tIcon->Height + 2;
@@ -1287,7 +1128,6 @@ void LCD_DrawBmp32(uint16_t _usX, uint16_t _usY, uint16_t _usHeight, uint16_t _u
 */
 void LCD_DrawLabel(LABEL_T *_pLabel)
 {
-#if 1
 	char dispbuf[256];
 	uint16_t i;
 	uint16_t NewLen;
@@ -1312,20 +1152,6 @@ void LCD_DrawLabel(LABEL_T *_pLabel)
 		dispbuf[i] = 0;
 		LCD_DispStr(_pLabel->Left, _pLabel->Top, dispbuf, _pLabel->Font);
 	}
-#else
-	if (g_ChipID == IC_8875)
-	{
-		RA8875_SetFont(_pLabel->Font->FontCode, 0, 0);	/* 设置32点阵字体，行间距=0，字间距=0 */
-
-		RA8875_SetBackColor(_pLabel->Font->BackColor);
-		RA8875_SetFrontColor(_pLabel->Font->FrontColor);
-
-		RA8875_DispStr(_pLabel->Left, _pLabel->Top, _pLabel->Caption);
-	}
-	else
-	{
-	}
-#endif
 }
 
 /*
@@ -1338,9 +1164,10 @@ void LCD_DrawLabel(LABEL_T *_pLabel)
 */
 void LCD_DrawCheckBox(CHECK_T *_pCheckBox)
 {
-#if 1
 	uint16_t x, y;
+
 	/* 目前只做了16点阵汉字的大小 */
+
 	/* 绘制外框 */
 	x = _pCheckBox->Left;
 	LCD_DrawRect(x, _pCheckBox->Top, CHECK_BOX_H, CHECK_BOX_W, CHECK_BOX_BORDER_COLOR);
@@ -1363,38 +1190,6 @@ void LCD_DrawCheckBox(CHECK_T *_pCheckBox)
 		x = _pCheckBox->Left;
 		LCD_DispStr(x + 3, _pCheckBox->Top + 3, "√", &font);
 	}
-#else
-	if (g_ChipID == IC_8875)
-	{
-		uint16_t x;
-
-		RA8875_SetFont(_pCheckBox->Font.FontCode, 0, 0);	/* 设置32点阵字体，行间距=0，字间距=0 */
-
-		/* 绘制标签 */
-		//RA8875_SetBackColor(_pCheckBox->Font.BackColor);
-		RA8875_SetBackColor(WIN_BODY_COLOR);
-		RA8875_SetFrontColor(_pCheckBox->Font.FrontColor);
-		RA8875_DispStr(_pCheckBox->Left, _pCheckBox->Top, _pCheckBox->Caption);
-
-		/* 绘制外框 */
-		x = _pCheckBox->Left + _pCheckBox->Width - CHECK_BOX_W;
-		RA8875_DrawRect(x, _pCheckBox->Top, CHECK_BOX_H, CHECK_BOX_W, CHECK_BOX_BORDER_COLOR);
-		RA8875_DrawRect(x + 1, _pCheckBox->Top + 1, CHECK_BOX_H - 2, CHECK_BOX_W - 2, CHECK_BOX_BORDER_COLOR);
-		RA8875_FillRect(x + 2, _pCheckBox->Top + 2, CHECK_BOX_H - 4, CHECK_BOX_W - 4, CHECK_BOX_BACK_COLOR);
-
-		if (_pCheckBox->Checked)
-		{
-			RA8875_SetBackColor(CHECK_BOX_BACK_COLOR);
-			RA8875_SetFrontColor(CL_RED);
-			RA8875_DispStr(x + 3, _pCheckBox->Top + 3, "√");
-		}
-	}
-	else
-	{
-
-	}
-#endif
-
 }
 
 /*
@@ -1407,7 +1202,6 @@ void LCD_DrawCheckBox(CHECK_T *_pCheckBox)
 */
 void LCD_DrawEdit(EDIT_T *_pEdit)
 {
-#if 1
 	uint16_t len, x, y;
 	uint8_t width;
 
@@ -1429,30 +1223,6 @@ void LCD_DrawEdit(EDIT_T *_pEdit)
 	y = _pEdit->Top + _pEdit->Height / 2 - width;
 
 	LCD_DispStr(x, y, _pEdit->pCaption, _pEdit->Font);
-#else
-	if (g_ChipID == IC_8875)
-	{
-		uint16_t len, x;
-
-		/* 仿XP风格，平面编辑框 */
-		RA8875_DrawRect(_pEdit->Left, _pEdit->Top, _pEdit->Height, _pEdit->Width, EDIT_BORDER_COLOR);
-		RA8875_FillRect(_pEdit->Left + 1, _pEdit->Top + 1, _pEdit->Height - 2, _pEdit->Width - 2, EDIT_BACK_COLOR);
-
-		RA8875_SetFont(_pEdit->Font.FontCode, 0, 0);	/* 设置32点阵字体，行间距=0，字间距=0 */
-		RA8875_SetFrontColor(_pEdit->Font.FrontColor);
-		RA8875_SetBackColor(EDIT_BACK_COLOR);
-
-		/* 文字居中 */
-		len = strlen(_pEdit->Caption);
-		x = (_pEdit->Width - len * 16) / 2;
-
-		RA8875_DispStr(_pEdit->Left + x, _pEdit->Top + 3, _pEdit->Caption);
-	}
-	else
-	{
-		//SPFD5420_DrawCircle(_usX, _usY, _usRadius, _usColor);
-	}
-#endif
 }
 
 /*
@@ -1469,7 +1239,6 @@ void LCD_DrawEdit(EDIT_T *_pEdit)
 */
 void LCD_DrawButton(BUTTON_T *_pBtn)
 {
-#if 1
 	uint16_t x, y, h;
 	FONT_T font;	/* 按钮激活时，需要更改字体设置，因此需要一个变量来保存 */
 
@@ -1499,83 +1268,6 @@ void LCD_DrawButton(BUTTON_T *_pBtn)
 	
 	LCD_Fill_Rect(_pBtn->Left + 3, _pBtn->Top + 3, _pBtn->Height - 6, _pBtn->Width - 6, font.BackColor);	/* 选中后的底色 */
 	LCD_DispStrEx(x, y, _pBtn->pCaption, &font, _pBtn->Width - 6, ALIGN_CENTER);	/* 水平居中 */		
-
-#else
-	if (g_ChipID == IC_8875)
-	{
-		uint16_t len, x, y;
-
-		if (_pBtn->Focus == 1)
-		{
-			/* 仿XP风格，平面编辑框 */
-			RA8875_DrawRect(_pBtn->Left, _pBtn->Top, _pBtn->Height, _pBtn->Width, BUTTON_BORDER_COLOR);
-			RA8875_DrawRect(_pBtn->Left + 1, _pBtn->Top + 1, _pBtn->Height - 2, _pBtn->Width - 2, BUTTON_BORDER1_COLOR);
-			RA8875_DrawRect(_pBtn->Left + 2, _pBtn->Top + 2, _pBtn->Height - 4, _pBtn->Width - 4, BUTTON_BORDER2_COLOR);
-
-			RA8875_FillRect(_pBtn->Left + 3, _pBtn->Top + 3, _pBtn->Height - 6, _pBtn->Width - 6, BUTTON_ACTIVE_COLOR);
-
-			RA8875_SetBackColor(BUTTON_ACTIVE_COLOR);
-		}
-		else
-		{
-			/* 仿XP风格，平面编辑框 */
-			RA8875_DrawRect(_pBtn->Left, _pBtn->Top, _pBtn->Height, _pBtn->Width, BUTTON_BORDER_COLOR);
-			RA8875_DrawRect(_pBtn->Left + 1, _pBtn->Top + 1, _pBtn->Height - 2, _pBtn->Width - 2, BUTTON_BORDER1_COLOR);
-			RA8875_DrawRect(_pBtn->Left + 2, _pBtn->Top + 2, _pBtn->Height - 4, _pBtn->Width - 4, BUTTON_BORDER2_COLOR);
-
-			RA8875_FillRect(_pBtn->Left + 3, _pBtn->Top + 3, _pBtn->Height - 6, _pBtn->Width - 6, BUTTON_BACK_COLOR);
-
-			RA8875_SetBackColor(BUTTON_BACK_COLOR);
-		}
-
-		#if 1	/* 按钮文字字体和颜色固定 */
-			if (strcmp(_pBtn->Caption, "←") == 0)	/* 退格键特殊处理 */
-			{
-				/* 退格键符号是单像素笔画，太细了不协调，因此特殊处理 */
-				RA8875_SetFont(RA_FONT_16, 0, 0);
-				RA8875_SetFrontColor(CL_BLACK);
-				RA8875_SetTextZoom(RA_SIZE_X2, RA_SIZE_X2);	/* 放大2倍 */
-			}
-			else
-			{
-				RA8875_SetFont(RA_FONT_16, 0, 0);
-				RA8875_SetFrontColor(CL_BLACK);
-				RA8875_SetTextZoom(RA_SIZE_X1, RA_SIZE_X1);	/* 放大1倍 */
-			}
-		#else	/* 按钮文字字体和颜色有应用程序指定 */
-			RA8875_SetFont(_pBtn->Font.FontCode, 0, 0);
-			RA8875_SetFrontColor(_pBtn->Font.FrontColor);
-		#endif
-
-		/* 文字居中 */
-		len = strlen(_pBtn->Caption);
-
-		/* 此处统计不等宽字符有问题。暂时特殊处理下 */
-		if (len != 3)
-		{
-			x = _pBtn->Left + (_pBtn->Width - len * 16) / 2;
-		}
-		else
-		{
-			x = _pBtn->Left + (_pBtn->Width - len * 20) / 2;
-		}
-
-		/* 对特殊字符特殊处理 */
-		if ((len == 1) && (_pBtn->Caption[0] == '.'))
-		{
-			y = _pBtn->Top + 3;
-			x += 3;
-		}
-		else
-		{
-			y = _pBtn->Top + 3;
-		}
-
-		RA8875_DispStr(x, y, _pBtn->Caption);
-
-		RA8875_SetTextZoom(RA_SIZE_X1, RA_SIZE_X1);	/* 还原放大1倍 */
-	}
-#endif
 }
 
 /*
@@ -1648,7 +1340,21 @@ void LCD_DispControl(void *_pControl)
 	}
 }
 
-
+/*
+*********************************************************************************************************
+*	函 数 名: LCD_SetPwmBackLight
+*	功能说明: 初始化控制LCD背景光的GPIO,配置为PWM模式。
+*			当关闭背光时，将CPU IO设置为浮动输入模式（推荐设置为推挽输出，并驱动到低电平)；将TIM3关闭 省电
+*	形    参:  _bright 亮度，0是灭，255是最亮
+*	返 回 值: 无
+*********************************************************************************************************
+*/
+static void LCD_SetPwmBackLight(uint8_t _bright)
+{
+	/* 背光有CPU输出PWM控制，PA0/TIM5_CH1/TIM2_CH1 */
+	//bsp_SetTIMOutPWM(GPIOA, GPIO_Pin_0, TIM5, 1, 100, (_bright * 10000) /255);
+	bsp_SetTIMOutPWM(GPIOA, GPIO_Pin_0, TIM5, 1, 20000, (_bright * 10000) /255);
+}
 
 /*
 *********************************************************************************************************
@@ -1661,8 +1367,9 @@ void LCD_DispControl(void *_pControl)
 */
 void LCD_SetBackLight(uint8_t _bright)
 {
-	  s_ucBright =  _bright;	/* 保存背光值 */
-		RA8875_SetBackLight(_bright);
+	s_ucBright =  _bright;	/* 保存背光值 */
+
+	LCD_SetPwmBackLight(s_ucBright);
 }
 
 /*
@@ -1677,6 +1384,7 @@ uint8_t LCD_GetBackLight(void)
 {
 	return s_ucBright;
 }
+
 /*
 *********************************************************************************************************
 *	函 数 名: LCD_SetDirection
@@ -1688,9 +1396,9 @@ uint8_t LCD_GetBackLight(void)
 void LCD_SetDirection(uint8_t _dir)
 {
 	g_LcdDirection =  _dir;		/* 保存在全局变量 */
-	RA8875_SetDirection(_dir);
-}
 
+	LCD429_SetDirection(_dir);
+}
 
 /*
 *********************************************************************************************************
@@ -1706,7 +1414,7 @@ uint8_t LCD_ButtonTouchDown(BUTTON_T *_btn, uint16_t _usX, uint16_t _usY)
 	if ((_usX > _btn->Left) && (_usX < _btn->Left + _btn->Width)
 		&& (_usY > _btn->Top) && (_usY < _btn->Top + _btn->Height))
 	{
-		//BUTTON_BEEP();	/* 按键提示音 bsp_tft_lcd.h 文件开头可以使能和关闭 */
+//		BUTTON_BEEP();	/* 按键提示音 bsp_tft_lcd.h 文件开头可以使能和关闭 */
 		_btn->Focus = 1;
 		LCD_DrawButton(_btn);
 		return 1;

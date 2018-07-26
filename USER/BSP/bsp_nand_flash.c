@@ -3,18 +3,39 @@
 *
 *	模块名称 : NAND Flash驱动模块
 *	文件名称 : bsp_nand.c
-*	版    本 : V1.0
+*	版    本 : V1.3
 *	说    明 : 提供NAND Flash (HY27UF081G2A， 8bit 128K字节 大页)的底层接口函数。【安富莱原创】
 *
 *	修改记录 :
 *		版本号  日期        作者     说明
-*		V1.0    2013-02-01 armfly  正式发布
+*		V1.0    2013-02-01  armfly  正式发布
+*		V1.1    2014-05-02  armfly  增加512MB型号: H27U4G8F2DTR,
+*					(1) 增加 NAND_ReadONFI() 函数;
+*					(2) 增加 NAND_ReadParamPage() 函数;
+*					(3) 解决 NAND_IsFreeBlock(uint32_t _ulBlockNo) 函数的BUG。
+*					(4) 解决 FMC_NAND_PageCopyBack() 和 FMC_NAND_PageCopyBackEx()， A18必须相同的BUG
+*					(5) 修改 NAND_FindFreeBlock(), 增加形参，查找奇数或偶数块号
+*					(6) 修改 打印坏块的函数，增加标识 1 表示已用块 0 表示空闲块
+*					(7) NAND_MarkUsedBlock() 调用的地方给的形参不对。 ulPhyPageNo / NAND_BLOCK_SIZE
+*		V1.2	2015-07-23   armfly  增加函数 uint8_t NAND_GetBlockInfo(void); 方便LCD显示。
+*		V1.3	2015-10-13   armfly  移植到STM32F429
+*					(1) 增加 WAIT_BUSY()宏, 需要增加命令间等待延迟时间。
+*					(2) h文件中 #define BAD_BALOK_TEST_CYCLE	2	(3修改为2, 测试2次失败，标记坏块)
 *
-*	Copyright (C), 2013-2014, 安富莱电子 www.armfly.com
+*	Copyright (C), 2015-2016, 安富莱电子 www.armfly.com
 *
 *********************************************************************************************************
 */
 #include "bsp_nand_flash.h"
+
+/* 定义调试打印语句，用于排错 */
+#define printf_err	printf
+//#define printf_err(...)
+
+//#define printf_ok	printf
+#define printf_ok(...)
+
+#define WRITE_PAGE_VERIFY_EN	/* 写 page 数据时校验 */
 
 /*
 	如果在IAR或KEIL的编辑器中阅读，请将编辑器的字体设置为新宋体（9号/五号），缩进的TAB设置为4。
@@ -30,15 +51,15 @@
  	（3）正常写文件操作时，会导致重建LUT。目前，重建LUT的代码执行效率还不够高，有待完善。
 
 	【硬件说明】
-	安富莱STM32F103ZE-EK开发板配置的NAND Flahs为海力士的HY27UF081G2A
-	（1）NAND Flash的片选信号连接到CPU的FSMC_NCE2，这决定了NAND Flash的地址空间为 0x70000000（见CPU的数据
+	安富莱开发板配置的NAND Flahs为海力士的HY27UF081G2A,  439板子配的为 H27U4G8F2DTR
+	（1）NAND Flash的片选信号连接到CPU的FMC_NCE2，这决定了NAND Flash的地址空间为 0x70000000（见CPU的数据
 		手册的FSMC章节)
 	（2）有FSMC总线上有多个总线设备（如TFT、SRAM、CH374T、NOR），因此必须确保其他总线设备的片选处于禁止
 		状态，否则将出现总线冲突问题 （参见本文件初始化FSMC GPIO的函数）
 
 
 	【NAND Flash 结构定义】
-     备用区有16x4字节，每page 1024字节，每512字节一个扇区，每个扇区对应16自己的备用区：
+     备用区有16x4字节，每page 2048字节，每512字节一个扇区，每个扇区对应16自己的备用区：
 
 	 每个PAGE的逻辑结构，前面512Bx4是主数据区，后面16Bx4是备用区
 	┌──────┐┌──────┐┌──────┐┌──────┐┌──────┐┌──────┐┌──────┐┌──────┐
@@ -91,6 +112,11 @@
 #define NAND_ADDR_AREA		*(__IO uint8_t *)(Bank_NAND_ADDR | ADDR_AREA)
 #define NAND_DATA_AREA		*(__IO uint8_t *)(Bank_NAND_ADDR | DATA_AREA)
 
+/* 必须等待，否则读出数据异常, 此处应该判断超时*/
+#define WAIT_BUSY()	{uint8_t kk; for (kk = 0; kk < 40; kk++);  while( GPIO_ReadInputDataBit(GPIOG, GPIO_Pin_6) == 0 );}
+
+
+	
 /* 逻辑块号映射表。好块总数的2%用于备份区，因此数组维数低于1024。 LUT = Look Up Table */
 static uint16_t s_usLUT[NAND_BLOCK_COUNT];
 
@@ -99,10 +125,10 @@ static uint16_t s_usValidDataBlockCount;	/* 有效的数据块个数 */
 static uint8_t s_ucTempBuf[NAND_PAGE_TOTAL_SIZE];	/* 大缓冲区，2112字节. 用于读出比较 */
 
 static uint8_t NAND_BuildLUT(void);
-static uint8_t FSMC_NAND_GetStatus(void);
-static uint16_t NAND_FindFreeBlock (void);
+static uint8_t FMC_NAND_GetStatus(void);
+static uint16_t NAND_FindFreeBlock (uint32_t _ulSrcPageNo);
 static uint8_t NAND_MarkUsedBlock(uint32_t _ulBlockNo);
-static void NAND_MarkBadBlock(uint32_t _ulBlockNo);
+
 static uint16_t NAND_AddrToPhyBlockNo(uint32_t _ulMemAddr);
 static uint8_t NAND_IsBufOk(uint8_t *_pBuf, uint32_t _ulLen, uint8_t _ucValue);
 uint8_t NAND_WriteToNewBlock(uint32_t _ulPhyPageNo, uint8_t *_pWriteBuf, uint16_t _usOffset, uint16_t _usSize);
@@ -110,56 +136,62 @@ static uint8_t NAND_IsFreeBlock(uint32_t _ulBlockNo);
 
 static uint16_t NAND_LBNtoPBN(uint32_t _uiLBN);
 
+static uint8_t FMC_NAND_ReadPage(uint8_t *_pBuffer, uint32_t _ulPageNo, uint16_t _usAddrInPage, uint16_t _usByteCount);
+static uint8_t FMC_NAND_WritePage(uint8_t *_pBuffer, uint32_t _ulPageNo, uint16_t _usAddrInPage, uint16_t _usByteCount);
+static uint8_t FMC_NAND_CompPage(uint8_t *_pBuffer, uint32_t _ulPageNo, uint16_t _usAddrInPage, uint16_t _usByteCount);
+
+static uint8_t FMC_NAND_EraseBlock(uint32_t _ulBlockNo);
+
 /*
 *********************************************************************************************************
-*	函 数 名: FSMC_NAND_Init
+*	函 数 名: FMC_NAND_Init
 *	功能说明: 配置FSMC和GPIO用于NAND Flash接口。这个函数必须在读写nand flash前被调用一次。
 *	形    参:  无
 *	返 回 值: 无
 *********************************************************************************************************
 */
-static void FSMC_NAND_Init(void)
+static void FMC_NAND_Init(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
-	FSMC_NANDInitTypeDef  FSMC_NANDInitStructure;
-	FSMC_NAND_PCCARDTimingInitTypeDef  p;
+	FMC_NANDInitTypeDef  FMC_NANDInitStructure;
+	FMC_NAND_PCCARDTimingInitTypeDef  p;
 
 
 	/*--NAND Flash GPIOs 配置  ------
-		PD0/FSMC_D2
-		PD1/FSMC_D3
-		PD4/FSMC_NOE
-		PD5/FSMC_NWE
-		PD7/FSMC_NCE2
-		PD11/FSMC_A16
-		PD12/FSMC_A17
-		PD14/FSMC_D0
-		PD15/FSMC_D1
+		PD0/FMC_D2
+		PD1/FMC_D3
+		PD4/FMC_NOE
+		PD5/FMC_NWE
+		PD7/FMC_NCE2
+		PD11/FMC_A16
+		PD12/FMC_A17
+		PD14/FMC_D0
+		PD15/FMC_D1
 
-		PE7/FSMC_D4
-		PE8/FSMC_D5
-		PE9/FSMC_D6
-		PE10/FSMC_D7
+		PE7/FMC_D4
+		PE8/FMC_D5
+		PE9/FMC_D6
+		PE10/FMC_D7
 
-		PG6/FSMC_INT2	(本例程用查询方式判忙，此口线作为普通GPIO输入功能使用)
+		PG6/FMC_INT2	(本例程用查询方式判忙，此口线作为普通GPIO输入功能使用)
 	*/
 
 	/* 使能 GPIO 时钟 */
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD | RCC_AHB1Periph_GPIOE | RCC_AHB1Periph_GPIOG, ENABLE);
 
 	/* 使能 FSMC 时钟 */
-	RCC_AHB3PeriphClockCmd(RCC_AHB3Periph_FSMC, ENABLE);
+	RCC_AHB3PeriphClockCmd(RCC_AHB3Periph_FMC, ENABLE);
 
 	/*  配置GPIOD */
-	GPIO_PinAFConfig(GPIOD, GPIO_PinSource0, GPIO_AF_FSMC);
-	GPIO_PinAFConfig(GPIOD, GPIO_PinSource1, GPIO_AF_FSMC);
-	GPIO_PinAFConfig(GPIOD, GPIO_PinSource4, GPIO_AF_FSMC);
-	GPIO_PinAFConfig(GPIOD, GPIO_PinSource5, GPIO_AF_FSMC);
-	GPIO_PinAFConfig(GPIOD, GPIO_PinSource7, GPIO_AF_FSMC);
-	GPIO_PinAFConfig(GPIOD, GPIO_PinSource11, GPIO_AF_FSMC);
-	GPIO_PinAFConfig(GPIOD, GPIO_PinSource12, GPIO_AF_FSMC);
-	GPIO_PinAFConfig(GPIOD, GPIO_PinSource14, GPIO_AF_FSMC);
-	GPIO_PinAFConfig(GPIOD, GPIO_PinSource15, GPIO_AF_FSMC);
+	GPIO_PinAFConfig(GPIOD, GPIO_PinSource0, GPIO_AF_FMC);
+	GPIO_PinAFConfig(GPIOD, GPIO_PinSource1, GPIO_AF_FMC);
+	GPIO_PinAFConfig(GPIOD, GPIO_PinSource4, GPIO_AF_FMC);
+	GPIO_PinAFConfig(GPIOD, GPIO_PinSource5, GPIO_AF_FMC);
+	GPIO_PinAFConfig(GPIOD, GPIO_PinSource7, GPIO_AF_FMC);
+	GPIO_PinAFConfig(GPIOD, GPIO_PinSource11, GPIO_AF_FMC);
+	GPIO_PinAFConfig(GPIOD, GPIO_PinSource12, GPIO_AF_FMC);
+	GPIO_PinAFConfig(GPIOD, GPIO_PinSource14, GPIO_AF_FMC);
+	GPIO_PinAFConfig(GPIOD, GPIO_PinSource15, GPIO_AF_FMC);
 
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_4 | GPIO_Pin_5 |
 	                            GPIO_Pin_7 | GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_14 | GPIO_Pin_15;
@@ -171,10 +203,10 @@ static void FSMC_NAND_Init(void)
 	GPIO_Init(GPIOD, &GPIO_InitStructure);
 
 	/*  配置GPIOE */
-	GPIO_PinAFConfig(GPIOE, GPIO_PinSource7, GPIO_AF_FSMC);
-	GPIO_PinAFConfig(GPIOE, GPIO_PinSource8, GPIO_AF_FSMC);
-	GPIO_PinAFConfig(GPIOE, GPIO_PinSource9, GPIO_AF_FSMC);
-	GPIO_PinAFConfig(GPIOE, GPIO_PinSource10, GPIO_AF_FSMC);
+	GPIO_PinAFConfig(GPIOE, GPIO_PinSource7, GPIO_AF_FMC);
+	GPIO_PinAFConfig(GPIOE, GPIO_PinSource8, GPIO_AF_FMC);
+	GPIO_PinAFConfig(GPIOE, GPIO_PinSource9, GPIO_AF_FMC);
+	GPIO_PinAFConfig(GPIOE, GPIO_PinSource10, GPIO_AF_FMC);
 
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
@@ -193,22 +225,22 @@ static void FSMC_NAND_Init(void)
 	GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_UP;
 	GPIO_Init(GPIOG, &GPIO_InitStructure);
 
-	/* 配置 FSMC 时序 */
+	/* 配置 FSMC 时序 2014-06-29 调整时序 */
 	/*
 		Defines the number of HCLK cycles to setup address before the command assertion for NAND-Flash
 		read or write access  to common/Attribute or I/O memory space (depending on the memory space
 		timing to be configured).This parameter can be a value between 0 and 0xFF.
 	*/
-  	//p.FSMC_SetupTime = 0x01;
-  	p.FSMC_SetupTime = 0x1;
+  	//p.FMC_SetupTime = 0x01;  ---- 01 err, 02 ok
+  	p.FMC_SetupTime = 0x2;
 
 	/*
 		Defines the minimum number of HCLK cycles to assert the command for NAND-Flash read or write
 		access to common/Attribute or I/O memory space (depending on the memory space timing to be
 		configured). This parameter can be a number between 0x00 and 0xFF
 	*/
-	//p.FSMC_WaitSetupTime = 0x03;
-	p.FSMC_WaitSetupTime = 0x3;
+	//p.FMC_WaitSetupTime = 0x03; ---- 03 err;  05 ok
+	p.FMC_WaitSetupTime = 0x5;
 
 	/*
 		Defines the number of HCLK clock cycles to hold address (and data for write access) after the
@@ -216,32 +248,32 @@ static void FSMC_NAND_Init(void)
 		 (depending on the memory space timing to be configured).
 		This parameter can be a number between 0x00 and 0xFF
 	*/
-	//p.FSMC_HoldSetupTime = 0x02;
-	p.FSMC_HoldSetupTime = 0x2;
+	//p.FMC_HoldSetupTime = 0x02;  --- 02 err  03 ok
+	p.FMC_HoldSetupTime = 0x3;
 
 	/*
 		Defines the number of HCLK clock cycles during which the databus is kept in HiZ after the start
 		of a NAND-Flash  write access to common/Attribute or I/O memory space (depending on the memory
 		space timing to be configured). This parameter can be a number between 0x00 and 0xFF
 	*/
-	//p.FSMC_HiZSetupTime = 0x01;
-	p.FSMC_HiZSetupTime = 0x1;
+	//p.FMC_HiZSetupTime = 0x01;
+	p.FMC_HiZSetupTime = 0x01;
+	
+	FMC_NANDInitStructure.FMC_Bank = FMC_Bank2_NAND;  					/* 定义FSMC NAND BANK 号 */
+	FMC_NANDInitStructure.FMC_Waitfeature = FMC_Waitfeature_Disable;	/* 插入等待时序使能 */
+	FMC_NANDInitStructure.FMC_MemoryDataWidth = FMC_NAND_MemoryDataWidth_8b;	/* 数据宽度 8bit */
+	FMC_NANDInitStructure.FMC_ECC = FMC_ECC_Enable; 					/* ECC错误检查和纠正功能使能 */
+	FMC_NANDInitStructure.FMC_ECCPageSize = FMC_ECCPageSize_2048Bytes;	/* ECC 页面大小 */
+	FMC_NANDInitStructure.FMC_TCLRSetupTime = 0x01;						/* CLE低和RE低之间的延迟，HCLK周期数 */	
+	FMC_NANDInitStructure.FMC_TARSetupTime = 0x01;						/* ALE低和RE低之间的延迟，HCLK周期数 */
 
+	FMC_NANDInitStructure.FMC_CommonSpaceTimingStruct = &p;				/* FSMC Common Space Timing */
+	FMC_NANDInitStructure.FMC_AttributeSpaceTimingStruct = &p;			/* FSMC Attribute Space Timing */
 
-	FSMC_NANDInitStructure.FSMC_Bank = FSMC_Bank2_NAND;  					/* 定义FSMC NAND BANK 号 */
-	FSMC_NANDInitStructure.FSMC_Waitfeature = FSMC_Waitfeature_Disable;		/* 插入等待时序使能 */
-	FSMC_NANDInitStructure.FSMC_MemoryDataWidth = FSMC_MemoryDataWidth_8b;	/* 数据宽度 8bit */
-	FSMC_NANDInitStructure.FSMC_ECC = FSMC_ECC_Enable; 						/* ECC错误检查和纠正功能使能 */
-	FSMC_NANDInitStructure.FSMC_ECCPageSize = FSMC_ECCPageSize_2048Bytes;	/* ECC 页面大小 */
-	FSMC_NANDInitStructure.FSMC_TCLRSetupTime = 0x01;						/* CLE低和RE低之间的延迟，HCLK周期数 */
-	FSMC_NANDInitStructure.FSMC_TARSetupTime = 0x01;						/* ALE低和RE低之间的延迟，HCLK周期数 */
-	FSMC_NANDInitStructure.FSMC_CommonSpaceTimingStruct = &p;				/* FSMC Common Space Timing */
-	FSMC_NANDInitStructure.FSMC_AttributeSpaceTimingStruct = &p;			/* FSMC Attribute Space Timing */
-
-	FSMC_NANDInit(&FSMC_NANDInitStructure);
+	FMC_NANDInit(&FMC_NANDInitStructure);
 
 	/* FSMC NAND Bank 使能 */
-	FSMC_NANDCmd(FSMC_Bank2_NAND, ENABLE);
+	FMC_NANDCmd(FMC_Bank2_NAND, ENABLE);	
 }
 
 /*
@@ -271,8 +303,8 @@ uint32_t NAND_ReadID(void)
 
 /*
 *********************************************************************************************************
-*	函 数 名: FSMC_NAND_PageCopyBack
-*	功能说明: 将一页数据复制到另外一个页。源页和目标页必须同为偶数页或同为奇数页。
+*	函 数 名: FMC_NAND_PageCopyBack
+*	功能说明: 将一页数据复制到另外一个页。源页和目标页所在的block必须同为偶数或同为奇数。即A18必须相同。
 *	形    参:  - _ulSrcPageNo: 源页号
 *             - _ulTarPageNo: 目标页号
 *	返 回 值: 执行结果：
@@ -283,9 +315,13 @@ uint32_t NAND_ReadID(void)
 *
 *********************************************************************************************************
 */
-static uint8_t FSMC_NAND_PageCopyBack(uint32_t _ulSrcPageNo, uint32_t _ulTarPageNo)
+static uint8_t FMC_NAND_PageCopyBack(uint32_t _ulSrcPageNo, uint32_t _ulTarPageNo)
 {
-	uint8_t i;
+	if ((_ulSrcPageNo & 0x40) != (_ulTarPageNo & 0x40))
+	{
+		printf_err("Error : FMC_NAND_PageCopyBackEx(src=%d, tar=%d) \r\n", _ulSrcPageNo, _ulTarPageNo);
+		return NAND_FAIL;
+	}
 
 	NAND_CMD_AREA = NAND_CMD_COPYBACK_A;
 
@@ -295,17 +331,28 @@ static uint8_t FSMC_NAND_PageCopyBack(uint32_t _ulSrcPageNo, uint32_t _ulTarPage
 		第2字节： 0    0    0    0    A11  A10  A9   A8		(_usPageAddr 的bit11 - bit8, 高4bit必须是0)
 		第3字节： A19  A18  A17  A16  A15  A14  A13  A12
 		第4字节： A27  A26  A25  A24  A23  A22  A21  A20
+
+		H27U4G8F2DTR (512MB)
+				  Bit7 Bit6 Bit5 Bit4 Bit3 Bit2 Bit1 Bit0
+		第1字节： A7   A6   A5   A4   A3   A2   A1   A0		(_usPageAddr 的bit7 - bit0)
+		第2字节： 0    0    0    0    A11  A10  A9   A8		(_usPageAddr 的bit11 - bit8, 高4bit必须是0)
+		第3字节： A19  A18  A17  A16  A15  A14  A13  A12
+		第4字节： A27  A26  A25  A24  A23  A22  A21  A20
+		第5字节： A28  A29  A30  A31  0    0    0    0
 	*/
 	NAND_ADDR_AREA = 0;
 	NAND_ADDR_AREA = 0;
 	NAND_ADDR_AREA = _ulSrcPageNo;
 	NAND_ADDR_AREA = (_ulSrcPageNo & 0xFF00) >> 8;
 
+	#if NAND_ADDR_5 == 1
+		NAND_ADDR_AREA = (_ulSrcPageNo & 0xFF0000) >> 16;
+	#endif
+
 	NAND_CMD_AREA = NAND_CMD_COPYBACK_B;
 
 	/* 必须等待，否则读出数据异常, 此处应该判断超时 */
-	for (i = 0; i < 20; i++);
-	while( GPIO_ReadInputDataBit(GPIOG, GPIO_Pin_6) == 0 );
+	WAIT_BUSY();
 
 	NAND_CMD_AREA = NAND_CMD_COPYBACK_C;
 
@@ -315,26 +362,43 @@ static uint8_t FSMC_NAND_PageCopyBack(uint32_t _ulSrcPageNo, uint32_t _ulTarPage
 		第2字节： 0    0    0    0    A11  A10  A9   A8		(_usPageAddr 的bit11 - bit8, 高4bit必须是0)
 		第3字节： A19  A18  A17  A16  A15  A14  A13  A12
 		第4字节： A27  A26  A25  A24  A23  A22  A21  A20
+
+		H27U4G8F2DTR (512MB)
+				  Bit7 Bit6 Bit5 Bit4 Bit3 Bit2 Bit1 Bit0
+		第1字节： A7   A6   A5   A4   A3   A2   A1   A0		(_usPageAddr 的bit7 - bit0)
+		第2字节： 0    0    0    0    A11  A10  A9   A8		(_usPageAddr 的bit11 - bit8, 高4bit必须是0)
+		第3字节： A19  A18  A17  A16  A15  A14  A13  A12    --- A18 是plane地址
+		第4字节： A27  A26  A25  A24  A23  A22  A21  A20
+		第5字节： A28  A29  A30  A31  0    0    0    0
+
+		Source and Destination page in the copy back program sequence must belong to the same device plane （A18）
+		源地址和目标地址的 A18必须相同
 	*/
 	NAND_ADDR_AREA = 0;
 	NAND_ADDR_AREA = 0;
 	NAND_ADDR_AREA = _ulTarPageNo;
 	NAND_ADDR_AREA = (_ulTarPageNo & 0xFF00) >> 8;
 
+	#if NAND_ADDR_5 == 1
+		NAND_ADDR_AREA = (_ulTarPageNo & 0xFF0000) >> 16;
+	#endif
+
 	NAND_CMD_AREA = NAND_CMD_COPYBACK_D;
 
 	/* 检查操作状态 */
-	if (FSMC_NAND_GetStatus() == NAND_READY)
+	if (FMC_NAND_GetStatus() == NAND_READY)
 	{
 		return NAND_OK;
 	}
+
+	printf_err("Error: FMC_NAND_PageCopyBack(%d, %d)\r\n", _ulSrcPageNo, _ulTarPageNo);
 	return NAND_FAIL;
 }
 
 /*
 *********************************************************************************************************
-*	函 数 名: FSMC_NAND_PageCopyBackEx
-*	功能说明: 将一页数据复制到另外一个页,并更新目标页中的部分数据。源页和目标页必须同为偶数页或同为奇数页。
+*	函 数 名: FMC_NAND_PageCopyBackEx
+*	功能说明: 将一页数据复制到另外一个页,并更新目标页中的部分数据。源页和目标页所在的BLOCK必须同为偶数或同为奇数。
 *	形    参:  - _ulSrcPageNo: 源页号
 *             - _ulTarPageNo: 目标页号
 *			  - _usOffset: 页内偏移地址，pBuf的内容将写入这个地址开始单元
@@ -348,9 +412,16 @@ static uint8_t FSMC_NAND_PageCopyBack(uint32_t _ulSrcPageNo, uint32_t _ulTarPage
 *
 *********************************************************************************************************
 */
-static uint8_t FSMC_NAND_PageCopyBackEx(uint32_t _ulSrcPageNo, uint32_t _ulTarPageNo, uint8_t *_pBuf, uint16_t _usOffset, uint16_t _usSize)
+static uint8_t FMC_NAND_PageCopyBackEx(uint32_t _ulSrcPageNo, uint32_t _ulTarPageNo, uint8_t *_pBuf, 
+	uint16_t _usOffset, uint16_t _usSize)
 {
 	uint16_t i;
+
+	if ((_ulSrcPageNo & 0x40) != (_ulTarPageNo & 0x40))
+	{
+		printf_err("Error A18 not same:  FMC_NAND_PageCopyBackEx(src=%d, tar=%d) \r\n", _ulSrcPageNo, _ulTarPageNo);
+		return NAND_FAIL;
+	}
 
 	NAND_CMD_AREA = NAND_CMD_COPYBACK_A;
 
@@ -360,17 +431,28 @@ static uint8_t FSMC_NAND_PageCopyBackEx(uint32_t _ulSrcPageNo, uint32_t _ulTarPa
 		第2字节： 0    0    0    0    A11  A10  A9   A8		(_usPageAddr 的bit11 - bit8, 高4bit必须是0)
 		第3字节： A19  A18  A17  A16  A15  A14  A13  A12
 		第4字节： A27  A26  A25  A24  A23  A22  A21  A20
+
+		H27U4G8F2DTR (512MB)
+				  Bit7 Bit6 Bit5 Bit4 Bit3 Bit2 Bit1 Bit0
+		第1字节： A7   A6   A5   A4   A3   A2   A1   A0		(_usPageAddr 的bit7 - bit0)
+		第2字节： 0    0    0    0    A11  A10  A9   A8		(_usPageAddr 的bit11 - bit8, 高4bit必须是0)
+		第3字节： A19  A18  A17  A16  A15  A14  A13  A12
+		第4字节： A27  A26  A25  A24  A23  A22  A21  A20
+		第5字节： A28  A29  A30  A31  0    0    0    0
 	*/
 	NAND_ADDR_AREA = 0;
 	NAND_ADDR_AREA = 0;
 	NAND_ADDR_AREA = _ulSrcPageNo;
 	NAND_ADDR_AREA = (_ulSrcPageNo & 0xFF00) >> 8;
 
+	#if NAND_ADDR_5 == 1
+		NAND_ADDR_AREA = (_ulSrcPageNo & 0xFF0000) >> 16;
+	#endif
+
 	NAND_CMD_AREA = NAND_CMD_COPYBACK_B;
 
 	/* 必须等待，否则读出数据异常, 此处应该判断超时 */
-	for (i = 0; i < 20; i++);
-	while( GPIO_ReadInputDataBit(GPIOG, GPIO_Pin_6) == 0 );
+	WAIT_BUSY();
 
 	NAND_CMD_AREA = NAND_CMD_COPYBACK_C;
 
@@ -380,11 +462,23 @@ static uint8_t FSMC_NAND_PageCopyBackEx(uint32_t _ulSrcPageNo, uint32_t _ulTarPa
 		第2字节： 0    0    0    0    A11  A10  A9   A8		(_usPageAddr 的bit11 - bit8, 高4bit必须是0)
 		第3字节： A19  A18  A17  A16  A15  A14  A13  A12
 		第4字节： A27  A26  A25  A24  A23  A22  A21  A20
+
+		H27U4G8F2DTR (512MB)
+				  Bit7 Bit6 Bit5 Bit4 Bit3 Bit2 Bit1 Bit0
+		第1字节： A7   A6   A5   A4   A3   A2   A1   A0		(_usPageAddr 的bit7 - bit0)
+		第2字节： 0    0    0    0    A11  A10  A9   A8		(_usPageAddr 的bit11 - bit8, 高4bit必须是0)
+		第3字节： A19  A18  A17  A16  A15  A14  A13  A12
+		第4字节： A27  A26  A25  A24  A23  A22  A21  A20
+		第5字节： A28  A29  A30  A31  0    0    0    0
 	*/
 	NAND_ADDR_AREA = 0;
 	NAND_ADDR_AREA = 0;
 	NAND_ADDR_AREA = _ulTarPageNo;
 	NAND_ADDR_AREA = (_ulTarPageNo & 0xFF00) >> 8;
+
+	#if NAND_ADDR_5 == 1
+		NAND_ADDR_AREA = (_ulTarPageNo & 0xFF0000) >> 16;
+	#endif
 
 	/* 中间无需带数据, 也无需等待 */
 
@@ -402,16 +496,19 @@ static uint8_t FSMC_NAND_PageCopyBackEx(uint32_t _ulSrcPageNo, uint32_t _ulTarPa
 	NAND_CMD_AREA = NAND_CMD_COPYBACK_D;
 
 	/* 检查操作状态 */
-	if (FSMC_NAND_GetStatus() == NAND_READY)
+	if (FMC_NAND_GetStatus() == NAND_READY)
 	{
 		return NAND_OK;
 	}
+
+	printf_err("Error: FMC_NAND_PageCopyBackEx(src=%d, tar=%d, offset=%d, size=%d)\r\n",
+			_ulSrcPageNo, _ulTarPageNo, _usOffset, _usSize);
 	return NAND_FAIL;
 }
 
 /*
 *********************************************************************************************************
-*	函 数 名: FSMC_NAND_WritePage
+*	函 数 名: FMC_NAND_WritePage
 *	功能说明: 写一组数据至NandFlash指定页面的指定位置，写入的数据长度不大于一页的大小。
 *	形    参:  - _pBuffer: 指向包含待写数据的缓冲区
 *             - _ulPageNo: 页号，所有的页统一编码，范围为：0 - 65535
@@ -422,7 +519,7 @@ static uint8_t FSMC_NAND_PageCopyBackEx(uint32_t _ulSrcPageNo, uint32_t _ulTarPa
 *				- NAND_OK 表示成功
 *********************************************************************************************************
 */
-static uint8_t FSMC_NAND_WritePage(uint8_t *_pBuffer, uint32_t _ulPageNo, uint16_t _usAddrInPage, uint16_t _usByteCount)
+static uint8_t FMC_NAND_WritePage(uint8_t *_pBuffer, uint32_t _ulPageNo, uint16_t _usAddrInPage, uint16_t _usByteCount)
 {
 	uint16_t i;
 
@@ -435,11 +532,26 @@ static uint8_t FSMC_NAND_WritePage(uint8_t *_pBuffer, uint32_t _ulPageNo, uint16
 		第2字节： 0    0    0    0    A11  A10  A9   A8		(_usPageAddr 的bit11 - bit8, 高4bit必须是0)
 		第3字节： A19  A18  A17  A16  A15  A14  A13  A12
 		第4字节： A27  A26  A25  A24  A23  A22  A21  A20
+
+		H27U4G8F2DTR (512MB)
+				  Bit7 Bit6 Bit5 Bit4 Bit3 Bit2 Bit1 Bit0
+		第1字节： A7   A6   A5   A4   A3   A2   A1   A0		(_usPageAddr 的bit7 - bit0)
+		第2字节： 0    0    0    0    A11  A10  A9   A8		(_usPageAddr 的bit11 - bit8, 高4bit必须是0)
+		第3字节： A19  A18  A17  A16  A15  A14  A13  A12
+		第4字节： A27  A26  A25  A24  A23  A22  A21  A20
+		第5字节： A28  A29  A30  A31  0    0    0    0
 	*/
 	NAND_ADDR_AREA = _usAddrInPage;
 	NAND_ADDR_AREA = _usAddrInPage >> 8;
 	NAND_ADDR_AREA = _ulPageNo;
 	NAND_ADDR_AREA = (_ulPageNo & 0xFF00) >> 8;
+
+	#if NAND_ADDR_5 == 1
+		NAND_ADDR_AREA = (_ulPageNo & 0xFF0000) >> 16;
+	#endif
+
+	/* tADL = 100ns,  Address to Data Loading */
+	for (i = 0; i < 20; i++);	/* 需要大于 100ns */
 
 	/* 写数据 */
 	for(i = 0; i < _usByteCount; i++)
@@ -448,55 +560,91 @@ static uint8_t FSMC_NAND_WritePage(uint8_t *_pBuffer, uint32_t _ulPageNo, uint16
 	}
 	NAND_CMD_AREA = NAND_CMD_WRITE_TRUE1;
 
+	/* WE High to Busy , 100ns */
+	WAIT_BUSY();
+	
 	/* 检查操作状态 */
-	if (FSMC_NAND_GetStatus() == NAND_READY)
+	if (FMC_NAND_GetStatus() == NAND_READY)
 	{
+			/* 读出数据进行校验 */
+		#ifdef WRITE_PAGE_VERIFY_EN
+			FMC_NAND_ReadPage (s_ucTempBuf, _ulPageNo, _usAddrInPage, _usByteCount);
+			if (memcmp(s_ucTempBuf,  _pBuffer, _usByteCount) != 0)
+			{
+				printf_err("Error1: FMC_NAND_WritePage(page=%d, addr=%d, count=%d)\r\n",
+					_ulPageNo, _usAddrInPage, _usByteCount);				
+				return NAND_FAIL;	
+			}			
+		#endif
+		
 		return NAND_OK;
 	}
+
+	printf_err("Error2: FMC_NAND_WritePage(page=%d, addr=%d, count=%d)\r\n",
+		_ulPageNo, _usAddrInPage, _usByteCount);
+	
 	return NAND_FAIL;
 }
 
 /*
 *********************************************************************************************************
-*	函 数 名: FSMC_NAND_ReadPage
+*	函 数 名: FMC_NAND_ReadPage
 *	功能说明: 从NandFlash指定页面的指定位置读一组数据，读出的数据长度不大于一页的大小。
 *	形    参:  - _pBuffer: 指向包含待写数据的缓冲区
 *             - _ulPageNo: 页号，所有的页统一编码，范围为：0 - 65535
 *			  - _usAddrInPage : 页内地址，范围为：0-2111
-*             - _usByteCount: 字节个数
+*             - _usByteCount: 字节个数，  （最大 2048 + 64）
 *	返 回 值: 执行结果：
 *				- NAND_FAIL 表示失败
 *				- NAND_OK 表示成功
 *********************************************************************************************************
 */
-static uint8_t FSMC_NAND_ReadPage(uint8_t *_pBuffer, uint32_t _ulPageNo, uint16_t _usAddrInPage, uint16_t _usByteCount)
+static uint8_t FMC_NAND_ReadPage(uint8_t *_pBuffer, uint32_t _ulPageNo, uint16_t _usAddrInPage, uint16_t _usByteCount)
 {
 	uint16_t i;
 
     /* 发送页面读命令 */
     NAND_CMD_AREA = NAND_CMD_AREA_A;
 
-	/* 发送页内地址 ， 对于 HY27UF081G2A
+	/* 发送页内地址 ， 对于 HY27UF081G2A  (128MB)
 				  Bit7 Bit6 Bit5 Bit4 Bit3 Bit2 Bit1 Bit0
 		第1字节： A7   A6   A5   A4   A3   A2   A1   A0		(_usPageAddr 的bit7 - bit0)
 		第2字节： 0    0    0    0    A11  A10  A9   A8		(_usPageAddr 的bit11 - bit8, 高4bit必须是0)
 		第3字节： A19  A18  A17  A16  A15  A14  A13  A12
 		第4字节： A27  A26  A25  A24  A23  A22  A21  A20
+
+		H27U4G8F2DTR (512MB)
+				  Bit7 Bit6 Bit5 Bit4 Bit3 Bit2 Bit1 Bit0
+		第1字节： A7   A6   A5   A4   A3   A2   A1   A0		(_usPageAddr 的bit7 - bit0)
+		第2字节： 0    0    0    0    A11  A10  A9   A8		(_usPageAddr 的bit11 - bit8, 高4bit必须是0)
+		第3字节： A19  A18  A17  A16  A15  A14  A13  A12
+		第4字节： A27  A26  A25  A24  A23  A22  A21  A20
+		第5字节： A28  A29  A30  A31  0    0    0    0
 	*/
 	NAND_ADDR_AREA = _usAddrInPage;
 	NAND_ADDR_AREA = _usAddrInPage >> 8;
 	NAND_ADDR_AREA = _ulPageNo;
 	NAND_ADDR_AREA = (_ulPageNo & 0xFF00) >> 8;
 
+	#if NAND_ADDR_5 == 1
+		NAND_ADDR_AREA = (_ulPageNo & 0xFF0000) >> 16;
+	#endif
+
 	NAND_CMD_AREA = NAND_CMD_AREA_TRUE1;
 
 	 /* 必须等待，否则读出数据异常, 此处应该判断超时 */
-	for (i = 0; i < 20; i++);
-	while( GPIO_ReadInputDataBit(GPIOG, GPIO_Pin_6) == 0);
+	WAIT_BUSY();
 
 	/* 读数据到缓冲区pBuffer */
 	for(i = 0; i < _usByteCount; i++)
 	{
+		/* 
+			由于429的LTDC显示部件会定时访问SDRAM，因此访问 NAND Flash时必须避开LTDC访问SDRAM，否则总线冲突。
+			导致的结果变量幅值语句失效。
+			下面的处理方法并不妥当，但是如果显示NAND图片时，基本上看不出来问题.					
+		*/
+		//while (LTDC->CDSR);
+		
 		_pBuffer[i] = NAND_DATA_AREA;
 	}
 
@@ -505,7 +653,70 @@ static uint8_t FSMC_NAND_ReadPage(uint8_t *_pBuffer, uint32_t _ulPageNo, uint16_
 
 /*
 *********************************************************************************************************
-*	函 数 名: FSMC_NAND_WriteSpare
+*	函 数 名: FMC_NAND_CompPage
+*	功能说明: 比较数据
+*	形    参:  - _pBuffer: 指向包含待比较的数据缓冲区
+*             - _ulPageNo: 页号，所有的页统一编码，范围为：0 - 65535
+*			  - _usAddrInPage : 页内地址，范围为：0-2111
+*             - _usByteCount: 字节个数，  （最大 2048 + 64）
+*	返 回 值: 执行结果：
+*				- NAND_FAIL 表示失败
+*				- NAND_OK 表示成功， 相等
+*********************************************************************************************************
+*/
+static uint8_t FMC_NAND_CompPage(uint8_t *_pBuffer, uint32_t _ulPageNo, uint16_t _usAddrInPage, uint16_t _usByteCount)
+{
+	uint16_t i;
+
+    /* 发送页面读命令 */
+    NAND_CMD_AREA = NAND_CMD_AREA_A;
+
+	/* 发送页内地址 ， 对于 HY27UF081G2A  (128MB)
+				  Bit7 Bit6 Bit5 Bit4 Bit3 Bit2 Bit1 Bit0
+		第1字节： A7   A6   A5   A4   A3   A2   A1   A0		(_usPageAddr 的bit7 - bit0)
+		第2字节： 0    0    0    0    A11  A10  A9   A8		(_usPageAddr 的bit11 - bit8, 高4bit必须是0)
+		第3字节： A19  A18  A17  A16  A15  A14  A13  A12
+		第4字节： A27  A26  A25  A24  A23  A22  A21  A20
+
+		H27U4G8F2DTR (512MB)
+				  Bit7 Bit6 Bit5 Bit4 Bit3 Bit2 Bit1 Bit0
+		第1字节： A7   A6   A5   A4   A3   A2   A1   A0		(_usPageAddr 的bit7 - bit0)
+		第2字节： 0    0    0    0    A11  A10  A9   A8		(_usPageAddr 的bit11 - bit8, 高4bit必须是0)
+		第3字节： A19  A18  A17  A16  A15  A14  A13  A12
+		第4字节： A27  A26  A25  A24  A23  A22  A21  A20
+		第5字节： A28  A29  A30  A31  0    0    0    0
+	*/
+	NAND_ADDR_AREA = _usAddrInPage;
+	NAND_ADDR_AREA = _usAddrInPage >> 8;
+	NAND_ADDR_AREA = _ulPageNo;
+	NAND_ADDR_AREA = (_ulPageNo & 0xFF00) >> 8;
+
+	#if NAND_ADDR_5 == 1
+		NAND_ADDR_AREA = (_ulPageNo & 0xFF0000) >> 16;
+	#endif
+
+	NAND_CMD_AREA = NAND_CMD_AREA_TRUE1;
+
+	 /* 必须等待，否则读出数据异常, 此处应该判断超时 */
+	WAIT_BUSY();
+
+	/* 读数据到缓冲区pBuffer */
+	for(i = 0; i < _usByteCount; i++)
+	{
+		//while (LTDC->CDSR);
+		
+		if (_pBuffer[i] != NAND_DATA_AREA)
+		{
+			return NAND_FAIL;
+		}
+	}
+
+	return NAND_OK;
+}
+
+/*
+*********************************************************************************************************
+*	函 数 名: FMC_NAND_WriteSpare
 *	功能说明: 向1个PAGE的Spare区写入数据
 *	形    参:  - _pBuffer: 指向包含待写数据的缓冲区
 *             - _ulPageNo: 页号，所有的页统一编码，范围为：0 - 65535
@@ -516,19 +727,20 @@ static uint8_t FSMC_NAND_ReadPage(uint8_t *_pBuffer, uint32_t _ulPageNo, uint16_
 *				- NAND_OK 表示成功
 *********************************************************************************************************
 */
-static uint8_t FSMC_NAND_WriteSpare(uint8_t *_pBuffer, uint32_t _ulPageNo, uint16_t _usAddrInSpare, uint16_t _usByteCount)
+static uint8_t FMC_NAND_WriteSpare(uint8_t *_pBuffer, uint32_t _ulPageNo, uint16_t _usAddrInSpare, uint16_t _usByteCount)
 {
 	if (_usByteCount > NAND_SPARE_AREA_SIZE)
 	{
+		printf_err("Error: FMC_NAND_WriteSpare() %d\r\n",_usByteCount);
 		return NAND_FAIL;
 	}
 
-	return FSMC_NAND_WritePage(_pBuffer, _ulPageNo, NAND_PAGE_SIZE + _usAddrInSpare, _usByteCount);
+	return FMC_NAND_WritePage(_pBuffer, _ulPageNo, NAND_PAGE_SIZE + _usAddrInSpare, _usByteCount);
 }
 
 /*
 *********************************************************************************************************
-*	函 数 名: FSMC_NAND_ReadSpare
+*	函 数 名: FMC_NAND_ReadSpare
 *	功能说明: 读1个PAGE的Spare区的数据
 *	形    参:  - _pBuffer: 指向包含待写数据的缓冲区
 *             - _ulPageNo: 页号，所有的页统一编码，范围为：0 - 65535
@@ -539,19 +751,20 @@ static uint8_t FSMC_NAND_WriteSpare(uint8_t *_pBuffer, uint32_t _ulPageNo, uint1
 *				- NAND_OK 表示成功
 *********************************************************************************************************
 */
-static uint8_t FSMC_NAND_ReadSpare(uint8_t *_pBuffer, uint32_t _ulPageNo, uint16_t _usAddrInSpare, uint16_t _usByteCount)
+static uint8_t FMC_NAND_ReadSpare(uint8_t *_pBuffer, uint32_t _ulPageNo, uint16_t _usAddrInSpare, uint16_t _usByteCount)
 {
 	if (_usByteCount > NAND_SPARE_AREA_SIZE)
 	{
+		printf_err("Error: FMC_NAND_ReadSpare() %d\r\n",_usByteCount);
 		return NAND_FAIL;
 	}
 
-	return FSMC_NAND_ReadPage(_pBuffer, _ulPageNo, NAND_PAGE_SIZE + _usAddrInSpare, _usByteCount);
+	return FMC_NAND_ReadPage(_pBuffer, _ulPageNo, NAND_PAGE_SIZE + _usAddrInSpare, _usByteCount);
 }
 
 /*
 *********************************************************************************************************
-*	函 数 名: FSMC_NAND_WriteData
+*	函 数 名: FMC_NAND_WriteData
 *	功能说明: 向1个PAGE的主数据区写入数据
 *	形    参:  - _pBuffer: 指向包含待写数据的缓冲区
 *             - _ulPageNo: 页号，所有的页统一编码，范围为：0 - 65535
@@ -562,19 +775,20 @@ static uint8_t FSMC_NAND_ReadSpare(uint8_t *_pBuffer, uint32_t _ulPageNo, uint16
 *				- NAND_OK 表示成功
 *********************************************************************************************************
 */
-static uint8_t FSMC_NAND_WriteData(uint8_t *_pBuffer, uint32_t _ulPageNo, uint16_t _usAddrInPage, uint16_t _usByteCount)
+static uint8_t FMC_NAND_WriteData(uint8_t *_pBuffer, uint32_t _ulPageNo, uint16_t _usAddrInPage, uint16_t _usByteCount)
 {
 	if (_usByteCount > NAND_PAGE_SIZE)
 	{
+		printf_err("Error: FMC_NAND_WriteData() %d\r\n",_usByteCount);
 		return NAND_FAIL;
 	}
 
-	return FSMC_NAND_WritePage(_pBuffer, _ulPageNo, _usAddrInPage, _usByteCount);
+	return FMC_NAND_WritePage(_pBuffer, _ulPageNo, _usAddrInPage, _usByteCount);
 }
 
 /*
 *********************************************************************************************************
-*	函 数 名: FSMC_NAND_ReadData
+*	函 数 名: FMC_NAND_ReadData
 *	功能说明: 读1个PAGE的主数据的数据
 *	形    参:  - _pBuffer: 指向包含待写数据的缓冲区
 *             - _ulPageNo: 页号，所有的页统一编码，范围为：0 - 65535
@@ -585,54 +799,78 @@ static uint8_t FSMC_NAND_WriteData(uint8_t *_pBuffer, uint32_t _ulPageNo, uint16
 *				- NAND_OK 表示成功
 *********************************************************************************************************
 */
-static uint8_t FSMC_NAND_ReadData(uint8_t *_pBuffer, uint32_t _ulPageNo, uint16_t _usAddrInPage, uint16_t _usByteCount)
+static uint8_t FMC_NAND_ReadData(uint8_t *_pBuffer, uint32_t _ulPageNo, uint16_t _usAddrInPage, uint16_t _usByteCount)
 {
 	if (_usByteCount > NAND_PAGE_SIZE)
 	{
+		printf_err("Error: FMC_NAND_ReadData() %d\r\n",_usByteCount);
 		return NAND_FAIL;
 	}
 
-	return FSMC_NAND_ReadPage(_pBuffer, _ulPageNo, _usAddrInPage, _usByteCount);
+	return FMC_NAND_ReadPage(_pBuffer, _ulPageNo, _usAddrInPage, _usByteCount);
 }
 
 /*
 *********************************************************************************************************
-*	函 数 名: FSMC_NAND_EraseBlock
+*	函 数 名: FMC_NAND_EraseBlock
 *	功能说明: 擦除NAND Flash一个块（block）
-*	形    参:  - _ulBlockNo: 块号，范围为：0 - 1023
+*	形    参:  - _ulBlockNo: 块号，范围为：0 - 1023,   0-4095
 *	返 回 值: NAND操作状态，有如下几种值：
 *             - NAND_TIMEOUT_ERROR  : 超时错误
 *             - NAND_READY          : 操作成功
 *********************************************************************************************************
 */
-static uint8_t FSMC_NAND_EraseBlock(uint32_t _ulBlockNo)
+static uint8_t FMC_NAND_EraseBlock(uint32_t _ulBlockNo)
 {
+	/* HY27UF081G2A  (128MB)
+				  Bit7 Bit6 Bit5 Bit4 Bit3 Bit2 Bit1 Bit0
+		第1字节： A7   A6   A5   A4   A3   A2   A1   A0		(_usPageAddr 的bit7 - bit0)
+		第2字节： 0    0    0    0    A11  A10  A9   A8		(_usPageAddr 的bit11 - bit8, 高4bit必须是0)
+		第3字节： A19  A18  A17  A16  A15  A14  A13  A12    A18以上是块号
+		第4字节： A27  A26  A25  A24  A23  A22  A21  A20
+
+		H27U4G8F2DTR (512MB)
+				  Bit7 Bit6 Bit5 Bit4 Bit3 Bit2 Bit1 Bit0
+		第1字节： A7   A6   A5   A4   A3   A2   A1   A0		(_usPageAddr 的bit7 - bit0)
+		第2字节： 0    0    0    0    A11  A10  A9   A8		(_usPageAddr 的bit11 - bit8, 高4bit必须是0)
+		第3字节： A19  A18  A17  A16  A15  A14  A13  A12    A18以上是块号
+		第4字节： A27  A26  A25  A24  A23  A22  A21  A20
+		第5字节： A28  A29  A30  A31  0    0    0    0
+	*/
+
 	/* 发送擦除命令 */
 	NAND_CMD_AREA = NAND_CMD_ERASE0;
 
 	_ulBlockNo <<= 6;	/* 块号转换为页编号 */
-	NAND_ADDR_AREA = _ulBlockNo;
-	NAND_ADDR_AREA = _ulBlockNo >> 8;
+
+	#if NAND_ADDR_5 == 0	/* 128MB的 */
+		NAND_ADDR_AREA = _ulBlockNo;
+		NAND_ADDR_AREA = _ulBlockNo >> 8;
+	#else		/* 512MB的 */
+		NAND_ADDR_AREA = _ulBlockNo;
+		NAND_ADDR_AREA = _ulBlockNo >> 8;
+		NAND_ADDR_AREA = _ulBlockNo >> 16;
+	#endif
 
 	NAND_CMD_AREA = NAND_CMD_ERASE1;
 
-	return (FSMC_NAND_GetStatus());
+	return (FMC_NAND_GetStatus());
 }
 
 /*
 *********************************************************************************************************
-*	函 数 名: FSMC_NAND_Reset
+*	函 数 名: FMC_NAND_Reset
 *	功能说明: 复位NAND Flash
 *	形    参:  无
 *	返 回 值: 无
 *********************************************************************************************************
 */
-static uint8_t FSMC_NAND_Reset(void)
+static uint8_t FMC_NAND_Reset(void)
 {
 	NAND_CMD_AREA = NAND_CMD_RESET;
 
 		/* 检查操作状态 */
-	if (FSMC_NAND_GetStatus() == NAND_READY)
+	if (FMC_NAND_GetStatus() == NAND_READY)
 	{
 		return NAND_OK;
 	}
@@ -642,7 +880,7 @@ static uint8_t FSMC_NAND_Reset(void)
 
 /*
 *********************************************************************************************************
-*	函 数 名: FSMC_NAND_ReadStatus
+*	函 数 名: FMC_NAND_ReadStatus
 *	功能说明: 使用Read statuc 命令读NAND Flash内部状态
 *	形    参:  - Address: 被擦除的快内任意地址
 *	返 回 值: NAND操作状态，有如下几种值：
@@ -651,7 +889,7 @@ static uint8_t FSMC_NAND_Reset(void)
 *             - NAND_ERROR: 先前的命令执行失败
 *********************************************************************************************************
 */
-static uint8_t FSMC_NAND_ReadStatus(void)
+static uint8_t FMC_NAND_ReadStatus(void)
 {
 	uint8_t ucData;
 	uint8_t ucStatus = NAND_BUSY;
@@ -678,7 +916,7 @@ static uint8_t FSMC_NAND_ReadStatus(void)
 
 /*
 *********************************************************************************************************
-*	函 数 名: FSMC_NAND_GetStatus
+*	函 数 名: FMC_NAND_GetStatus
 *	功能说明: 获取NAND Flash操作状态
 *	形    参:  - Address: 被擦除的快内任意地址
 *	返 回 值: NAND操作状态，有如下几种值：
@@ -686,17 +924,18 @@ static uint8_t FSMC_NAND_ReadStatus(void)
 *             - NAND_READY          : 操作成功
 *********************************************************************************************************
 */
-static uint8_t FSMC_NAND_GetStatus(void)
+static uint8_t FMC_NAND_GetStatus(void)
 {
-	uint32_t ulTimeout = 0x10000;
+	//uint32_t ulTimeout = 0x10000;  128M,  512M
+	uint32_t ulTimeout = 0x20000;
 	uint8_t ucStatus = NAND_READY;
 
-	ucStatus = FSMC_NAND_ReadStatus();
+	ucStatus = FMC_NAND_ReadStatus();
 
 	/* 等待NAND操作结束，超时后会退出 */
 	while ((ucStatus != NAND_READY) &&( ulTimeout != 0x00))
 	{
-		ucStatus = FSMC_NAND_ReadStatus();
+		ucStatus = FMC_NAND_ReadStatus();
 		ulTimeout--;
 	}
 
@@ -723,9 +962,9 @@ uint8_t NAND_Init(void)
 {
 	uint8_t Status;
 
-	FSMC_NAND_Init();			/* 配置FSMC和GPIO用于NAND Flash接口 */
+	FMC_NAND_Init();			/* 配置FSMC和GPIO用于NAND Flash接口 */
 
-	FSMC_NAND_Reset();			/* 通过复位命令复位NAND Flash到读状态 */
+	FMC_NAND_Reset();			/* 通过复位命令复位NAND Flash到读状态 */
 
 	Status = NAND_BuildLUT();	/* 建立块管理表 LUT = Look up table */
 	return Status;
@@ -734,7 +973,7 @@ uint8_t NAND_Init(void)
 /*
 *********************************************************************************************************
 *	函 数 名: NAND_WriteToNewBlock
-*	功能说明: 将旧块的数据复制到新块，并将新的数据段写入这个新块
+*	功能说明: 将旧块的数据复制到新块，并将新的数据段写入这个新块. 
 *	形    参:  	_ulPhyPageNo : 源页号
 *				_pWriteBuf ： 数据缓冲区
 *				_usOffset ： 页内偏移地址
@@ -757,32 +996,39 @@ uint8_t NAND_WriteToNewBlock(uint32_t _ulPhyPageNo, uint8_t *_pWriteBuf, uint16_
 	for (n = 0; n < 10; n++)
 	{
 		/* 如果不是全0xFF， 则需要寻找一个空闲可用块，并将页内的数据全部移到新块中，然后擦除这个块 */
-		usNewBlock = NAND_FindFreeBlock();	/* 从最后一个Block开始，搜寻一个可用块 */
+		usNewBlock = NAND_FindFreeBlock(_ulPhyPageNo);	/* 从最后一个Block开始，搜寻一个可用块.  */
 		if (usNewBlock >= NAND_BLOCK_COUNT)
 		{
+			printf_err("Error1: NAND_FindFreeBlock() %d\r\n", usNewBlock);
 			return NAND_FAIL;	/* 查找空闲块失败 */
 		}
 
+		printf_ok("NAND_WriteToNewBlock(%d -> %d)\r\n", ulSrcBlock, usNewBlock);
+		
 		/* 使用page-copy功能，将当前块（usPBN）的数据全部搬移到新块（usNewBlock） */
 		for (i = 0; i < NAND_BLOCK_SIZE; i++)
 		{
 			if (i == usOffsetPageNo)
 			{
 				/* 如果写入的数据在当前页，则需要使用带随机数据的Copy-Back命令 */
-				if (FSMC_NAND_PageCopyBackEx(ulSrcBlock * NAND_BLOCK_SIZE + i, usNewBlock * NAND_BLOCK_SIZE + i,
+				if (FMC_NAND_PageCopyBackEx(ulSrcBlock * NAND_BLOCK_SIZE + i, usNewBlock * NAND_BLOCK_SIZE + i,
 					_pWriteBuf, _usOffset, _usSize) == NAND_FAIL)
 				{
+					printf_err("Error2: NAND_WriteToNewBlock() %d\r\n", ulSrcBlock);
 					NAND_MarkBadBlock(usNewBlock);	/* 将新块标记为坏块 */
 					NAND_BuildLUT();				/* 重建LUT表 */
 					break;
 				}
+
 			}
 			else
 			{
 				/* 使用NAND Flash 提供的整页Copy-Back功能，可以显著提高操作效率 */
-				if (FSMC_NAND_PageCopyBack(ulSrcBlock * NAND_BLOCK_SIZE + i,
+				if (FMC_NAND_PageCopyBack(ulSrcBlock * NAND_BLOCK_SIZE + i,
 					usNewBlock * NAND_BLOCK_SIZE + i) == NAND_FAIL)
 				{
+					printf_err("Error3: NAND_WriteToNewBlock() %d\r\n", ulSrcBlock);
+					
 					NAND_MarkBadBlock(usNewBlock);	/* 将新块标记为坏块 */
 					NAND_BuildLUT();				/* 重建LUT表 */
 					break;
@@ -800,9 +1046,10 @@ uint8_t NAND_WriteToNewBlock(uint32_t _ulPhyPageNo, uint8_t *_pWriteBuf, uint16_
 				continue;
 			}
 
-			/* 擦除源BLOCK */
-			if (FSMC_NAND_EraseBlock(ulSrcBlock) != NAND_READY)
+			/* 擦除源BLOCK  (如果源块写失败，则会擦除坏块标记) */
+			if (FMC_NAND_EraseBlock(ulSrcBlock) != NAND_READY)
 			{
+				printf_err("Error4: FMC_NAND_EraseBlock(), %d\r\n", ulSrcBlock);
 				NAND_MarkBadBlock(ulSrcBlock);	/* 将源块标记为坏块 */
 				NAND_BuildLUT();				/* 重建LUT表 */
 				continue;
@@ -810,6 +1057,15 @@ uint8_t NAND_WriteToNewBlock(uint32_t _ulPhyPageNo, uint8_t *_pWriteBuf, uint16_
 			NAND_BuildLUT();				/* 重建LUT表 */
 			break;
 		}
+		else	/* 更新失败 */
+		{
+			printf_err("Error4: NAND_WriteToNewBlock(), %d\r\n", ulSrcBlock);
+		}
+	}
+	if (n == 10)
+	{
+		printf_err("Error5: NAND_WriteToNewBlock() n=%d\r\n", n);
+		return NAND_FAIL;
 	}
 
 	return NAND_OK;	/* 写入成功 */
@@ -837,11 +1093,13 @@ uint8_t NAND_Write(uint32_t _ulMemAddr, uint32_t *_pWriteBuf, uint16_t _usSize)
 	/* 数据长度必须是4字节整数倍 */
 	if ((_usSize % 4) != 0)
 	{
+		printf_err("Error:1 NAND_Write()  %d\r\n",_usSize);
 		return NAND_FAIL;
 	}
 	/* 数据长度不能超过512字节(遵循 Fat格式) */
 	if (_usSize > 512)
 	{
+		printf_err("Error:2 NAND_Write() %d\r\n",_usSize);
 		//return NAND_FAIL;
 	}
 
@@ -852,21 +1110,21 @@ uint8_t NAND_Write(uint32_t _ulMemAddr, uint32_t *_pWriteBuf, uint16_t _usSize)
 	usAddrInPage = ulTemp % NAND_PAGE_SIZE;	/* 计算页内偏移地址 */
 
 	/* 读出扇区的内容，判断是否全FF */
-	if (FSMC_NAND_ReadData(s_ucTempBuf, ulPhyPageNo, usAddrInPage, _usSize) == NAND_FAIL)
+	if (FMC_NAND_ReadData(s_ucTempBuf, ulPhyPageNo, usAddrInPage, _usSize) == NAND_FAIL)
 	{
 		return NAND_FAIL;	/* 读NAND Flash失败 */
 	}
 	/*　如果是全0xFF, 则可以直接写入，无需擦除 */
-	if (NAND_IsBufOk(s_ucTempBuf, _usSize, 0xFF))
+	if (NAND_IsBufOk(s_ucTempBuf, _usSize, 0xFF) == 1)
 	{
-		if (FSMC_NAND_WriteData((uint8_t *)_pWriteBuf, ulPhyPageNo, usAddrInPage, _usSize) == NAND_FAIL)
+		if (FMC_NAND_WriteData((uint8_t *)_pWriteBuf, ulPhyPageNo, usAddrInPage, _usSize) == NAND_FAIL)
 		{
 			/* 将数据写入到另外一个块（空闲块） */
 			return NAND_WriteToNewBlock(ulPhyPageNo, (uint8_t *)_pWriteBuf, usAddrInPage, _usSize);
 		}
 
 		/* 标记该块已用 */
-		if (NAND_MarkUsedBlock(ulPhyPageNo) == NAND_FAIL)
+		if (NAND_MarkUsedBlock(ulPhyPageNo / NAND_BLOCK_SIZE) == NAND_FAIL)
 		{
 			/* 标记失败，将数据写入到另外一个块（空闲块） */
 			return NAND_WriteToNewBlock(ulPhyPageNo, (uint8_t *)_pWriteBuf, usAddrInPage, _usSize);
@@ -900,6 +1158,7 @@ uint8_t NAND_Read(uint32_t _ulMemAddr, uint32_t *_pReadBuf, uint16_t _usSize)
 	/* 数据长度必须是4字节整数倍 */
 	if ((_usSize % 4) != 0)
 	{
+		printf_err("Error:1 NAND_Read(_usSize)  %d\r\n",_usSize);
 		return NAND_FAIL;
 	}
 
@@ -907,6 +1166,7 @@ uint8_t NAND_Read(uint32_t _ulMemAddr, uint32_t *_pReadBuf, uint16_t _usSize)
 	if (usPBN >= NAND_BLOCK_COUNT)
 	{
 		/* 没有格式化，usPBN = 0xFFFF */
+		printf_err("Error:1 NAND_Write() usPBN %d\r\n",usPBN);
 		return NAND_FAIL;
 	}
 
@@ -914,7 +1174,7 @@ uint8_t NAND_Read(uint32_t _ulMemAddr, uint32_t *_pReadBuf, uint16_t _usSize)
 	ulPhyPageNo = usPBN * NAND_BLOCK_SIZE + ulTemp / NAND_PAGE_SIZE;	/* 计算物理页号 */
 	usAddrInPage = ulTemp % NAND_PAGE_SIZE;	/* 计算页内偏移地址 */
 
-	if (FSMC_NAND_ReadData((uint8_t *)_pReadBuf, ulPhyPageNo, usAddrInPage, _usSize) == NAND_FAIL)
+	if (FMC_NAND_ReadData((uint8_t *)_pReadBuf, ulPhyPageNo, usAddrInPage, _usSize) == NAND_FAIL)
 	{
 		return NAND_FAIL;	/* 读NAND Flash失败 */
 	}
@@ -929,7 +1189,7 @@ uint8_t NAND_Read(uint32_t _ulMemAddr, uint32_t *_pReadBuf, uint16_t _usSize)
 *	功能说明: 该函数用于文件系统，连续写多个扇区数据。扇区大小可以是512字节或2048字节
 *	形    参:  	_pBuf : 存放数据的缓冲区的指针
 *				_SectorNo ：扇区号
-*				_SectorSize ：每个扇区的大小
+*				_SectorSize ：每个扇区的大小 （一般是 512字节）
 *				_SectorCount : 扇区个数
 *	返 回 值: 执行结果：
 *				- NAND_FAIL 表示失败
@@ -962,6 +1222,7 @@ uint8_t NAND_WriteMultiSectors(uint8_t *_pBuf, uint32_t _SectorNo, uint16_t _Sec
 		usPBN = NAND_LBNtoPBN(usLBN);	/* 查询LUT表获得物理块号 */
 		if (usPBN >= NAND_BLOCK_COUNT)
 		{
+			printf_err("Error1: NAND_WriteMultiSectors(), no format. usLBN=%d, usPBN=%d\r\n", usLBN, usPBN);
 			/* 没有格式化，usPBN = 0xFFFF */
 			return NAND_FAIL;
 		}
@@ -976,34 +1237,38 @@ uint8_t NAND_WriteMultiSectors(uint8_t *_pBuf, uint32_t _SectorNo, uint16_t _Sec
 		{
 			/* 暂未处理 */
 		}
-
-		/* 读出扇区的内容，判断是否全FF */
-		if (FSMC_NAND_ReadData(s_ucTempBuf, uiPhyPageNo, usAddrInPage, _SectorSize) == NAND_FAIL)
-		{
-			return NAND_FAIL;	/* 失败 */
-		}
+		
+		memset(s_ucTempBuf, 0xFF, _SectorSize);
 
 		/*　如果是全0xFF, 则可以直接写入，无需擦除 */
-		if (NAND_IsBufOk(s_ucTempBuf, _SectorSize, 0xFF))
+		//if (NAND_IsBufOk(s_ucTempBuf, _SectorSize, 0xFF) == 1)
+		if (FMC_NAND_CompPage(s_ucTempBuf, uiPhyPageNo, usAddrInPage, _SectorSize) == NAND_OK)
 		{
-			if (FSMC_NAND_WriteData(&_pBuf[i * _SectorSize], uiPhyPageNo, usAddrInPage, _SectorSize) == NAND_FAIL)
+			if (FMC_NAND_WriteData(&_pBuf[i * _SectorSize], uiPhyPageNo, usAddrInPage, _SectorSize) == NAND_FAIL)
 			{
+				printf_err("Error3: NAND_WriteMultiSectors(), Write Faile\r\n");
 				/* 将数据写入到另外一个块（空闲块） */
 				ucReturn = NAND_WriteToNewBlock(uiPhyPageNo, &_pBuf[i * _SectorSize], usAddrInPage, _SectorSize);
 				if (ucReturn != NAND_OK)
 				{
+					printf_err("Error4: NAND_WriteMultiSectors(), Write Faile\r\n");
 					return NAND_FAIL;	/* 失败 */
 				}
+				
+				printf_err("Error4a: NAND_MarkBadBlock() Faile\r\n");
+				/* 标记源块为坏块 */
+				NAND_MarkBadBlock(uiPhyPageNo / NAND_BLOCK_SIZE);	/* 将源块标记为坏块 */
 				continue;
 			}
 
 			/* 标记该块已用 */
-			if (NAND_MarkUsedBlock(uiPhyPageNo) == NAND_FAIL)
+			if (NAND_MarkUsedBlock(uiPhyPageNo / NAND_BLOCK_SIZE) == NAND_FAIL)
 			{
 				/* 标记失败，将数据写入到另外一个块（空闲块） */
 				ucReturn = NAND_WriteToNewBlock(uiPhyPageNo, &_pBuf[i * _SectorSize], usAddrInPage, _SectorSize);
 				if (ucReturn != NAND_OK)
 				{
+					printf_err("Error4: Mark Used Block Faile\r\n");
 					return NAND_FAIL;	/* 失败 */
 				}
 				continue;
@@ -1015,6 +1280,7 @@ uint8_t NAND_WriteMultiSectors(uint8_t *_pBuf, uint32_t _SectorNo, uint16_t _Sec
 			ucReturn = NAND_WriteToNewBlock(uiPhyPageNo, &_pBuf[i * _SectorSize], usAddrInPage, _SectorSize);
 			if (ucReturn != NAND_OK)
 			{
+				printf_err("Error5: NAND_WriteMultiSectors(), Write Faile\r\n");
 				return NAND_FAIL;	/* 失败 */
 			}
 			continue;
@@ -1061,6 +1327,7 @@ uint8_t NAND_ReadMultiSectors(uint8_t *_pBuf, uint32_t _SectorNo, uint16_t _Sect
 		usPBN = NAND_LBNtoPBN(usLBN);	/* 查询LUT表获得物理块号 */
 		if (usPBN >= NAND_BLOCK_COUNT)
 		{
+			printf_err("Error: NAND_ReadMultiSectors(), not format, usPBN = %d\r\n", usPBN);
 			/* 没有格式化，usPBN = 0xFFFF */
 			return NAND_FAIL;
 		}
@@ -1069,8 +1336,9 @@ uint8_t NAND_ReadMultiSectors(uint8_t *_pBuf, uint32_t _SectorNo, uint16_t _Sect
 		uiPhyPageNo = usPBN * NAND_BLOCK_SIZE + ulTemp / NAND_PAGE_SIZE;	/* 计算物理页号 */
 		usAddrInPage = ulTemp % NAND_PAGE_SIZE;	/* 计算页内偏移地址 */
 
-		if (FSMC_NAND_ReadData((uint8_t *)&_pBuf[i * _SectorSize], uiPhyPageNo, usAddrInPage, _SectorSize) == NAND_FAIL)
+		if (FMC_NAND_ReadData((uint8_t *)&_pBuf[i * _SectorSize], uiPhyPageNo, usAddrInPage, _SectorSize) == NAND_FAIL)
 		{
+			printf_err("Error: NAND_ReadMultiSectors(), ReadData(page = %d, addr = %d)\r\n", uiPhyPageNo, usAddrInPage);
 			return NAND_FAIL;	/* 读NAND Flash失败 */
 		}
 	}
@@ -1101,7 +1369,7 @@ static uint8_t NAND_BuildLUT(void)
 	for (i = 0; i < NAND_BLOCK_COUNT; i++)
 	{
 		/* 读每个块的第1个PAGE，偏移地址为LBN0_OFFSET的数据 */
-		FSMC_NAND_ReadSpare(buf, i * NAND_BLOCK_SIZE, 0, VALID_SPARE_SIZE);
+		FMC_NAND_ReadSpare(buf, i * NAND_BLOCK_SIZE, 0, VALID_SPARE_SIZE);
 
 		/* 如果是好块，则记录LBN0 LBN1 */
 		if (buf[BI_OFFSET] == 0xFF)
@@ -1195,26 +1463,44 @@ static uint16_t NAND_LBNtoPBN(uint32_t _uiLBN)
 /*
 *********************************************************************************************************
 *	函 数 名: NAND_FindFreeBlock
-*	功能说明: 从最后一个块开始，查找一个可用的块。
-*	形    参:  ZoneNbr ：区号
+*	功能说明: 从最后一个块开始，查找一个可用的块。A18必须相同
+*	形    参: _ulSrcPageNo : 源页号
 *	返 回 值: 块号，如果是0xFFFF表示失败
 *********************************************************************************************************
 */
-static uint16_t NAND_FindFreeBlock (void)
+static uint16_t NAND_FindFreeBlock (uint32_t _ulSrcPageNo)
 {
-	uint16_t i;
 	uint16_t n;
 
 	n = NAND_BLOCK_COUNT - 1;
-	for (i = 0; i < NAND_BLOCK_COUNT; i++)
+	if (_ulSrcPageNo & 0x40)	/* 需要奇数块 */
 	{
-		if (NAND_IsFreeBlock(n))
+		if ((n & 0x01) == 0)
+		{
+			n--;
+		}
+	}
+	else	/* 需要偶数块 */
+	{
+		if (n & 0x01)
+		{
+			n--;
+		}
+	}
+
+	while (1)
+	{
+		if (NAND_IsFreeBlock(n))	/* 是空闲块 */
 		{
 			return n;
 		}
-		n--;
+
+		if (n < 2)
+		{
+			return 0xFFFF;	/* 没有找到空闲的块 */
+		}
+		n -= 2;
 	}
-	return 0xFFFF;
 }
 
 /*
@@ -1255,13 +1541,13 @@ static uint8_t NAND_IsBufOk(uint8_t *_pBuf, uint32_t _ulLen, uint8_t _ucValue)
 	uint8_t ucFlag;
 
 	/* 如果NAND Flash出厂前已经标注为坏块了，则就认为是坏块 */
-	FSMC_NAND_ReadSpare(&ucFlag, _ulBlockNo * NAND_BLOCK_SIZE, BI_OFFSET, 1);
+	FMC_NAND_ReadSpare(&ucFlag, _ulBlockNo * NAND_BLOCK_SIZE, BI_OFFSET, 1);
 	if (ucFlag != 0xFF)
 	{
 		return 1;
 	}
 
-	FSMC_NAND_ReadSpare(&ucFlag, _ulBlockNo * NAND_BLOCK_SIZE + 1, BI_OFFSET, 1);
+	FMC_NAND_ReadSpare(&ucFlag, _ulBlockNo * NAND_BLOCK_SIZE + 1, BI_OFFSET, 1);
 	if (ucFlag != 0xFF)
 	{
 		return 1;
@@ -1287,7 +1573,8 @@ static uint8_t NAND_IsFreeBlock(uint32_t _ulBlockNo)
 		return 0;
 	}
 
-	FSMC_NAND_ReadPage(&ucFlag, _ulBlockNo * NAND_BLOCK_SIZE, USED_OFFSET, 1);
+	//FMC_NAND_ReadPage(&ucFlag, _ulBlockNo * NAND_BLOCK_SIZE, USED_OFFSET, 1);  2014-05-03 bug
+	FMC_NAND_ReadSpare(&ucFlag, _ulBlockNo * NAND_BLOCK_SIZE, USED_OFFSET, 1);
 	if (ucFlag == 0xFF)
 	{
 		return 1;
@@ -1318,7 +1605,7 @@ uint8_t NAND_ScanBlock(uint32_t _ulBlockNo)
 	uint32_t i, k;
 	uint32_t ulPageNo;
 
-	#if 1
+	#if 0
 	/* 如果NAND Flash出厂前已经标注为坏块了，则就认为是坏块 */
 	if (NAND_IsBadBlock(_ulBlockNo))
 	{
@@ -1331,21 +1618,23 @@ uint8_t NAND_ScanBlock(uint32_t _ulBlockNo)
 	for (i = 0; i < BAD_BALOK_TEST_CYCLE; i++)
 	{
 		/* 第1步：擦除这个块 */
-		if (FSMC_NAND_EraseBlock(_ulBlockNo) != NAND_READY)
+		if (FMC_NAND_EraseBlock(_ulBlockNo) != NAND_READY)
 		{
+			printf_err(" -- EraseBlock Error %d\r\n", _ulBlockNo);
 			return NAND_FAIL;
 		}
-
+		
 		/* 第2步：读出块内每个page的数据，并判断是否全0xFF */
 		ulPageNo = _ulBlockNo * NAND_BLOCK_SIZE;	/* 计算该块第1个页的页号 */
 		for (k = 0; k < NAND_BLOCK_SIZE; k++)
 		{
 			/* 读出整页数据 */
-			FSMC_NAND_ReadPage(s_ucTempBuf, ulPageNo, 0, NAND_PAGE_TOTAL_SIZE);
+			FMC_NAND_ReadPage(s_ucTempBuf, ulPageNo, 0, NAND_PAGE_TOTAL_SIZE);
 
 			/* 判断存储单元是不是全0xFF */
-			if (NAND_IsBufOk(s_ucTempBuf, NAND_PAGE_TOTAL_SIZE, 0xFF) != NAND_OK)
+			if (NAND_IsBufOk(s_ucTempBuf, NAND_PAGE_TOTAL_SIZE, 0xFF) == 0)
 			{
+				printf_err(" -- IsBufOk 0xFF Error %d\r\n", _ulBlockNo);
 				return NAND_FAIL;
 			}
 
@@ -1358,15 +1647,17 @@ uint8_t NAND_ScanBlock(uint32_t _ulBlockNo)
 		{
 			/* 填充buf[]缓冲区为全0,并写入NAND Flash */
 			memset(s_ucTempBuf, 0x00, NAND_PAGE_TOTAL_SIZE);
-			if (FSMC_NAND_WritePage(s_ucTempBuf, ulPageNo, 0, NAND_PAGE_TOTAL_SIZE) != NAND_OK)
+			if (FMC_NAND_WritePage(s_ucTempBuf, ulPageNo, 0, NAND_PAGE_TOTAL_SIZE) != NAND_OK)
 			{
+				printf_err(" -- WritePage 0xFF Error %d\r\n", _ulBlockNo);
 				return NAND_FAIL;
 			}
 
 			/* 读出整页数据, 判断存储单元是不是全0x00 */
-			FSMC_NAND_ReadPage(s_ucTempBuf, ulPageNo, 0, NAND_PAGE_TOTAL_SIZE);
-			if (NAND_IsBufOk(s_ucTempBuf, NAND_PAGE_TOTAL_SIZE, 0x00) != NAND_OK)
+			FMC_NAND_ReadPage(s_ucTempBuf, ulPageNo, 0, NAND_PAGE_TOTAL_SIZE);
+			if (NAND_IsBufOk(s_ucTempBuf, NAND_PAGE_TOTAL_SIZE, 0x00) == 0)
 			{
+				printf_err(" -- IsBufOk 0x00 Error %d\r\n", _ulBlockNo);
 				return NAND_FAIL;
 			}
 
@@ -1375,19 +1666,21 @@ uint8_t NAND_ScanBlock(uint32_t _ulBlockNo)
 	}
 
 	/* 最后一步：擦除整个块 */
-	if (FSMC_NAND_EraseBlock(_ulBlockNo) != NAND_READY)
+	if (FMC_NAND_EraseBlock(_ulBlockNo) != NAND_READY)
 	{
+		printf_err(" -- Last Erase Block Error %d\r\n", _ulBlockNo);
 		return NAND_FAIL;
 	}
 	ulPageNo = _ulBlockNo * NAND_BLOCK_SIZE;	/* 计算该块第1个页的页号 */
 	for (k = 0; k < NAND_BLOCK_SIZE; k++)
 	{
 		/* 读出整页数据 */
-		FSMC_NAND_ReadPage(s_ucTempBuf, ulPageNo, 0, NAND_PAGE_TOTAL_SIZE);
+		FMC_NAND_ReadPage(s_ucTempBuf, ulPageNo, 0, NAND_PAGE_TOTAL_SIZE);
 
 		/* 判断存储单元是不是全0xFF */
-		if (NAND_IsBufOk(s_ucTempBuf, NAND_PAGE_TOTAL_SIZE, 0xFF) != NAND_OK)
+		if (NAND_IsBufOk(s_ucTempBuf, NAND_PAGE_TOTAL_SIZE, 0xFF) == 0)
 		{
+			printf_err(" --IsBufOk 0xFF. %d\r\n", _ulBlockNo);
 			return NAND_FAIL;
 		}
 
@@ -1395,6 +1688,7 @@ uint8_t NAND_ScanBlock(uint32_t _ulBlockNo)
 	}
 
 	return NAND_OK;
+
 }
 
 /*
@@ -1413,9 +1707,9 @@ static uint8_t NAND_MarkUsedBlock(uint32_t _ulBlockNo)
 	/* 计算块的第1个页号 */
 	ulPageNo = _ulBlockNo * NAND_BLOCK_SIZE;	/* 计算该块第1个页的页号 */
 
-	/* 块内第1个page备用区的第6个字节写入非0xFF数据表示坏块 */
+	/* 块内第1个page备用区的第USED_OFFSET个字节写入非0xFF数据表示已用块 */
 	ucFlag = NAND_USED_BLOCK_FLAG;
-	if (FSMC_NAND_WriteSpare(&ucFlag, ulPageNo, USED_OFFSET, 1) == NAND_FAIL)
+	if (FMC_NAND_WriteSpare(&ucFlag, ulPageNo, USED_OFFSET, 1) == NAND_FAIL)
 	{
 		/* 如果标记失败，则需要标注这个块为坏块 */
 		return NAND_FAIL;
@@ -1431,20 +1725,48 @@ static uint8_t NAND_MarkUsedBlock(uint32_t _ulBlockNo)
 *	返 回 值: 固定NAND_OK
 *********************************************************************************************************
 */
-static void NAND_MarkBadBlock(uint32_t _ulBlockNo)
+void NAND_MarkBadBlock(uint32_t _ulBlockNo)
 {
 	uint32_t ulPageNo;
 	uint8_t ucFlag;
 
+	printf_err("NAND_MarkBadBlock(%d)\r\n", _ulBlockNo);
+
 	/* 计算块的第1个页号 */
 	ulPageNo = _ulBlockNo * NAND_BLOCK_SIZE;	/* 计算该块第1个页的页号 */
 
-	/* 块内第1个page备用区的第6个字节写入非0xFF数据表示坏块 */
+	/* 块内第1个page备用区的第BI_OFFSET个字节写入非0xFF数据表示坏块 */
 	ucFlag = NAND_BAD_BLOCK_FLAG;
-	if (FSMC_NAND_WriteSpare(&ucFlag, ulPageNo, BI_OFFSET, 1) == NAND_FAIL)
+	if (FMC_NAND_WriteSpare(&ucFlag, ulPageNo, BI_OFFSET, 1) == NAND_FAIL)
 	{
 		/* 如果第1个页标记失败，则在第2个页标记 */
-		FSMC_NAND_WriteSpare(&ucFlag, ulPageNo + 1, BI_OFFSET, 1);
+		FMC_NAND_WriteSpare(&ucFlag, ulPageNo + 1, BI_OFFSET, 1);
+	}
+}
+
+/*
+*********************************************************************************************************
+*	函 数 名: NAND_ScanAllBadBlock
+*	功能说明: 扫描测试所有的BLOCK, 如果是坏块，则做坏块标记
+*	形    参: _ulBlockNo ：块号 0 - 1023 （对于128M字节，2K Page的NAND Flash，有1024个块）
+*	返 回 值: 固定NAND_OK
+*********************************************************************************************************
+*/
+void NAND_ScanAllBadBlock(void)
+{
+	uint32_t i;
+	
+	for (i = 0; i < NAND_BLOCK_COUNT; i++)
+	{
+		if (NAND_ScanBlock(i) == NAND_OK)
+		{
+			printf("Scan Block %d (%d%%), Ok\r\n", i, i * 100 / NAND_BLOCK_COUNT);
+		}
+		else
+		{
+			printf("Scan Block %d (%d%%), Err\r\n", i, i * 100 / NAND_BLOCK_COUNT);
+			NAND_MarkBadBlock(i);
+		}
 	}
 }
 
@@ -1468,7 +1790,7 @@ uint8_t NAND_Format(void)
 		/* 如果是好块，则擦除 */
 		if (!NAND_IsBadBlock(i))
 		{
-			FSMC_NAND_EraseBlock(i);
+			FMC_NAND_EraseBlock(i);
 			usGoodBlockCount++;
 		}
 	}
@@ -1488,7 +1810,10 @@ uint8_t NAND_Format(void)
 		if (!NAND_IsBadBlock(i))
 		{
 			/* 如果是好块，则在该块的第1个PAGE的LBN0 LBN1处写入n值 (前面已经执行了块擦除） */
-			FSMC_NAND_WriteSpare((uint8_t *)&n, i * NAND_BLOCK_SIZE, LBN0_OFFSET, 2);
+			if (FMC_NAND_WriteSpare((uint8_t *)&n, i * NAND_BLOCK_SIZE, LBN0_OFFSET, 2) != NAND_OK)
+			{
+				return NAND_FAIL;
+			}
 			n++;
 
 			/* 计算并写入每个扇区的ECC值 （暂时未作）*/
@@ -1507,9 +1832,9 @@ uint8_t NAND_Format(void)
 /*
 *********************************************************************************************************
 *	函 数 名: NAND_FormatCapacity
-*	功能说明: NAND Flash格式化后的有效容量
+*	功能说明: NAND Flash格式化后的有效容量. (最大支持4G)
 *	形    参:  无
-*	返 回 值: NAND_OK : 成功； NAND_Fail ：失败（一般是坏块数量过多导致）
+*	返 回 值: 容量，单位字节
 *********************************************************************************************************
 */
 uint32_t NAND_FormatCapacity(void)
@@ -1535,8 +1860,10 @@ void NAND_DispBadBlockInfo(void)
 	uint32_t id;
 	uint32_t i;
 	uint32_t n;
+	uint32_t used = 0;
+	uint16_t bad_no[128];
 
-	FSMC_NAND_Init();	/* 初始化FSMC */
+	FMC_NAND_Init();	/* 初始化FSMC */
 
 	id = NAND_ReadID();
 
@@ -1553,24 +1880,43 @@ void NAND_DispBadBlockInfo(void)
 	{
 		printf("K9F1G08U0B\r\n  1024 Blocks, 64 pages per block, 2048 + 64 bytes per page\r\n");
 	}
+	else if (id == H27U4G8F2DTR)
+	{
+		printf("H27U4G8F2DTR\r\n  4096 Blocks, 64 pages per block, 2048 + 64 bytes per page\r\n");
+	}
 	else
 	{
 		printf("unkonow\r\n");
 		return;
 	}
 
-	printf("Block Info : 0 is OK, * is Bad\r\n");
+	FMC_NAND_Reset();
+
+	printf("Block Info : 0 is OK, * is Bad, - is Used\r\n");
 	n = 0;	/* 坏块统计 */
+	used = 0; /* 已用块统计 */
 	for (i = 0; i < NAND_BLOCK_COUNT; i++)
 	{
 		if (NAND_IsBadBlock(i))
 		{
+			if (n < sizeof(bad_no) / 2)
+			{
+				bad_no[n] = i;	/* 记录坏块号 */
+			}
 			printf("*");
 			n++;
 		}
 		else
 		{
-			printf("0");
+			if (NAND_IsFreeBlock(i))
+			{
+				printf("0");
+			}
+			else
+			{
+				printf("-");	/* 已用块 */
+				used++;
+			}
 		}
 
 		if (((i + 1) % 8) == 0)
@@ -1583,7 +1929,102 @@ void NAND_DispBadBlockInfo(void)
 			printf("\r\n");
 		}
 	}
-	printf("Bad Block Count = %d\r\n", n);
+
+	if (id == H27U4G8F2DTR)
+	{
+		printf("Bad Block Count = %d  ( < 80 is OK), Used = %d \r\n", n, used);
+	}
+	else
+	{
+		printf("Bad Block Count = %d\r\n", n);
+	}
+	
+	/* 打印坏块序号 */
+	if (n > 0)
+	{
+		for (i = 0; i < n; i++)
+		{
+			printf("%4d ",  bad_no[i]);
+		}
+		
+		printf("\r\n\r\n");
+	}
+}
+
+/*
+*********************************************************************************************************
+*	函 数 名: NAND_GetBlockInfo
+*	功能说明: 获得NAND 坏块、已用块信息
+*	形    参: 无
+*	返 回 值: 1 表示成功识别， 0 表示识别失败
+*********************************************************************************************************
+*/
+uint8_t NAND_GetBlockInfo(NAND_BLOCK_INFO_T *_pInfo)
+{
+	uint32_t id;
+	uint32_t i;
+	uint32_t n;
+	uint32_t used = 0;
+	uint32_t free = 0;
+
+	FMC_NAND_Init();	/* 初始化FSMC */
+
+	id = NAND_ReadID();
+	
+	_pInfo->ChipID = id;
+	if (id == HY27UF081G2A)
+	{
+		_pInfo->ChipID = HY27UF081G2A;
+		strcpy(_pInfo->ChipName, "HY27UF081G2A");
+	}
+	else if (id == K9F1G08U0A)
+	{
+		_pInfo->ChipID = K9F1G08U0A;
+		strcpy(_pInfo->ChipName, "K9F1G08U0A");
+	}
+	else if (id == K9F1G08U0B)
+	{
+		_pInfo->ChipID = K9F1G08U0B;
+		strcpy(_pInfo->ChipName, "K9F1G08U0B");
+	}
+	else if (id == H27U4G8F2DTR)
+	{
+		_pInfo->ChipID = H27U4G8F2DTR;
+		strcpy(_pInfo->ChipName, "H27U4G8F2DTR");
+	}
+	else
+	{		
+		return 0;
+	}
+
+	FMC_NAND_Reset();
+
+	n = 0;	/* 坏块统计 */
+	used = 0; /* 已用块统计 */
+	free = 0; /* 未用的好块 */
+	for (i = 0; i < NAND_BLOCK_COUNT; i++)
+	{
+		if (NAND_IsBadBlock(i))
+		{
+			n++;			/* 记录坏块 */
+		}
+		else
+		{
+			if (NAND_IsFreeBlock(i))
+			{
+				free++;
+			}
+			else
+			{	
+				used++;		/* 已用块 */
+			}
+		}
+	}
+
+	_pInfo->Bad = n;
+	_pInfo->Used = used;
+	_pInfo->Free = free;
+	return 1;
 }
 
 /*
@@ -1603,9 +2044,9 @@ void NAND_DispPhyPageData(uint32_t _uiPhyPageNo)
 	ulBlockNo = _uiPhyPageNo / NAND_BLOCK_SIZE;		/* 根据物理页号反推块号 */
 	usOffsetPageNo = _uiPhyPageNo % NAND_BLOCK_SIZE;	/* 根据物理页号计算物理页号在块内偏移页号 */
 
-	if (NAND_OK != FSMC_NAND_ReadPage(s_ucTempBuf, _uiPhyPageNo, 0, NAND_PAGE_TOTAL_SIZE))
+	if (NAND_OK != FMC_NAND_ReadPage(s_ucTempBuf, _uiPhyPageNo, 0, NAND_PAGE_TOTAL_SIZE))
 	{
-		printf("FSMC_NAND_ReadPage Failed() \r\n");
+		printf("FMC_NAND_ReadPage Failed() \r\n");
 		return;
 	}
 
@@ -1670,5 +2111,127 @@ void NAND_DispLogicPageData(uint32_t _uiLogicPageNo)
 	uiPhyPageNo = usPBN * NAND_BLOCK_SIZE + _uiLogicPageNo % NAND_BLOCK_SIZE;
 	NAND_DispPhyPageData(uiPhyPageNo);	/* 显示指定页数据 */
 }
+
+/*
+*********************************************************************************************************
+*	函 数 名: NAND_ReadONFI
+*	功能说明: 读NAND Flash的ONFI信息,  针对 H27U4G8F2DTR
+*	形    参: _pBuf 存放结果的缓冲区, 大小4字节。应该固定返回 "ONFI" 字符串
+*	返 回 值: 无
+*********************************************************************************************************
+*/
+void NAND_ReadONFI(uint8_t *_pBuf)
+{
+	uint16_t i;
+
+	/* 发送命令 Command to the command area */
+	NAND_CMD_AREA = 0x90;
+	NAND_ADDR_AREA = 0x20;
+
+	/* 读数据到缓冲区pBuffer */
+	for(i = 0; i < 256; i++)
+	{	
+		_pBuf[i] = NAND_DATA_AREA;
+	}
+}
+
+/*
+*********************************************************************************************************
+*	函 数 名: NAND_ReadParamPage
+*	功能说明: Read Parameter Page,  针对 H27U4G8F2DTR
+*	形    参: _pData 存放结果的缓冲区。
+*	返 回 值: 无
+*********************************************************************************************************
+*/
+void NAND_ReadParamPage(PARAM_PAGE_T *_pData)
+{
+	uint16_t i;
+	uint8_t *_pBuf = (uint8_t *)_pData;
+
+	/* 发送命令 Command to the command area */
+	NAND_CMD_AREA = 0xEC;
+	NAND_ADDR_AREA = 0x00;
+
+	/* 必须等待，否则读出数据异常, 此处应该判断超时 */
+	WAIT_BUSY();
+
+	/* 读数据到缓冲区pBuffer */
+	for(i = 0; i < 256; i++)
+	{
+		_pBuf[i] = NAND_DATA_AREA;
+	}
+
+}
+
+/*
+*********************************************************************************************************
+*	函 数 名: NAND_DispParamPage
+*	功能说明: 通过串口打印 Parameter Page Data Structure Definition (参数页数据结构) 针对 H27U4G8F2DTR
+*	形    参: 无
+*	返 回 值: 无
+*********************************************************************************************************
+*/
+void NAND_DispParamPage(void)
+{
+	PARAM_PAGE_T tPage;
+	char buf[32];
+
+	FMC_NAND_Reset();
+
+	NAND_ReadParamPage(&tPage);
+
+#if 0
+	uint8_t Sign[4];		/* = "ONFI" */
+	uint16_t Revision; 		/* Bit1 = 1 表示支持 ONFI Ver 1.0 */
+	uint16_t Features;		/* */
+	uint16_t OptionalCommands;
+#endif
+
+	printf("\r\n");
+	printf("Read Parameter Page Data :\r\n");
+	printf("Sign = %c%c%c%c\r\n", tPage.Sign[0], tPage.Sign[1], tPage.Sign[2], tPage.Sign[3]);
+	printf("Revision = %04X\r\n", tPage.Revision);
+	printf("Features = %04X\r\n", tPage.Features);
+	printf("OptionalCommands = %04X\r\n", tPage.OptionalCommands);
+
+	/* Manufacturer information block */
+	memcpy(buf, tPage.Manufacturer, 12);
+	buf[12] = 0;
+	printf("Manufacturer = %s\r\n", buf);	/* 制造商 */
+
+	memcpy(buf, tPage.Model, 20);
+	buf[20] = 0;
+	printf("Model = %s\r\n", buf);	/* 型号 */
+
+	printf("JEDEC_ID = %02X\r\n", tPage.JEDEC_ID);	/* AD */
+	printf("DateCode = %04X\r\n", tPage.DateCode);
+
+#if 0
+	/* Memory organization block */
+	uint32_t PageDataSize;
+	uint16_t PageSpareSize;
+	uint32_t PartialPageDataSize;
+	uint16_t PartialPageSpareSize;
+	uint32_t BlockSize;
+	uint32_t LogicalUnitSize;
+	uint8_t LogicalUnitNumber;
+	uint8_t AddressCycles;
+	uint8_t CellBits;
+	uint16_t BadBlockMax;
+	uint16_t BlockEndurance;
+	uint8_t ValidBlocksBegin;	/* 最前面保证有效的块个数 */
+	uint16_t BlockEndurance2;	/* Block endurance for guaranteed valid blocks */
+	uint8_t  ProgramsPerPage;	/* Number of programs per page */
+	uint8_t PartialProgram;
+	uint8_t ECCcorrectBits;
+	uint8_t InterleavedAddrBits;	/* 交错的地址位 */
+	uint8_t InterleavedOperaton;
+	uint8_t Rsv3[13];
+#endif
+
+	printf("\r\n");
+
+}
+
 
 /***************************** 安富莱电子 www.armfly.com (END OF FILE) *********************************/

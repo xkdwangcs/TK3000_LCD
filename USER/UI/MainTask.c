@@ -64,22 +64,25 @@ void MainTask(void)
     //使能窗口使用内存设备，这样可以有效避免闪烁, 
 	//放在GUI_Init前面就包括桌面窗口，如果放在后面就不包括桌面窗口
 	//放此处可以重绘掉背景无效窗体
-	WM_SetCreateFlags(WM_CF_MEMDEV); 
+	//WM_SetCreateFlags(WM_CF_MEMDEV); 
 	GUI_Init();//初始化emWin/ucGUI
-	//WM_SetCreateFlags(WM_CF_MEMDEV); //使能设备缓存，解决闪烁	
-	WM_SetDesktopColor(GUI_BLUE); //GUI_BLUE
-	//设置桌面窗口的回调函数,当把WM_SetCreateFlags放到GUI_Init()之前时，可以WM_SetDesktopColor替代
-	//WM_SetCallback(WM_HBKWIN,_cbBkWindow);
+    /*	 关于多缓冲和窗口内存设备的设置说明
+	   1. 使能多缓冲是调用的如下函数，用户要在LCDConf_Lin_Template.c文件中配置了多缓冲，调用此函数才有效：
+		  WM_MULTIBUF_Enable(1);
+	   2. 窗口使能使用内存设备是调用函数：WM_SetCreateFlags(WM_CF_MEMDEV);
+	   3. 如果emWin的配置多缓冲和窗口内存设备都支持，二选一即可，且务必优先选择使用多缓冲，实际使用
+		  STM32F429BIT6 + 32位SDRAM + RGB565/RGB888平台测试，多缓冲可以有效的降低窗口移动或者滑动时的撕裂
+		  感，并有效的提高流畅性，通过使能窗口使用内存设备是做不到的。
+	   4. 所有emWin例子默认是开启三缓冲。
+	*/
+	WM_MULTIBUF_Enable(1);	
+	//设置桌面窗口的背景色，会自动重绘
+	WM_SetDesktopColor(GUI_BLUE);   
     
-//  GUI_MEMDEV_Handle  hMem0 = GUI_MEMDEV_CreateEx(0, 0, 800, 480, GUI_MEMDEV_HASTRANS);
-//  GUI_MEMDEV_Select(hMem0);
-//  CreateWorkForm();
-//  GUI_MEMDEV_Select(0);
-//  GUI_MEMDEV_WriteAt(hMem0, 800, 480);
-	if(_isTouchCalibration)
-	{
-		TouchCalibrationTask();
-	}
+//	if(_isTouchCalibration)
+//	{
+//		TouchCalibrationTask();
+//	}
 //	//XBF字库的使用
 //	UseXBF();
 //	GUI_UC_SetEncodeUTF8();
@@ -89,7 +92,8 @@ void MainTask(void)
 //	GUI_DispStringHCenterAt("二行中文测试,XBF!",200,80);	
 //	GUI_DispStringHCenterAt("非常好!",200,110);
 //	GUI_Delay(1000);	
-	
+    
+    bool isExitWhile=false;		
 	FIL fil;
     FATFS fs;
     FRESULT res = f_mount(&fs,"0:/",0);
@@ -97,7 +101,7 @@ void MainTask(void)
 	if(res!=FR_OK)
 	{
 		GUI_SetFont(&GUI_Font24_ASCII);	
-		GUI_DispStringHCenterAt("Plase copy XBF file to disk!",200,50);		
+		GUI_DispStringHCenterAt("Plase copy XBF file LIB to disk!",200,50);		
 	}
 	else
 	{
@@ -126,10 +130,10 @@ void MainTask(void)
             //显示欢迎界面
             //WM_HWIN welForm = CreateWelcomForm();
             //GUI_Delay(2000);                      
-            //GUI_EndDialog(welForm,0);
+            //GUI_EndDialog(welForm,0);            
 			while(true)
-			{
-				bool isExitWhile=false;				
+			{			
+                isExitWhile=false;	                
 				GUI_Clear();
 				appStatus =GetCurrStatus();
                 if(appStatus.DevStatus==lastStatus)
@@ -144,8 +148,9 @@ void MainTask(void)
 						GUI_DispStringHCenterAt("没有读取到设备程序当前状态",200,50);
 						break;
 					case DeviceIniting: //设备初始化中
-                        CreateWelcomForm();
-                        GUI_Delay(1000);				
+                        //CreateWelcomForm();
+                        //GUI_Delay(1000);	
+                        break;
 					case DevReady: //设备准备就绪,进入工作主界面
 					case DevWorking: //设备正在工作
 						CreateWorkForm();
@@ -174,15 +179,18 @@ void MainTask(void)
     static char loopCount=0;   
     while(1)
     {
-        if(loopCount>=2)
+        if(isExitWhile)
         {
-            loopCount=0;
-            LoopDataStruct loopData = GetLoopData();
-            if(LoopDataReaded!=NULL)
-                LoopDataReaded(loopData);
+            if(loopCount>=2)
+            {
+                loopCount=0;
+                LoopDataStruct loopData = GetLoopData();
+                if(LoopDataReaded!=NULL)
+                    LoopDataReaded(loopData);
+            }
+            loopCount++;
         }
-        loopCount++;
-        GUI_Delay(100);
+        GUI_Delay(50);
     }
 }
 

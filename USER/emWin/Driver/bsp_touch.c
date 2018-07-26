@@ -1,24 +1,56 @@
-
-#include "bsp_tft_lcd.h"
-#include "bsp_touch.h"
-#include "LCDPara.h"	/* 包含参数存储模块 */
+/*
+*********************************************************************************************************
+*
+*	模块名称 : 电阻式触摸板驱动模块
+*	文件名称 : bsp_touch.c
+*	版    本 : V1.8
+*	说    明 : 驱动i2c接口的触摸芯片。 
+*	修改记录 :
+*		版本号  日期        作者    说明
+*       v1.0    2012-07-06 armfly  ST固件库V3.5.0版本。
+*		v1.1    2012-10-22 armfly  增加4点校准
+*		v1.2    2012-11-07 armfly  解决4点校准的XY交换分支的bug
+*		v1.3    2012-12-17 armfly  触摸校准函数增加入口参数:等待时间
+*		V1.4    2013-07-26 armfly  更改 TOUCH_DataFilter() 滤波算法
+*		V1.5    2013-07-32 armfly  修改TOUCH_WaitRelease(),计数器需要清零
+*		V1.6    2014-10-20 armfly
+*					(1) 修改 TOUCH_PutKey() 函数，实现触摸屏的横屏和竖屏动态切换.
+*					(2) param 结构增加校准时当前的屏幕方向变量 TouchDirection
+*					(3) 调试3.5寸的触摸芯片。修改SPI相关配置函数。
+*					(4) 由于触摸芯片TSC2046和串行FLASH,NRF24L01,MP3等模块共享SPI总线。因此需要
+*						在触摸中断函数中判断总线冲突. 增加函数 bsp_SpiBusBusy() 判忙.
+*					(5) TSC2046增加软件模拟SPI (软件模拟方式方便SPI设备共享)
+*		V1.7    2015-01-02 armfly  计划将触摸扫描由1ms一次修改为10ms一次。未定。
+*				2015-04-21 armfly 修改 TOUCH_InitHard() 函数。GT811_InitHard() 执行后直接return
+*		V1.8	2015-10-30 armfly 增加 4.3寸电容触摸 FT5x06
+*					(1) 添加 void TOUCH_CapScan(void) 函数
+*
+*	Copyright (C), 2015-2020, 安富莱电子 www.armfly.com
+*
+*********************************************************************************************************
+*/
 #include "GUI.h"
-#include "LCD_RA8875.h"
+#include "bsp_touch.h"
+#include "LCDPara.h"
+#include "bsp_tft_lcd.h"
+#include "bsp_gt811.h"
+#include "bsp_ts_ft5x06.h"
+#include "TOUCH_STMPE811.h"
+#include "bsp_i2c_gpio.h"
 #include "SysTick_Timer.h"
-#include "Delay.h"
 
-/* TSC2046 内部ADC通道号 */
-#define ADC_CH_X	1		/* X通道，测量X位置 */
-#define ADC_CH_Y	5		/* Y通道，测量Y位置 */
+/* 调试打印语句 */
+//#define touch_printf       printf
+#define touch_printf(...) 
 
 /* 每1ms扫描一次坐标 */
-#define DOWN_VALID		30	/* 按下30ms 后, 开始统计ADC */
-#define SAMPLE_COUNT	10	/* 按下后连续采集40个样本 */
+#define DOWN_VALID		10	/* 按下30ms 后, 开始统计ADC */
+#define SAMPLE_COUNT	10	/* 按下后 20ms处理一次坐标 */
 
 /*
-触摸屏校准点相对屏幕像素四角的偏移像素
-第1个点 ： x1 = CALIB_OFFSET, y1 = CALIB_OFFSET
-第2个点 ： x2 = LCD_GetWidth() - CALIB_OFFSET, y2 = LCD_GetHeight() - CALIB_OFFSET
+	触摸屏校准点相对屏幕像素四角的偏移像素
+	第1个点 ： x1 = CALIB_OFFSET, y1 = CALIB_OFFSET
+	第2个点 ： x2 = LCD_GetWidth() - CALIB_OFFSET, y2 = LCD_GetHeight() - CALIB_OFFSET
 */
 #define CALIB_OFFSET	20
 #define TP_X1	CALIB_OFFSET
@@ -36,11 +68,15 @@
 /* 有效ADC值的判断门限. 太接近ADC临界值的坐标认为无效 */
 #define ADC_VALID_OFFSET	2
 
-//#define WaitTPReady() while(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_5))
-#define WaitTPReady() {}
-
 /* 触屏模块用到的全局变量 */
 TOUCH_T g_tTP;
+
+/* emWin要用到的触摸参数，在函数TOUCH_InitHard初始为给图层1发送触摸数据 */
+GUI_PID_STATE State = {0};
+
+uint8_t g_TouchType;
+uint8_t g_LcdType;
+
 static uint8_t	TOUCH_PressValid(uint16_t _usX, uint16_t _usY);
 static uint16_t TOUCH_DataFilter(uint16_t *_pBuf, uint8_t _ucCount);
 static void TOUCH_LoadParam(void);
@@ -50,23 +86,175 @@ static int16_t TOUCH_TransX(uint16_t _usAdcX, uint16_t _usAdcY);
 static int16_t TOUCH_TransY(uint16_t _usAdcX, uint16_t _usAdcY);
 int32_t TOUCH_Abs(int32_t x);
 
+
 /*
 *********************************************************************************************************
-*	函 数 名: bsp_InitTouch
-*	功能说明: 配置STM32和触摸相关的口线，使能硬件SPI1, 片选由软件控制
-*	形    参:  无
+*	函 数 名: bsp_DetectLcdType
+*	功能说明: 通过I2C触摸芯片，识别LCD模组类型。结果存放在全局变量 g_LcdType 和 g_TouchType
+*	形    参: 无
+*	返 回 值: 无
+*********************************************************************************************************
+*/
+void bsp_DetectLcdType(void)
+{
+	uint8_t i;
+	
+	g_TouchType = 0xFF;
+	g_LcdType = 0xFF;
+	
+	/* 50ms，等待GT811复位就绪，才能探测GT811芯片 ID */
+	for (i = 0; i < 5; i++)
+	{
+		/*
+			GT811电容触摸, 有 800 * 480 和 1024 * 600 两种分辨率（根据GT811的 Sensor ID识别（有3个状态）		
+			GT811 的从设备地址有三组可选，以方便主控调配。三组地址分别为：0xBA/0xBB、0x6E/0x6F和0x28/0x29		
+		*/
+		if (i2c_CheckDevice(GT811_I2C_ADDR1) == 0)
+		{
+			g_GT811.i2c_addr = GT811_I2C_ADDR1;
+			g_TouchType = CT_GT811;
+			g_LcdType = LCD_70_800X480;		
+			touch_printf("检测到7.0寸电容触摸屏 800x480\r\n");
+			break;
+		}
+
+		if (i2c_CheckDevice(GT811_I2C_ADDR3) == 0)
+		{
+			g_GT811.i2c_addr = GT811_I2C_ADDR3;
+			g_TouchType = CT_GT811;
+			g_LcdType = LCD_70_1024X600;
+			touch_printf("检测到7.0寸电容触摸屏 1024x600\r\n");
+			break;
+		}		
+		
+		/* FT系列电容触摸触摸 : 4.3寸id = 0x55    5.0寸id = 0x0A  7.0寸id = 0x06 */
+		if (i2c_CheckDevice(FT5X06_I2C_ADDR) == 0)
+		{
+			uint8_t id;
+			
+			Delay_ms_Tick(100);
+			
+			id = FT5X06_ReadID();			
+			if (id == 0x55)
+			{
+				g_TouchType = CT_FT5X06;
+				g_LcdType = LCD_43_480X272;		
+				touch_printf("检测到4.3寸电容触摸屏\r\n");
+			}
+			else if (id == 0x0A)
+			{
+				g_TouchType = CT_FT5X06;
+				g_LcdType = LCD_50_800X480;		
+				touch_printf("检测到5.0寸电容触摸屏\r\n");				
+			}
+			else	/* id == 0x06 表示7寸电容屏（FT芯片） */
+			{
+				g_TouchType = CT_FT5X06;
+				g_LcdType = LCD_70_800X480;		
+				touch_printf("检测到7.0寸电容触摸屏\r\n");					
+			}
+			break;
+		}
+
+		/* 电阻触摸板 */		
+		if (i2c_CheckDevice(STMPE811_I2C_ADDRESS) == 0)
+		{
+			/*			
+				0  = 4.3寸屏（480X272）
+				1  = 5.0寸屏（480X272）
+				2  = 5.0寸屏（800X480）
+				3  = 7.0寸屏（800X480）
+				4  = 7.0寸屏（1024X600）
+				5  = 3.5寸屏（480X320）			
+			*/					
+			uint8_t id;			
+			
+			g_TouchType = CT_STMPE811;	/* 触摸类型 */
+			
+			STMPE811_InitHard();	/* 必须先配置才能读取ID */
+			
+			id = STMPE811_ReadIO();	/* 识别LCD硬件类型 */
+
+			touch_printf("检测到电阻触摸屏, id = %d\r\n", id);
+			switch (id)
+			{
+				case 0:
+					g_LcdType = LCD_43_480X272;
+					break;
+
+				case 1:
+					g_LcdType = LCD_50_480X272;
+					break;
+
+				case 2:
+					g_LcdType = LCD_50_800X480;
+					break;
+
+				case 3:
+					g_LcdType = LCD_70_800X480;
+					break;
+
+				case 4:
+					g_LcdType = LCD_70_1024X600;
+					break;
+
+				case 5:
+					g_LcdType = LCD_35_480X320;
+					break;			
+				
+				default:
+					g_LcdType = LCD_35_480X320;
+					break;
+			}			
+			break;			
+		}		
+		
+		Delay_ms_Tick(10);
+	}
+	
+	if (i == 5)
+	{
+		touch_printf("未识别出显示模块\r\n");
+	}
+}
+	
+/*
+*********************************************************************************************************
+*	函 数 名: TOUCH_InitHard
+*	功能说明: 初始化触摸芯片。 再之前，必须先执行 bsp_DetectLcdType() 识别触摸出触摸芯片型号.
+*	形    参: 无
 *	返 回 值: 无
 *********************************************************************************************************
 */
 void TOUCH_InitHard(void)
-{
-    uint16_t i;	
+{	
     g_tTP.Enable = 0;
-    g_tTP.Write = g_tTP.Read = 0;			
-		RA8875_TouchInit();
-		g_tTP.usMaxAdc = 1023;	/* 10位ADC */
-    TOUCH_LoadParam();	/* 读取校准参数 */
-    g_tTP.Enable = 1;
+	
+	/* 默认是发给图层1，如果是发给图层2，请修改Layer参数为1 */
+	State.Layer = 0;
+	
+	switch (g_TouchType)
+	{
+		case CT_GT811:			/* 电容触摸 7寸 */
+			GT811_InitHard();
+			break;
+		
+		case CT_FT5X06:			/* 电容触摸 4.3寸 */
+			FT5X06_InitHard();
+			break;
+		
+		case CT_STMPE811:		/* 电阻的 */
+			//STMPE811_InitHard();   < bsp_DetectLcdType() 内部已经执行初始化 
+			g_tTP.usMaxAdc = 4095;	/* 12位ADC */	
+		
+			TOUCH_LoadParam();	/* 读取校准参数 */
+			g_tTP.Write = g_tTP.Read = 0;
+			g_tTP.Enable = 1;
+			break;
+		
+		default:
+			break;
+	}
 }
 
 /*
@@ -80,9 +268,11 @@ void TOUCH_InitHard(void)
 uint16_t TOUCH_ReadAdcX(void)
 {
 	uint16_t usAdc;
+
 	__set_PRIMASK(1);  		/* 关中断 */
 	usAdc = g_tTP.usAdcNowX;
 	__set_PRIMASK(0);  		/* 开中断 */
+
 	return usAdc;
 }
 
@@ -97,9 +287,11 @@ uint16_t TOUCH_ReadAdcX(void)
 uint16_t TOUCH_ReadAdcY(void)
 {
 	uint16_t usAdc;
+
 	__set_PRIMASK(1);  		/* 关中断 */
 	usAdc = g_tTP.usAdcNowY;
 	__set_PRIMASK(0);  		/* 开中断 */
+
 	return usAdc;
 }
 
@@ -115,15 +307,26 @@ void TOUCH_PutKey(uint8_t _ucEvent, uint16_t _usX, uint16_t _usY)
 {
 	uint16_t xx, yy;
 	uint16_t x = 0, y = 0;
+
 	g_tTP.Event[g_tTP.Write] = _ucEvent;
+
+	if (g_GT811.Enable == 1)	/* 电容屏 (无需校准) */
+	{
+		xx = _usX;
+		yy = _usY;
+	}
+	else if (g_tFT5X06.Enable == 1)
+	{
+		xx = _usX;
+		yy = _usY;
+	}
+	else	/* 电阻屏 */
+	{
 		xx = TOUCH_TransX(_usX, _usY);
 		yy = TOUCH_TransY(_usX, _usY);
+	}
 	
 	/* 横屏和竖屏方向识别 */
-	if (g_tParam.TouchDirection > 3)
-	{
-		g_tParam.TouchDirection  = 0;
-	}
 	switch (g_tParam.TouchDirection)
 	{
 		case 0:	/* 校准触摸时，屏幕方向为0 */
@@ -222,19 +425,24 @@ void TOUCH_PutKey(uint8_t _ucEvent, uint16_t _usX, uint16_t _usY)
 			g_tParam.TouchDirection = 0;	/* 方向参数无效时，纠正为缺省的横屏 */
 			break;
 	}
+
 	g_tTP.XBuf[g_tTP.Write] = x;
 	g_tTP.YBuf[g_tTP.Write] = y;
+
 	if (++g_tTP.Write  >= TOUCH_FIFO_SIZE)
 	{
 		g_tTP.Write = 0;
 	}
+	
+	/* 调试语句，打印adc和坐标 */
+	touch_printf("%d - (%d, %d) adcX=%d,adcY=%d\r\n", _ucEvent, x, y, g_tTP.usAdcNowX, g_tTP.usAdcNowY);
 }
 
 /*
 *********************************************************************************************************
 *	函 数 名: TOUCH_GetKey
 *	功能说明: 从触摸FIFO缓冲区读取一个坐标值。
-*	形    参:  无
+*	形    参: 无
 *	返 回 值:
 *			TOUCH_NONE      表示无事件
 *			TOUCH_DOWN      按下
@@ -245,6 +453,7 @@ void TOUCH_PutKey(uint8_t _ucEvent, uint16_t _usX, uint16_t _usY)
 uint8_t TOUCH_GetKey(int16_t *_pX, int16_t *_pY)
 {
 	uint8_t ret;
+
 	if (g_tTP.Read == g_tTP.Write)
 	{
 		return TOUCH_NONE;
@@ -335,7 +544,6 @@ uint8_t TOUCH_MoveValid(uint16_t _usX1, uint16_t _usY1, uint16_t _usX2, uint16_t
 	}
 }
 
-
 /*
 *********************************************************************************************************
 *	函 数 名: TOUCH_CapScan
@@ -346,6 +554,17 @@ uint8_t TOUCH_MoveValid(uint16_t _usX1, uint16_t _usY1, uint16_t _usX2, uint16_t
 */
 void TOUCH_CapScan(void)
 {
+	if (g_GT811.Enable == 1)
+	{
+		GT811_Scan();
+		return;
+	}
+	
+	if (g_tFT5X06.Enable == 1)
+	{
+		FT5X06_Scan();
+		return;
+	}
 }
 
 /*
@@ -356,7 +575,6 @@ void TOUCH_CapScan(void)
 *	返 回 值: 无
 *********************************************************************************************************
 */
-GUI_PID_STATE State;
 void TOUCH_Scan(void)
 {
 	uint16_t usAdcX;
@@ -367,56 +585,62 @@ void TOUCH_Scan(void)
 	static uint8_t s_count = 0;
 	static uint8_t s_down = 0;
 	static uint16_t s_usSaveAdcX, s_usSaveAdcY; /* 用于触笔抬起事件，保存按下和移动的最后采样值 */
+	static uint8_t s_ms = 0;
+
+	if (g_GT811.Enable == 1)
+	{
+		GT811_Timer1ms();	/* 电容触摸屏程序计数器 */
+		return;
+	}
+	
+	if (g_tFT5X06.Enable == 1)
+	{
+		FT5X06_Timer1ms();	/* 电容触摸屏程序计数器 */
+		return;
+	}
+	
 	if (g_tTP.Enable == 0)
 	{
 		return;
 	}
-
-	/* 获得原始的ADC值，未滤波 */
-		/* 如果主程序正在访问RA8875,则丢弃本次触摸采集，避免影响显示 */
-		if (RA8875_IsBusy())
-		{
-			return;
-		}
-		usAdcX = RA8875_TouchReadX();
-		usAdcY = RA8875_TouchReadY();
-
-	if (TOUCH_PressValid(usAdcX, usAdcY))
+	
+	if (++s_ms >= 2)
 	{
-		/* 按压30ms之后才开始采集数据 */
-		if (s_count >= DOWN_VALID)
+		return;
+	}
+	
+	/* 2ms进入一次 */
+	s_ms = 0;
+	
+	/* 触笔中断发生 */
+	if (STMPE811_PenInt())
+	{
+		/* 获得原始的ADC值，未滤波 */
+		usAdcX = STMPE811_ReadX();
+		usAdcY = STMPE811_ReadY();
+
+		if (TOUCH_PressValid(usAdcX, usAdcY))
 		{
-			s_usXBuf[s_ucPos] = usAdcX;
-			s_usYBuf[s_ucPos] = usAdcY;
-
-			/* 采集10ms数据进行滤波 */
-			if (++s_ucPos >= SAMPLE_COUNT)
+			/* 按压30ms之后才开始采集数据 */
+			if (s_count >= DOWN_VALID / 2)
 			{
-				s_ucPos = 0;
-				/* 对ADC采样值进行软件滤波 */
-				g_tTP.usAdcNowX = TOUCH_DataFilter(s_usXBuf, SAMPLE_COUNT);
-				g_tTP.usAdcNowY = TOUCH_DataFilter(s_usYBuf, SAMPLE_COUNT);
+				s_usXBuf[s_ucPos] = usAdcX;
+				s_usYBuf[s_ucPos] = usAdcY;
 
-				if (s_down == 0)
+				/* 采集20ms数据进行滤波 */
+				if (++s_ucPos >= SAMPLE_COUNT / 2)
 				{
-					s_down = 1;
+					s_ucPos = 0;
 
-					/* 触摸按下事件 */
-					State.x = TOUCH_TransX( g_tTP.usAdcNowX, g_tTP.usAdcNowY);
-					State.y = TOUCH_TransY( g_tTP.usAdcNowX, g_tTP.usAdcNowY);
-					State.Pressed = 1;
-					GUI_PID_StoreState(&State);
+					/* 对ADC采样值进行软件滤波 */
+					g_tTP.usAdcNowX = TOUCH_DataFilter(s_usXBuf, SAMPLE_COUNT / 2);
+					g_tTP.usAdcNowY = TOUCH_DataFilter(s_usYBuf, SAMPLE_COUNT / 2);
 
-					/* 用于触笔抬起事件，保存按下和移动的最后采样值 */
-					s_usSaveAdcX = g_tTP.usAdcNowX;
-					s_usSaveAdcY = g_tTP.usAdcNowY;
-
-				}
-				else
-				{
-					if (TOUCH_MoveValid(s_usSaveAdcX, s_usSaveAdcY, g_tTP.usAdcNowX, g_tTP.usAdcNowY))
+					if (s_down == 0)
 					{
-						/* 触摸移动事件 */
+						s_down = 1;
+						
+						/* 触摸按下事件 */
 						State.x = TOUCH_TransX( g_tTP.usAdcNowX, g_tTP.usAdcNowY);
 						State.y = TOUCH_TransY( g_tTP.usAdcNowX, g_tTP.usAdcNowY);
 						State.Pressed = 1;
@@ -428,35 +652,51 @@ void TOUCH_Scan(void)
 					}
 					else
 					{
-						g_tTP.usAdcNowX = 0; /* for debug stop */
+						if (TOUCH_MoveValid(s_usSaveAdcX, s_usSaveAdcY, g_tTP.usAdcNowX, g_tTP.usAdcNowY))
+						{
+							/* 触摸移动事件 */
+							State.x = TOUCH_TransX( g_tTP.usAdcNowX, g_tTP.usAdcNowY);
+							State.y = TOUCH_TransY( g_tTP.usAdcNowX, g_tTP.usAdcNowY);
+							State.Pressed = 1;
+							GUI_PID_StoreState(&State);
+
+							/* 用于触笔抬起事件，保存按下和移动的最后采样值 */
+							s_usSaveAdcX = g_tTP.usAdcNowX;
+							s_usSaveAdcY = g_tTP.usAdcNowY;
+						}
+						else
+						{
+							g_tTP.usAdcNowX = 0; /* for debug stop */
+						}
 					}
 				}
-
+			}
+			else
+			{
+				s_count++;
 			}
 		}
 		else
 		{
-			s_count++;
-		}
-	}
-	else
-	{
-		if (s_count > 0)
-		{
-			if (--s_count == 0)
+			if (s_count > 0)
 			{
-				/* 触摸释放事件 */
-				/* State.x和State.y的数值无需更新，State是全局变量，保存的就是最近一次的数值 */
-				State.Pressed = 0;
-				GUI_PID_StoreState(&State);
-				s_count = 0;
-				s_down = 0;
+				if (--s_count == 0)
+				{
+					/* 触摸释放事件 */
+					/* State.x和State.y的数值无需更新，State是全局变量，保存的就是最近一次的数值 */
+					State.Pressed = 0;
+					GUI_PID_StoreState(&State);
+					s_count = 0;
+					s_down = 0;
 
-				g_tTP.usAdcNowX = 0;
-				g_tTP.usAdcNowY = 0;
+					g_tTP.usAdcNowX = 0;
+					g_tTP.usAdcNowY = 0;
+
+					STMPE811_ClearInt();		/* 清触笔中断标志 */
+				}
 			}
+			s_ucPos = 0;
 		}
-		s_ucPos = 0;
 	}
 }
 
@@ -554,8 +794,8 @@ static int16_t TOUCH_TransX(uint16_t _usAdcX, uint16_t _usAdcY)
 	else
 	{
 		/* 根据2点直线方程，计算坐标 */
-		y = CalTwoPoint(x1, TP_X1, x2, TP_X2, x);
-		//CalTwoPoint(x1, g_tTP.usLcdX1, x2, g_tTP.usLcd2, x);
+		//y = CalTwoPoint(x1, TP_X1, x2, TP_X2, x);
+		y = CalTwoPoint(x1, g_tTP.usLcdX1, x2, g_tTP.usLcdX2, x);
 	}
 	return y;
 #endif
@@ -609,6 +849,7 @@ static int16_t TOUCH_TransY(uint16_t _usAdcX, uint16_t _usAdcY)
 	if (g_tTP.XYChange == 0)	/* X Y 坐标不交换 */
 	{
 		x = _usAdcY;
+
 		/* 根据 X ADC 实时计算直线方程的参考点x1, x2
 			if  _usAdcX = usAdcX1 then  取点 = (AdcY1, TP_Y1, AdcY3, TP_Y3, _usAdcX)
 			if  _usAdcX = usAdcX2 then  取点 = (AdcY4, TP_Y4, AdcY2, TP_Y2, _usAdcX)
@@ -622,6 +863,7 @@ static int16_t TOUCH_TransY(uint16_t _usAdcX, uint16_t _usAdcY)
 	else						/* X Y 坐标交换 */
 	{
 		x = _usAdcX;
+
 		/* 根据 X ADC 实时计算直线方程的参考点x1, x2
 			if  _usAdcY = usAdcY1 then  取点 = (AdcX1, TP_Y1, AdcX3, TP_Y3, _usAdcY)
 			if  _usAdcY = usAdcY2 then  取点 = (AdcX4, TP_Y4, AdcX2, TP_Y2, _usAdcY)
@@ -640,8 +882,8 @@ static int16_t TOUCH_TransY(uint16_t _usAdcX, uint16_t _usAdcY)
 	else
 	{
 		/* 根据2点直线方程，计算坐标 */
-		y = CalTwoPoint(x1, TP_Y1, x2, TP_Y2, x);
-		//y = CalTwoPoint(x1, g_tTP.usLcdY1, x2, g_tTP.usLcdY2, x);
+		//y = CalTwoPoint(x1, TP_Y1, x2, TP_Y2, x);
+		y = CalTwoPoint(x1, g_tTP.usLcdY1, x2, g_tTP.usLcdY2, x);
 	}
 	return y;
 #endif
@@ -735,51 +977,49 @@ static uint16_t TOUCH_DataFilter(uint16_t *_pBuf, uint8_t _ucCount)
 */
 static void TOUCH_DispPoint(uint8_t _ucIndex)
 {
-	FONT_T tFont16;			/* 定义一个字体结构体变量，用于设置字体参数 */
-
-	/* 设置字体参数 */
-	{
-		tFont16.FontCode = FC_ST_16;	/* 字体代码 16点阵 */
-		tFont16.FrontColor = CL_WHITE;		/* 字体颜色 0 或 1 */
-		tFont16.BackColor = CL_BLUE;	/* 文字背景颜色 */
-		tFont16.Space = 0;			/* 文字间距，单位 = 像素 */
-	}
-
 /*
 	第1个点 ： x1 = CALIB_OFFSET, y1 = CALIB_OFFSET
 	第2个点 ： x2 = LCD_GetHeight() - CALIB_OFFSET, y2 = LCD_GetWidth - CALIB_OFFSET
 */
 	if (_ucIndex == 0)
 	{
-		LCD_ClrScr(CL_BLUE);  		/* 清屏，背景蓝色 */
-
-		/* 在屏幕边沿绘制2个矩形框(用于检测面板边缘像素是否正常) */
-		LCD_DrawRect(0, 0, LCD_GetHeight(), LCD_GetWidth(), CL_WHITE);
-		LCD_DrawRect(2, 2, LCD_GetHeight() - 4, LCD_GetWidth() - 4, CL_YELLOW);
+		GUI_SetBkColor(GUI_BLUE);
+		GUI_Clear(); 
 		
-		LCD_DispStr(50, 10, "触摸屏四点校准，十秒内不校准将自动返回主界面", &tFont16);		/* 在(8,3)坐标处显示一串汉字 */
-		LCD_DispStr(50, 27, "电阻屏需要校准，电容屏无需校准", &tFont16);
+		/* 在屏幕边沿绘制2个矩形框(用于检测面板边缘像素是否正常) */
+	    GUI_SetColor(GUI_WHITE);
+		GUI_DrawRect(0, 0, LCD_GetXSize()-1, LCD_GetYSize()-1);
+		GUI_DrawRect(2, 2, LCD_GetXSize() - 3, LCD_GetYSize() - 3);		
 
-		LCD_DrawCircle(TP_X1, TP_Y1, 6, CL_WHITE);
+		GUI_SetFont(&GUI_Font16B_1);
+		GUI_DispStringAt("Touch Calibration" , 50, 10);
+		GUI_DrawCircle(TP_X1, TP_Y1, 6);
 	}
 	else if (_ucIndex == 1)
 	{
-		LCD_DrawCircle(TP_X1, TP_Y1, 6, CL_BLUE);			/* 擦除第1个点 */
-
-		LCD_DrawCircle(TP_X2, TP_Y2, 6, CL_WHITE);
+		GUI_SetColor(GUI_BLUE);/* 擦除第1个点 */
+		GUI_DrawCircle(TP_X1, TP_Y1, 6);
+		
+		GUI_SetColor(GUI_WHITE);
+		GUI_DrawCircle(TP_X2, TP_Y2, 6);
 	}
 	else if (_ucIndex == 2)
 	{
-		LCD_DrawCircle(TP_X2, TP_Y2, 6, CL_BLUE);			/* 擦除第2个点 */
-		LCD_DrawCircle(TP_X3, TP_Y3, 6, CL_WHITE);
+		GUI_SetColor(GUI_BLUE);/* 擦除第2个点 */
+		GUI_DrawCircle(TP_X2, TP_Y2, 6);
+		
+		GUI_SetColor(GUI_WHITE);
+		GUI_DrawCircle(TP_X3, TP_Y3, 6);
 	}
 	else
 	{
-		LCD_DrawCircle(TP_X3, TP_Y3, 6, CL_BLUE);			/* 擦除第3个点 */
-		LCD_DrawCircle(TP_X4, TP_Y4, 6, CL_WHITE);
+		GUI_SetColor(GUI_BLUE);/* 擦除第3个点 */
+		GUI_DrawCircle(TP_X3, TP_Y3, 6);
+		
+		GUI_SetColor(GUI_WHITE);
+		GUI_DrawCircle(TP_X4, TP_Y4, 6);
 	}
 }
-
 
 /*
 *********************************************************************************************************
@@ -867,11 +1107,15 @@ void TOUCH_Calibration(void)
 	uint8_t usCount;
 	uint8_t i;
 	uint32_t n;
+
 	TOUCH_CelarFIFO();		/* 清除无效的触摸事件 */
+
 	for (i = 0; i < CALIB_POINT_COUNT; i++)
 	{
 		TOUCH_DispPoint(i);		/* 显示校准点 */
+
 		TOUCH_WaitRelease(); 	/* 等待触笔释放 */
+
 		usCount = 0;
 		for (n = 0; n < 500; n++)
 		{
@@ -917,6 +1161,7 @@ void TOUCH_Calibration(void)
 			return;
 		}
 	}
+
 	TOUCH_WaitRelease(); 	/* 等待触笔释放 */
 
 	/* 识别触摸的 X, Y 和 显示面板的 X，Y 是否需要交换 */
@@ -976,7 +1221,9 @@ static void TOUCH_SaveParam(void)
 	g_tParam.usLcdY3 = g_tTP.usLcdY3;
 	g_tParam.usLcdX4 = g_tTP.usLcdX4;
 	g_tParam.usLcdY4 = g_tTP.usLcdY4;
+
 	g_tParam.XYChange = g_tTP.XYChange;
+
 	g_tParam.TouchDirection = g_LcdDirection;	/* 2014-09-11 添加屏幕方向, 用于屏幕旋转时无需再次校准 */
 
 	SaveLcdPara();	/* 将参数写入Flash */
@@ -990,10 +1237,10 @@ static void TOUCH_SaveParam(void)
 *	返 回 值: 无
 *********************************************************************************************************
 */
-
 static void TOUCH_LoadParam(void)
 {
 	LoadLcdPara();	/* 从Flash中读取参数 */
+
 	g_tTP.usAdcX1 = g_tParam.usAdcX1;
 	g_tTP.usAdcY1 = g_tParam.usAdcY1;
 	g_tTP.usAdcX2 = g_tParam.usAdcX2;
@@ -1011,6 +1258,8 @@ static void TOUCH_LoadParam(void)
 	g_tTP.usLcdY3 = g_tParam.usLcdY3;
 	g_tTP.usLcdX4 = g_tParam.usLcdX4;
 	g_tTP.usLcdY4 = g_tParam.usLcdY4;
+
 	g_tTP.XYChange = g_tParam.XYChange;
 }
 
+/***************************** 安富莱电子 www.armfly.com (END OF FILE) *********************************/

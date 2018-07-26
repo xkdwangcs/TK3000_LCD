@@ -1,5 +1,5 @@
 /*********************************************************************
-*          Portions COPYRIGHT 2015 STMicroelectronics                *
+*          Portions COPYRIGHT 2016 STMicroelectronics                *
 *          Portions SEGGER Microcontroller GmbH & Co. KG             *
 *        Solutions for real time microcontroller applications        *
 **********************************************************************
@@ -10,7 +10,7 @@
 *                                                                    *
 **********************************************************************
 
-** emWin V5.28 - Graphical user interface for embedded applications **
+** emWin V5.32 - Graphical user interface for embedded applications **
 All  Intellectual Property rights  in the Software belongs to  SEGGER.
 emWin is protected by  international copyright laws.  Knowledge of the
 source code may not be used to write a similar product.  This file may
@@ -51,15 +51,15 @@ Purpose     : Config / System dependent externals for GUI
   ******************************************************************************
   */
 
+
 #include "GUI.h"
-#include "stm32f4xx.h"
+#include "SysTick_Timer.h"
 
 /*********************************************************************
 *
 *       Global data
 */
 volatile GUI_TIMER_TIME OS_TimeMS;
-extern __IO int32_t _iRunTime;
 
 /*********************************************************************
 *
@@ -71,6 +71,8 @@ extern __IO int32_t _iRunTime;
   and delay function. Default time unit (tick), normally is
   1 ms.
 */
+
+extern __IO int32_t _iRunTime;
 
 int GUI_X_GetTime(void)
 {

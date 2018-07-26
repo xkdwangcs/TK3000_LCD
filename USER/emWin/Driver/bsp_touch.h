@@ -10,10 +10,30 @@
 *
 *********************************************************************************************************
 */
-#include "stm32f4xx.h"
 
 #ifndef __BSP_TOUCH_H
 #define __BSP_TOUCH_H
+
+#include "stm32f4xx.h"
+
+/* 触摸板类型 */
+enum
+{
+	CT_FT5X06 = 0,		/* FT系列电容触摸IC */
+	CT_GT811,			/* 7寸电容触摸 800 * 480 */	
+	CT_STMPE811			/* 电阻触摸 */
+};
+
+/* LCD面板类型 */
+enum
+{
+	LCD_35_480X320 = 0,	/* 3.5寸 480 * 320 */	
+	LCD_43_480X272,		/* 4.3寸 480 * 272 */
+	LCD_50_480X272,		/* 5.0寸 480 * 272 */
+	LCD_50_800X480,		/* 5.0寸 480 * 272 */
+	LCD_70_800X480,		/* 7.0寸 800 * 480 */	
+	LCD_70_1024X600,	/* 7.0寸 1024 * 600 */		
+};
 
 #define CALIB_POINT_COUNT	4		/* 2 = 2点校准； 4 = 四点校准 */
 
@@ -86,7 +106,13 @@ void TOUCH_PutKey(uint8_t _ucEvent, uint16_t _usX, uint16_t _usY);
 
 void TOUCH_CapScan(void);
 
+void bsp_DetectLcdType(void);
+
 extern TOUCH_T g_tTP;
+
+
+extern uint8_t g_TouchType;
+extern uint8_t g_LcdType;
 
 #endif
 

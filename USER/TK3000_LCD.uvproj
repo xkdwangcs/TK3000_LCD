@@ -13,13 +13,13 @@
       <pCCUsed>5060061::V5.06 update 1 (build 61)::ARMCC</pCCUsed>
       <TargetOption>
         <TargetCommonOption>
-          <Device>STM32F407ZG</Device>
+          <Device>STM32F429BI</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <Cpu>IRAM(0x20000000-0x2001FFFF) IRAM2(0x10000000-0x1000FFFF) IROM(0x8000000-0x80FFFFF) CLOCK(25000000) CPUTYPE("Cortex-M4") FPU2</Cpu>
+          <Cpu>IRAM(0x20000000-0x2002FFFF) IRAM2(0x10000000-0x1000FFFF) IROM(0x8000000-0x81FFFFF) CLOCK(25000000) CPUTYPE("Cortex-M4") FPU2</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
-          <StartupFile>"Startup\ST\STM32F4xx\startup_stm32f40_41xxx.s" ("STM32F40/41xxx Startup Code")</StartupFile>
-          <FlashDriverDll>UL2CM3(-O207 -S0 -C0 -FO7 -FD20000000 -FC800 -FN1 -FF0STM32F4xx_1024 -FS08000000 -FL0100000)</FlashDriverDll>
-          <DeviceId>6105</DeviceId>
+          <StartupFile>"Startup\ST\STM32F4xx\startup_stm32f429_439xx.s" ("STM32F429/439xx Startup Code")</StartupFile>
+          <FlashDriverDll>UL2CM3(-O207 -S0 -C0 -FO7 -FD20000000 -FC800 -FN1 -FF0STM32F4xx_2048 -FS08000000 -FL0200000)</FlashDriverDll>
+          <DeviceId>7031</DeviceId>
           <RegisterFile>stm32f4xx.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
@@ -27,10 +27,10 @@
           <Linker></Linker>
           <OHString></OHString>
           <InfinionOptionDll></InfinionOptionDll>
-          <SLE66CMisc>-DSTM32F40_41xxx</SLE66CMisc>
+          <SLE66CMisc>-DSTM32F429_439xx</SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>SFD\ST\STM32F4xx\STM32F40x.sfr</SFDFile>
+          <SFDFile>SFD\ST\STM32F4xx\STM32F429x.SFR</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -241,12 +241,12 @@
               <IRAM>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x20000</Size>
+                <Size>0x30000</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x100000</Size>
+                <Size>0x200000</Size>
               </IROM>
               <XRAM>
                 <Type>0</Type>
@@ -271,7 +271,7 @@
               <OCR_RVCT4>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x100000</Size>
+                <Size>0x200000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -296,7 +296,7 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x20000</Size>
+                <Size>0x30000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
@@ -330,7 +330,7 @@
               <MiscControls>--c99 --locale=english --diag_suppress=870 </MiscControls>
               <Define>STM32F4XX,USE_USB_OTG_FS, USE_EMBEDDED_PHY, USE_STDPERIPH_DRIVER, __FPU_PRESENT = 1,__FPU_USED = 1,ARM_MATH_CM4, __CC_ARM</Define>
               <Undefine></Undefine>
-              <IncludePath>..\STM32F40x_FWLib\inc;..\STM32F40x_FWLib\src;..\USER;..\CORE;.\Public;.\UI;.\BSP;.\COM;.\emWin\Include;.\emWin\Config;.\emWin\GUI_X;.\emWin\Driver;.\emWin\Fonts;.\DAL;.\USBH_APP;..\Libraries\STM32_USB_HOST_Library\Class\MSC\inc;..\Libraries\STM32_USB_HOST_Library\Core\inc;..\Libraries\STM32_USB_OTG_Driver\inc;..\Libraries\STM32_USB_Device_Library\Class\msc\inc;..\Libraries\STM32_USB_Device_Library\Core\inc;.\USBD_APP;.\emWin\FontLib;.\FATFS\src;.\emWin\PNG;.\emWin\UI_Public</IncludePath>
+              <IncludePath>..\Libraries\CMSIS\Device\ST\STM32F4xx\Include;..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\USER;..\CORE;.\Public;.\UI;.\BSP;.\COM;.\emWin\Include;.\emWin\Config;.\emWin\GUI_X;.\emWin\Driver;.\emWin\Fonts;.\DAL;.\USBH_APP;..\Libraries\STM32_USB_HOST_Library\Class\MSC\inc;..\Libraries\STM32_USB_HOST_Library\Core\inc;..\Libraries\STM32_USB_OTG_Driver\inc;..\Libraries\STM32_USB_Device_Library\Class\msc\inc;..\Libraries\STM32_USB_Device_Library\Core\inc;.\USBD_APP;.\emWin\FontLib;.\FATFS\src;.\emWin\PNG;.\emWin\UI_Public</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -389,19 +389,9 @@
           <GroupName>BSP</GroupName>
           <Files>
             <File>
-              <FileName>stm32f4xx_it.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\BSP\stm32f4xx_it.c</FilePath>
-            </File>
-            <File>
               <FileName>SysTick_Timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\BSP\SysTick_Timer.c</FilePath>
-            </File>
-            <File>
-              <FileName>bsp_fsmc_sram.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\BSP\bsp_fsmc_sram.c</FilePath>
             </File>
             <File>
               <FileName>MemoryAlloc.h</FileName>
@@ -417,6 +407,41 @@
               <FileName>RTC_F4xx.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\BSP\RTC_F4xx.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_fmc_sdram.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\BSP\bsp_fmc_sdram.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_beep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\BSP\bsp_beep.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_i2c_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\BSP\bsp_i2c_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_spi_bus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\BSP\bsp_spi_bus.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_tim_pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\BSP\bsp_tim_pwm.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_it.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\BSP\stm32f4xx_it.c</FilePath>
+            </File>
+            <File>
+              <FileName>system_stm32f4xx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\BSP\system_stm32f4xx.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -523,6 +548,11 @@
               <FileType>1</FileType>
               <FilePath>.\UI\WelcomForm.c</FilePath>
             </File>
+            <File>
+              <FileName>WindowDLG.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\UI\WindowDLG.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -614,16 +644,6 @@
           <GroupName>LCD_Driver</GroupName>
           <Files>
             <File>
-              <FileName>GUIDRV_Template.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\emWin\Driver\GUIDRV_Template.c</FilePath>
-            </File>
-            <File>
-              <FileName>bsp_ra8875_port.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\emWin\Driver\bsp_ra8875_port.c</FilePath>
-            </File>
-            <File>
               <FileName>bsp_tft_lcd.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\emWin\Driver\bsp_tft_lcd.c</FilePath>
@@ -634,14 +654,29 @@
               <FilePath>.\emWin\Driver\bsp_touch.c</FilePath>
             </File>
             <File>
-              <FileName>LCD_RA8875.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\emWin\Driver\LCD_RA8875.c</FilePath>
-            </File>
-            <File>
               <FileName>LCDPara.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\emWin\Driver\LCDPara.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_tft_429.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\emWin\Driver\bsp_tft_429.c</FilePath>
+            </File>
+            <File>
+              <FileName>TOUCH_STMPE811.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\emWin\Driver\TOUCH_STMPE811.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_gt811.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\emWin\Driver\bsp_gt811.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_ts_ft5x06.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\emWin\Driver\bsp_ts_ft5x06.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -664,9 +699,9 @@
               <FilePath>.\emWin\Config\GUIConf.c</FilePath>
             </File>
             <File>
-              <FileName>LCDConf.c</FileName>
+              <FileName>LCDConf_Lin_Template.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\emWin\Config\LCDConf.c</FilePath>
+              <FilePath>.\emWin\Config\LCDConf_Lin_Template.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -674,9 +709,9 @@
           <GroupName>GUILib</GroupName>
           <Files>
             <File>
-              <FileName>STemWin528_CM4_Keil_ot.lib</FileName>
+              <FileName>STemWin532_CM4_Keil_ot.lib</FileName>
               <FileType>4</FileType>
-              <FilePath>.\emWin\GUILib\STemWin528_CM4_Keil_ot.lib</FilePath>
+              <FilePath>.\emWin\GUILib\STemWin532_CM4_Keil_ot.lib</FilePath>
             </File>
           </Files>
         </Group>
@@ -1014,104 +1049,104 @@
           <GroupName>FWLIB</GroupName>
           <Files>
             <File>
-              <FileName>stm32f4xx_dbgmcu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STM32F40x_FWLib\src\stm32f4xx_dbgmcu.c</FilePath>
+              <FileName>startup_stm32f429_439xx.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\Libraries\CMSIS\Device\ST\STM32F4xx\Source\Templates\arm\startup_stm32f429_439xx.s</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_dcmi.c</FileName>
+              <FileName>stm32f4xx_dma2d.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\STM32F40x_FWLib\src\stm32f4xx_dcmi.c</FilePath>
+              <FilePath>..\Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_dma2d.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_dma.c</FileName>
+              <FileName>stm32f4xx_fmc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\STM32F40x_FWLib\src\stm32f4xx_dma.c</FilePath>
+              <FilePath>..\Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_fmc.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_exti.c</FileName>
+              <FileName>stm32f4xx_ltdc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\STM32F40x_FWLib\src\stm32f4xx_exti.c</FilePath>
+              <FilePath>..\Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_ltdc.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_flash.c</FileName>
+              <FileName>stm32f4xx_crc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\STM32F40x_FWLib\src\stm32f4xx_flash.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_fsmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STM32F40x_FWLib\src\stm32f4xx_fsmc.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STM32F40x_FWLib\src\stm32f4xx_gpio.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STM32F40x_FWLib\src\stm32f4xx_i2c.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_pwr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STM32F40x_FWLib\src\stm32f4xx_pwr.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_rcc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STM32F40x_FWLib\src\stm32f4xx_rcc.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_rng.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STM32F40x_FWLib\src\stm32f4xx_rng.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STM32F40x_FWLib\src\stm32f4xx_rtc.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STM32F40x_FWLib\src\stm32f4xx_spi.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_syscfg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STM32F40x_FWLib\src\stm32f4xx_syscfg.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_tim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STM32F40x_FWLib\src\stm32f4xx_tim.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STM32F40x_FWLib\src\stm32f4xx_usart.c</FilePath>
+              <FilePath>..\Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_crc.c</FilePath>
             </File>
             <File>
               <FileName>misc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\STM32F40x_FWLib\src\misc.c</FilePath>
+              <FilePath>..\Libraries\STM32F4xx_StdPeriph_Driver\src\misc.c</FilePath>
             </File>
             <File>
-              <FileName>startup_stm32f40_41xxx.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\STM32F40x_FWLib\startup_stm32f40_41xxx.s</FilePath>
-            </File>
-            <File>
-              <FileName>system_stm32f4xx.c</FileName>
+              <FileName>stm32f4xx_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\STM32F40x_FWLib\system_stm32f4xx.c</FilePath>
+              <FilePath>..\Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_dma.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_exti.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_flash.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_pwr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_pwr.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_rcc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_rcc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_rng.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_rng.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_rtc.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_sdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\STM32F40x_FWLib\src\stm32f4xx_sdio.c</FilePath>
+              <FilePath>..\Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_sdio.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_syscfg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_syscfg.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_tim.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_usart.c</FilePath>
             </File>
           </Files>
         </Group>
