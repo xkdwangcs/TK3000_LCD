@@ -44,7 +44,7 @@
 #define touch_printf(...) 
 
 /* 每1ms扫描一次坐标 */
-#define DOWN_VALID		10	/* 按下30ms 后, 开始统计ADC */
+#define DOWN_VALID		20	/* 按下30ms 后, 开始统计ADC */
 #define SAMPLE_COUNT	10	/* 按下后 20ms处理一次坐标 */
 
 /*

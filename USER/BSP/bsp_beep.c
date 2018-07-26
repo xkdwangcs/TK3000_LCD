@@ -33,7 +33,7 @@
 	/* PA8 ---> TIM1_CH1 */
 
 	/* 1500表示频率1.5KHz，5000表示50.00%的占空比 */
-	#define BEEP_ENABLE()	bsp_SetTIMOutPWM(GPIOA, GPIO_Pin_8, TIM1, 1, 6000, 5000); 
+	#define BEEP_ENABLE()	bsp_SetTIMOutPWM(GPIOA, GPIO_Pin_8, TIM1, 1, 5000, 5000); 
 
 	/* 禁止蜂鸣器鸣叫 */
 	#define BEEP_DISABLE()	bsp_SetTIMOutPWM(GPIOA, GPIO_Pin_8, TIM1, 1, 1500, 0);
