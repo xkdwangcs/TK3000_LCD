@@ -549,9 +549,9 @@
               <FilePath>.\UI\WelcomForm.c</FilePath>
             </File>
             <File>
-              <FileName>WindowDLG.c</FileName>
+              <FileName>HomeForm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\UI\WindowDLG.c</FilePath>
+              <FilePath>.\UI\HomeForm.c</FilePath>
             </File>
           </Files>
         </Group>

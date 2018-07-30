@@ -110,9 +110,10 @@ void MainTask(void)
 			GUI_UC_SetEncodeUTF8();
 			GUI_SetFont(&GUI_FontYAHE18);	
 			GUI_SetTextAlign(GUI_TA_HORIZONTAL|GUI_TA_LEFT);
-            //TestPictureFontDisplay();    
+            //TestPictureFontDisplay();   
+            CreateHomeForm();
         
-			char devMode[16]={0};
+			/*char devMode[16]={0};
 			while(!GetDevMode(devMode))
 			{
 				GUI_Clear();
@@ -173,14 +174,15 @@ void MainTask(void)
 				}
 				if(isExitWhile) break;
 				GUI_Delay(500);
-			}	
+			}	*/
 		}
     
     static char loopCount=0;   
     while(1)
     {
-        if(isExitWhile)
+       /* if(isExitWhile)
         {
+            //要改为GUI定时器的方式
             if(loopCount>=2)
             {
                 loopCount=0;
@@ -189,7 +191,7 @@ void MainTask(void)
                     LoopDataReaded(loopData);
             }
             loopCount++;
-        }
+        }*/
         GUI_Delay(50);
     }
 }
