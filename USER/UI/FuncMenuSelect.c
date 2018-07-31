@@ -1,4 +1,4 @@
-﻿/*****************************************
+/*****************************************
 *
 * 肖应强设计的GUIBuilder生成的文件
 * V2.03 (2018.07.17)
@@ -8,45 +8,45 @@
 #include "DIALOG.h"
 
 
-#define HomeForm (GUI_ID_USER +0x00)
-#define panel1_HomeForm (GUI_ID_USER +0x01)
-#define btnZBSJ_HomeForm (GUI_ID_USER +0x02)
-#define btnQLZB_HomeForm (GUI_ID_USER +0x03)
-#define btnWorkPara_HomeForm (GUI_ID_USER +0x04)
-#define btnMotorPara_HomeForm (GUI_ID_USER +0x05)
-#define btnDevPara_HomeForm (GUI_ID_USER +0x06)
-#define btnIOStatus_HomeForm (GUI_ID_USER +0x07)
-#define btnPortConfig_HomeForm (GUI_ID_USER +0x08)
-#define btnMotionConfig_HomeForm (GUI_ID_USER +0x09)
-#define btnMPXX_HomeForm (GUI_ID_USER +0x0A)
-#define btnSystem_HomeForm (GUI_ID_USER +0x0B)
-#define btnLogView_HomeForm (GUI_ID_USER +0x0C)
-#define btnAbout_HomeForm (GUI_ID_USER +0x0D)
-#define btnWorkForm_HomeForm (GUI_ID_USER +0x0E)
-#define panel2_HomeForm (GUI_ID_USER +0x0F)
-#define lbSystemTitle_HomeForm (GUI_ID_USER +0x10)
-#define lbDateTime_HomeForm (GUI_ID_USER +0x11)
+#define FuncMenuSelect (GUI_ID_USER +0x00)
+#define panel1_FuncMenuSelect (GUI_ID_USER +0x01)
+#define btnZBSJ_FuncMenuSelect (GUI_ID_USER +0x02)
+#define btnQLZB_FuncMenuSelect (GUI_ID_USER +0x03)
+#define btnWorkPara_FuncMenuSelect (GUI_ID_USER +0x04)
+#define btnMotorPara_FuncMenuSelect (GUI_ID_USER +0x05)
+#define btnDevPara_FuncMenuSelect (GUI_ID_USER +0x06)
+#define btnIOStatus_FuncMenuSelect (GUI_ID_USER +0x07)
+#define btnPortConfig_FuncMenuSelect (GUI_ID_USER +0x08)
+#define btnMotionConfig_FuncMenuSelect (GUI_ID_USER +0x09)
+#define btnMPXX_FuncMenuSelect (GUI_ID_USER +0x0A)
+#define btnSystem_FuncMenuSelect (GUI_ID_USER +0x0B)
+#define btnLogView_FuncMenuSelect (GUI_ID_USER +0x0C)
+#define btnAbout_FuncMenuSelect (GUI_ID_USER +0x0D)
+#define btnWorkForm_FuncMenuSelect (GUI_ID_USER +0x0E)
+#define panel2_FuncMenuSelect (GUI_ID_USER +0x0F)
+#define lbSystemTitle_FuncMenuSelect (GUI_ID_USER +0x10)
+#define lbDateTime_FuncMenuSelect (GUI_ID_USER +0x11)
 
 
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
-{ WINDOW_CreateIndirect,"HomeForm",HomeForm,0,0,800,480,0,0x0,0 },
-{ EDIT_CreateIndirect,"",panel1_HomeForm,0,54,800,426,0,0x0,0 },
-{ BUTTON_CreateIndirect,"坐标示教",btnZBSJ_HomeForm,22,74,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"取料坐标",btnQLZB_HomeForm,178,74,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"工作参数",btnWorkPara_HomeForm,334,74,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"电机参数",btnMotorPara_HomeForm,490,74,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"设备参数",btnDevPara_HomeForm,642,74,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"IO口状态",btnIOStatus_HomeForm,22,168,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"端口配置",btnPortConfig_HomeForm,178,168,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"动作配置",btnMotionConfig_HomeForm,334,168,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"铭牌信息",btnMPXX_HomeForm,490,168,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"系统管理",btnSystem_HomeForm,642,168,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"日志查看",btnLogView_HomeForm,22,268,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"关于",btnAbout_HomeForm,178,268,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"工作界面",btnWorkForm_HomeForm,642,388,130,68,0,0x0,0 },
-{ EDIT_CreateIndirect,"",panel2_HomeForm,0,0,800,50,0,0x0,0 },
-{ TEXT_CreateIndirect,"螺丝机自动锁付系统 V4.10",lbSystemTitle_HomeForm,45,4,430,36,0,0x0,0 },
-{ TEXT_CreateIndirect,"2018-07-31 08:47:00",lbDateTime_HomeForm,557,17,238,24,0,0x0,0 },
+{ WINDOW_CreateIndirect,"功能菜单选择",FuncMenuSelect,0,0,800,480,0,0x0,0 },
+{ EDIT_CreateIndirect,"",panel1_FuncMenuSelect,0,54,800,426,0,0x0,0 },
+{ BUTTON_CreateIndirect,"坐标示教",btnZBSJ_FuncMenuSelect,22,74,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"取料坐标",btnQLZB_FuncMenuSelect,178,74,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"工作参数",btnWorkPara_FuncMenuSelect,334,74,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"电机参数",btnMotorPara_FuncMenuSelect,490,74,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"设备参数",btnDevPara_FuncMenuSelect,642,74,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"IO口状态",btnIOStatus_FuncMenuSelect,22,171,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"端口配置",btnPortConfig_FuncMenuSelect,178,171,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"动作配置",btnMotionConfig_FuncMenuSelect,334,171,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"铭牌信息",btnMPXX_FuncMenuSelect,490,171,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"系统管理",btnSystem_FuncMenuSelect,642,171,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"日志查看",btnLogView_FuncMenuSelect,22,268,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"关于",btnAbout_FuncMenuSelect,178,268,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"工作界面",btnWorkForm_FuncMenuSelect,642,388,130,68,0,0x0,0 },
+{ EDIT_CreateIndirect,"",panel2_FuncMenuSelect,0,0,800,50,0,0x0,0 },
+{ TEXT_CreateIndirect,"螺丝机自动锁付系统 V4.10",lbSystemTitle_FuncMenuSelect,45,4,430,36,0,0x0,0 },
+{ TEXT_CreateIndirect,"2018-07-31 08:47:00",lbDateTime_FuncMenuSelect,557,17,238,24,0,0x0,0 },
 };
 
 
@@ -61,82 +61,82 @@ static void InitForm(WM_MESSAGE * pMsg){
     WM_HWIN hItem = pMsg->hWin;
     WINDOW_SetBkColor(hItem,0x00F0F0F0);
 
-    hItem = WM_GetDialogItem(pMsg->hWin,panel1_HomeForm);
+    hItem = WM_GetDialogItem(pMsg->hWin,panel1_FuncMenuSelect);
     EDIT_SetText(hItem, "");
     EDIT_SetFocussable(hItem, 0);
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00F0F0F0);
 
-    hItem = WM_GetDialogItem(pMsg->hWin,btnZBSJ_HomeForm);
+    hItem = WM_GetDialogItem(pMsg->hWin,btnZBSJ_FuncMenuSelect);
     BUTTON_SetFont(hItem, &GUI_FontYAHE18);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
-    hItem = WM_GetDialogItem(pMsg->hWin,btnQLZB_HomeForm);
+    hItem = WM_GetDialogItem(pMsg->hWin,btnQLZB_FuncMenuSelect);
     BUTTON_SetFont(hItem, &GUI_FontYAHE18);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
-    hItem = WM_GetDialogItem(pMsg->hWin,btnWorkPara_HomeForm);
+    hItem = WM_GetDialogItem(pMsg->hWin,btnWorkPara_FuncMenuSelect);
     BUTTON_SetFont(hItem, &GUI_FontYAHE18);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
-    hItem = WM_GetDialogItem(pMsg->hWin,btnMotorPara_HomeForm);
+    hItem = WM_GetDialogItem(pMsg->hWin,btnMotorPara_FuncMenuSelect);
     BUTTON_SetFont(hItem, &GUI_FontYAHE18);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
-    hItem = WM_GetDialogItem(pMsg->hWin,btnDevPara_HomeForm);
+    hItem = WM_GetDialogItem(pMsg->hWin,btnDevPara_FuncMenuSelect);
     BUTTON_SetFont(hItem, &GUI_FontYAHE18);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
-    hItem = WM_GetDialogItem(pMsg->hWin,btnIOStatus_HomeForm);
+    hItem = WM_GetDialogItem(pMsg->hWin,btnIOStatus_FuncMenuSelect);
     BUTTON_SetFont(hItem, &GUI_FontYAHE18);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
-    hItem = WM_GetDialogItem(pMsg->hWin,btnPortConfig_HomeForm);
+    hItem = WM_GetDialogItem(pMsg->hWin,btnPortConfig_FuncMenuSelect);
     BUTTON_SetFont(hItem, &GUI_FontYAHE18);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
-    hItem = WM_GetDialogItem(pMsg->hWin,btnMotionConfig_HomeForm);
+    hItem = WM_GetDialogItem(pMsg->hWin,btnMotionConfig_FuncMenuSelect);
     BUTTON_SetFont(hItem, &GUI_FontYAHE18);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
-    hItem = WM_GetDialogItem(pMsg->hWin,btnMPXX_HomeForm);
+    hItem = WM_GetDialogItem(pMsg->hWin,btnMPXX_FuncMenuSelect);
     BUTTON_SetFont(hItem, &GUI_FontYAHE18);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
-    hItem = WM_GetDialogItem(pMsg->hWin,btnSystem_HomeForm);
+    hItem = WM_GetDialogItem(pMsg->hWin,btnSystem_FuncMenuSelect);
     BUTTON_SetFont(hItem, &GUI_FontYAHE18);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
-    hItem = WM_GetDialogItem(pMsg->hWin,btnLogView_HomeForm);
+    hItem = WM_GetDialogItem(pMsg->hWin,btnLogView_FuncMenuSelect);
     BUTTON_SetFont(hItem, &GUI_FontYAHE18);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
-    hItem = WM_GetDialogItem(pMsg->hWin,btnAbout_HomeForm);
+    hItem = WM_GetDialogItem(pMsg->hWin,btnAbout_FuncMenuSelect);
     BUTTON_SetFont(hItem, &GUI_FontYAHE18);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
-    hItem = WM_GetDialogItem(pMsg->hWin,btnWorkForm_HomeForm);
+    hItem = WM_GetDialogItem(pMsg->hWin,btnWorkForm_FuncMenuSelect);
     BUTTON_SetFont(hItem, &GUI_FontYAHE18);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
-    hItem = WM_GetDialogItem(pMsg->hWin,panel2_HomeForm);
+    hItem = WM_GetDialogItem(pMsg->hWin,panel2_FuncMenuSelect);
     EDIT_SetText(hItem, "");
     EDIT_SetFocussable(hItem, 0);
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00808080);
 
-    hItem = WM_GetDialogItem(pMsg->hWin,lbSystemTitle_HomeForm);
+    hItem = WM_GetDialogItem(pMsg->hWin,lbSystemTitle_FuncMenuSelect);
     TEXT_SetText(hItem,"螺丝机自动锁付系统 V4.10");
     TEXT_SetFont(hItem,&GUI_FontYAHE18);
     TEXT_SetTextAlign(hItem,GUI_TA_VCENTER|GUI_TA_LEFT);
@@ -144,7 +144,7 @@ static void InitForm(WM_MESSAGE * pMsg){
     TEXT_SetBkColor(hItem,0x00808080);
     TEXT_SetTextColor(hItem,0x0000FF00);
 
-    hItem = WM_GetDialogItem(pMsg->hWin,lbDateTime_HomeForm);
+    hItem = WM_GetDialogItem(pMsg->hWin,lbDateTime_FuncMenuSelect);
     TEXT_SetText(hItem,"2018-07-31 08:47:00");
     TEXT_SetFont(hItem,GUI_FONT_24_ASCII);
     TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
@@ -161,17 +161,7 @@ static void DoEvent(WM_MESSAGE * pMsg)
     int NCode = pMsg->Data.v;
     switch(Id)
     {
-		case HomeForm:
-			switch(NCode)
-			{
-			}
-			break;
-		case panel1_HomeForm:
-			switch(NCode)
-			{
-			}
-			break;
-		case btnZBSJ_HomeForm:
+		case btnZBSJ_FuncMenuSelect:
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
@@ -182,7 +172,7 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 			}
 			break;
-		case btnQLZB_HomeForm:
+		case btnQLZB_FuncMenuSelect:
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
@@ -193,7 +183,7 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 			}
 			break;
-		case btnWorkPara_HomeForm:
+		case btnWorkPara_FuncMenuSelect:
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
@@ -204,7 +194,7 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 			}
 			break;
-		case btnMotorPara_HomeForm:
+		case btnMotorPara_FuncMenuSelect:
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
@@ -215,7 +205,7 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 			}
 			break;
-		case btnDevPara_HomeForm:
+		case btnDevPara_FuncMenuSelect:
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
@@ -226,7 +216,7 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 			}
 			break;
-		case btnIOStatus_HomeForm:
+		case btnIOStatus_FuncMenuSelect:
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
@@ -237,7 +227,7 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 			}
 			break;
-		case btnPortConfig_HomeForm:
+		case btnPortConfig_FuncMenuSelect:
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
@@ -248,7 +238,7 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 			}
 			break;
-		case btnMotionConfig_HomeForm:
+		case btnMotionConfig_FuncMenuSelect:
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
@@ -259,7 +249,7 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 			}
 			break;
-		case btnMPXX_HomeForm:
+		case btnMPXX_FuncMenuSelect:
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
@@ -270,7 +260,7 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 			}
 			break;
-		case btnSystem_HomeForm:
+		case btnSystem_FuncMenuSelect:
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
@@ -281,7 +271,7 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 			}
 			break;
-		case btnLogView_HomeForm:
+		case btnLogView_FuncMenuSelect:
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
@@ -292,7 +282,7 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 			}
 			break;
-		case btnAbout_HomeForm:
+		case btnAbout_FuncMenuSelect:
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
@@ -303,7 +293,7 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 			}
 			break;
-		case btnWorkForm_HomeForm:
+		case btnWorkForm_FuncMenuSelect:
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
@@ -311,20 +301,22 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
+					GUI_EndDialog(pMsg->hWin,0);
+					CreateWorkForm();
 					break;
 			}
 			break;
-		case panel2_HomeForm:
+		case panel2_FuncMenuSelect:
 			switch(NCode)
 			{
 			}
 			break;
-		case lbSystemTitle_HomeForm:
+		case lbSystemTitle_FuncMenuSelect:
 			switch(NCode)
 			{
 			}
 			break;
-		case lbDateTime_HomeForm:
+		case lbDateTime_FuncMenuSelect:
 			switch(NCode)
 			{
 			}
@@ -350,7 +342,7 @@ static void _cbDialog(WM_MESSAGE * pMsg)
 }
 
 
-WM_HWIN CreateHomeForm(void) {
+WM_HWIN CreateFuncMenuSelect(void) {
     WM_HWIN hWin;
     hWin = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
     return hWin;

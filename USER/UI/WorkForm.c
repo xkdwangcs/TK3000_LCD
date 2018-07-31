@@ -412,77 +412,7 @@ static void DoEvent(WM_MESSAGE * pMsg)
     int Id = WM_GetId(pMsg->hWinSrc);
     int NCode = pMsg->Data.v;
     switch(Id)
-    {
-		case txtX_WorkForm:
-			switch(NCode)
-			{
-				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
-					break;
-				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
-					break;
-				case WM_NOTIFICATION_VALUE_CHANGED:
-					//DO:控件的值已改变
-					break;
-			}
-			break;
-		case txtY1_WorkForm:
-			switch(NCode)
-			{
-				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
-					break;
-				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
-					break;
-				case WM_NOTIFICATION_VALUE_CHANGED:
-					//DO:控件的值已改变
-					break;
-			}
-			break;
-		case txtY2_WorkForm:
-			switch(NCode)
-			{
-				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
-					break;
-				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
-					break;
-				case WM_NOTIFICATION_VALUE_CHANGED:
-					//DO:控件的值已改变
-					break;
-			}
-			break;
-		case txtZ_WorkForm:
-			switch(NCode)
-			{
-				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
-					break;
-				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
-					break;
-				case WM_NOTIFICATION_VALUE_CHANGED:
-					//DO:控件的值已改变
-					break;
-			}
-			break;
-		case mEditMsg_WorkForm:
-			switch(NCode)
-			{
-				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
-					break;
-				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
-					break;
-				case WM_NOTIFICATION_VALUE_CHANGED:
-					//DO:控件的值已改变
-					break;
-			}
-			break;
+    {		
 		case cmbFileSelect_WorkForm:
 			switch(NCode)
 			{
@@ -494,76 +424,6 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 				case WM_NOTIFICATION_SEL_CHANGED:
 					//DO:选择的值已发生改变
-					break;
-			}
-			break;
-		case txtLSNum_WorkForm:
-			switch(NCode)
-			{
-				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
-					break;
-				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
-					break;
-				case WM_NOTIFICATION_VALUE_CHANGED:
-					//DO:控件的值已改变
-					break;
-			}
-			break;
-		case txtLSIndex_WorkForm:
-			switch(NCode)
-			{
-				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
-					break;
-				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
-					break;
-				case WM_NOTIFICATION_VALUE_CHANGED:
-					//DO:控件的值已改变
-					break;
-			}
-			break;
-		case txtTimeTotal_WorkForm:
-			switch(NCode)
-			{
-				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
-					break;
-				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
-					break;
-				case WM_NOTIFICATION_VALUE_CHANGED:
-					//DO:控件的值已改变
-					break;
-			}
-			break;
-		case txtTimeAVG_WorkForm:
-			switch(NCode)
-			{
-				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
-					break;
-				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
-					break;
-				case WM_NOTIFICATION_VALUE_CHANGED:
-					//DO:控件的值已改变
-					break;
-			}
-			break;
-		case txtJGTatol_WorkForm:
-			switch(NCode)
-			{
-				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
-					break;
-				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
-					break;
-				case WM_NOTIFICATION_VALUE_CHANGED:
-					//DO:控件的值已改变
 					break;
 			}
 			break;
@@ -603,6 +463,8 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
+					GUI_EndDialog(pMsg->hWin,0);
+					CreateFuncMenuSelect();
 					break;
 			}
 			break;
@@ -625,6 +487,7 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
+					ShowNumKeyboard1(pMsg->hWin,EDIT_SetText,Id);
 					break;
 				case WM_NOTIFICATION_VALUE_CHANGED:
 					//DO:控件的值已改变
@@ -639,6 +502,8 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
+					GUI_EndDialog(pMsg->hWin,0);
+					CreateFuncMenuSelect();
 					break;
 			}
 			break;

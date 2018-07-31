@@ -549,9 +549,9 @@
               <FilePath>.\UI\WelcomForm.c</FilePath>
             </File>
             <File>
-              <FileName>HomeForm.c</FileName>
+              <FileName>FuncMenuSelect.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\UI\HomeForm.c</FilePath>
+              <FilePath>.\UI\FuncMenuSelect.c</FilePath>
             </File>
           </Files>
         </Group>

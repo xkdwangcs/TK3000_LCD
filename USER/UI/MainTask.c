@@ -54,6 +54,9 @@ static void _cbBkWindow(WM_MESSAGE * pMsg)
 			GUI_SetBkColor(GUI_BLACK);
 			GUI_Clear();
 			break;
+		case 32: //点击焦点控件
+			LCDBeep(50); 
+			break;
 		default:
 			WM_DefaultProc(pMsg);
 	}
@@ -77,7 +80,9 @@ void MainTask(void)
 	*/
 	WM_MULTIBUF_Enable(1);	
 	//设置桌面窗口的背景色，会自动重绘
-	WM_SetDesktopColor(GUI_BLUE);   
+	//WM_SetDesktopColor(GUI_BLUE); 
+	//设置桌面窗口的回调函数,当把WM_SetCreateFlags放到GUI_Init()之前时，可以WM_SetDesktopColor替代
+	WM_SetCallback(WM_HBKWIN,_cbBkWindow);	
     
 //	if(_isTouchCalibration)
 //	{
@@ -111,9 +116,9 @@ void MainTask(void)
 			GUI_SetFont(&GUI_FontYAHE18);	
 			GUI_SetTextAlign(GUI_TA_HORIZONTAL|GUI_TA_LEFT);
             //TestPictureFontDisplay();   
-            CreateHomeForm();
+            //CreateFuncMenuSelect();
         
-			/*char devMode[16]={0};
+			char devMode[16]={0};
 			while(!GetDevMode(devMode))
 			{
 				GUI_Clear();
@@ -135,7 +140,7 @@ void MainTask(void)
 			while(true)
 			{			
                 isExitWhile=false;	                
-				GUI_Clear();
+				GUI_Clear(); 
 				appStatus =GetCurrStatus();
                 if(appStatus.DevStatus==lastStatus)
                 {
@@ -174,7 +179,7 @@ void MainTask(void)
 				}
 				if(isExitWhile) break;
 				GUI_Delay(500);
-			}	*/
+			}	
 		}
     
     static char loopCount=0;   
