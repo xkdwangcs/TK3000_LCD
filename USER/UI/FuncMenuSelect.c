@@ -6,7 +6,7 @@
 ******************************************/
 
 #include "DIALOG.h"
-
+#include "MainTask.h"
 
 #define FuncMenuSelect (GUI_ID_USER +0x00)
 #define panel1_FuncMenuSelect (GUI_ID_USER +0x01)
@@ -153,6 +153,19 @@ static void InitForm(WM_MESSAGE * pMsg){
     TEXT_SetTextColor(hItem,0x00FFFFFF);
 }
 
+static WM_HTIMER _hTimer;
+static WM_HWIN _lbDateTime=NULL;
+//char _dateStr[15];
+//char _timeStr[15];
+char _timeStr[30];
+static void ShowDateTime(LoopDataStruct loopData)
+{
+    DataTimeStruct dataTime=loopData.DataTime;
+    //sprintf(_dateStr,"20%02d-%02d-%02d", dataTime.Year, dataTime.Mon,dataTime.Day);
+	sprintf(_timeStr,"20%02d-%02d-%02d %0.2d:%0.2d:%0.2d",dataTime.Year, 
+        dataTime.Mon,dataTime.Day, dataTime.Hour, dataTime.Min, dataTime.Sec);    
+    TEXT_SetText(_lbDateTime,_timeStr);
+}
 
 //控件事件处理函数
 static void DoEvent(WM_MESSAGE * pMsg)
@@ -303,6 +316,7 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					//DO:按钮已被释放（弹起）
 					GUI_EndDialog(pMsg->hWin,0);
 					CreateWorkForm();
+                    WM_DeleteTimer(_hTimer);
 					break;
 			}
 			break;
@@ -324,9 +338,9 @@ static void DoEvent(WM_MESSAGE * pMsg)
     }
 }
 
-
 static void _cbDialog(WM_MESSAGE * pMsg)
 {
+    LoopDataStruct loopData ;
     switch (pMsg->MsgId)
 	{
 		case WM_INIT_DIALOG:
@@ -335,16 +349,26 @@ static void _cbDialog(WM_MESSAGE * pMsg)
 		case WM_NOTIFY_PARENT:
 			DoEvent(pMsg);
 			break;
+         case WM_TIMER:
+             loopData = GetLoopData();
+            ShowDateTime(loopData);
+            WM_RestartTimer(pMsg->Data.v,1000);
+            break;
 		default:
 		    WM_DefaultProc(pMsg);
 		    break;
     }
 }
 
-
 WM_HWIN CreateFuncMenuSelect(void) {
     WM_HWIN hWin;
     hWin = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
+    _lbDateTime=WM_GetDialogItem(hWin,lbDateTime_FuncMenuSelect);
+    //_hTimer= WM_CreateTimer(WM_HBKWIN, 0, 1000, 0);
+    //_hTimer = WM_CreateTimer(hWin, 0, 1000, 0);
+    LoopDataReaded=ShowDateTime;
     return hWin;
 }
+
+
  

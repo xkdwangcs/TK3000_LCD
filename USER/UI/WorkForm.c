@@ -379,17 +379,11 @@ static void InitForm(WM_MESSAGE * pMsg){
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x000000FF);
 }
 
-
+static char* _coordFormat = "%.3f";//坐标格式化字符
 static WM_HWIN _txtXCoord=NULL;
 static WM_HWIN _txtY1Coord=NULL;
 static WM_HWIN _txtY2Coord=NULL;
 static WM_HWIN _txtZCoord=NULL;
-static WM_HWIN _txtTime=NULL;
-static char* _coordFormat = "%.3f";//坐标格式化字符
-
-//char _dateStr[15];
-//char _timeStr[15];
-char _timeStr[30];
 
 static void ShowCurrCoord(LoopDataStruct loopData)
 {
@@ -398,12 +392,6 @@ static void ShowCurrCoord(LoopDataStruct loopData)
     EDIT_SetText(_txtY1Coord,ConvertFloatToAsciiFormat(coord.Y1,_coordFormat));
     EDIT_SetText(_txtY2Coord,ConvertFloatToAsciiFormat(coord.Y2,_coordFormat));
     EDIT_SetText(_txtZCoord,ConvertFloatToAsciiFormat(coord.Z1,_coordFormat));
-    
-    DataTimeStruct dataTime=loopData.DataTime;
-    //sprintf(_dateStr,"20%02d-%02d-%02d", dataTime.Year, dataTime.Mon,dataTime.Day);
-	sprintf(_timeStr,"20%02d-%02d-%02d %0.2d:%0.2d:%0.2d",dataTime.Year, 
-        dataTime.Mon,dataTime.Day, dataTime.Hour, dataTime.Min, dataTime.Sec);    
-    MULTIEDIT_SetText(_txtTime,_timeStr);
 }
 
 //控件事件处理函数
@@ -595,7 +583,6 @@ WM_HWIN CreateWorkForm(void) {
     _txtY1Coord=WM_GetDialogItem(hWin,txtY1_WorkForm);
     _txtY2Coord=WM_GetDialogItem(hWin,txtY2_WorkForm);
     _txtZCoord=WM_GetDialogItem(hWin,txtZ_WorkForm);
-    _txtTime=WM_GetDialogItem(hWin,mEditMsg_WorkForm);
     LoopDataReaded=ShowCurrCoord;
     return hWin;
 }

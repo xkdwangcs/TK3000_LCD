@@ -186,10 +186,10 @@ void MainTask(void)
     static char loopCount=0;   
     while(1)
     {
-       /* if(isExitWhile)
+        if(isExitWhile)
         {
             //要改为GUI定时器的方式
-            if(loopCount>=2)
+            if(loopCount>=20)
             {
                 loopCount=0;
                 LoopDataStruct loopData = GetLoopData();
@@ -197,7 +197,7 @@ void MainTask(void)
                     LoopDataReaded(loopData);
             }
             loopCount++;
-        }*/
+        }
         GUI_Delay(50);
     }
 }
