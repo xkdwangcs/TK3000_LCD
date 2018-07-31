@@ -463,8 +463,8 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
-					GUI_EndDialog(pMsg->hWin,0);
-					CreateFuncMenuSelect();
+					//GUI_EndDialog(pMsg->hWin,0);
+					//CreateFuncMenuSelect();
 					break;
 			}
 			break;

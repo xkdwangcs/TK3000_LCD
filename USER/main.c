@@ -74,8 +74,6 @@ int main(void)
 //		CreateFileOnDisk(fn,true);
 //		WriteBytesToFile(fn,(u8*)str,0,strlen(str));
     LCDBeep(100); 
-	//BEEP_Start(100,1,1);
-    //BEEP_Stop();
     MainTask();
   
   

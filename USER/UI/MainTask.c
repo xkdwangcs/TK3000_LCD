@@ -51,11 +51,12 @@ static void _cbBkWindow(WM_MESSAGE * pMsg)
 	switch(pMsg->MsgId)
 	{
 		case WM_PAINT:
-			GUI_SetBkColor(GUI_BLACK);
-			GUI_Clear();
+//			GUI_SetBkColor(GUI_BLUE);
+//			GUI_Clear();
 			break;
 		case 32: //点击焦点控件
-			LCDBeep(50); 
+			LCDBeep(10); 
+            //BEEP_KeyTone();
 			break;
 		default:
 			WM_DefaultProc(pMsg);

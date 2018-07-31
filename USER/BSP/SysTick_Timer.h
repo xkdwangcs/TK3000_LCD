@@ -22,11 +22,11 @@ typedef enum
 	
 typedef struct
 {
-	volatile SoftTimerType TimerType; 			  //定时器类型
-	volatile bool IsUse; 						          //是否使用定时器
-	volatile bool IsEnable;						        //定时器是否使能
-	volatile u32 Count;  						          //当前定时器中的计时
-	volatile u32 PreValue;						        //计时器的目标值(ms),到达这个值将引发事件(调用回调)
+	volatile SoftTimerType TimerType; 			//定时器类型
+	volatile bool IsUse; 						//是否使用定时器
+	volatile bool IsEnable;						//定时器是否使能
+	volatile u32 Count;  						//当前定时器中的计时
+	volatile u32 PreValue;						//计时器的目标值(ms),到达这个值将引发事件(调用回调)
 	volatile OneIntParameterHandler CallFunc;	//回调函数，返回的参数为定时器的索引，从0开始的	
 }SoftTimerStruct;//软定时器结构体，成员变量必须是 volatile, 否则C编译器优化时可能有问题 
 

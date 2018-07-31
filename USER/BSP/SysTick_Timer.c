@@ -47,24 +47,6 @@ void SysTick_Init(void)
 //    #endif
 }
 
-//1ms调用一次的任务
-void Run1msTask(void)
-{
-	//电阻触摸屏，扫描
-	if(g_tTP.Enable == 1)
-	{
-		TOUCH_Scan();	
-	}
-	
-	if(_currUSBMode==HostMode && _isUSBInset)
-		USBH_Process(&USB_OTG_Core, &USB_Host);
-}
-
-//10ms调用一次的任务
-void Run10msTask(void)
-{
-  
-}
 
 //软定时器累加，1ms一次
 void TimeKeeperISR()
@@ -95,6 +77,26 @@ void TimeKeeperISR()
 		}
  }
 
+ //1ms调用一次的任务
+void Run1msTask(void)
+{
+	//电阻触摸屏，扫描
+	if(g_tTP.Enable == 1)
+	{
+		TOUCH_Scan();	
+	}	
+      //软定时器累加
+    TimeKeeperISR();
+	if(_currUSBMode==HostMode && _isUSBInset)
+		USBH_Process(&USB_OTG_Core, &USB_Host);
+}
+
+//10ms调用一次的任务
+void Run10msTask(void)
+{
+  
+}
+
 //功能说明: 系统嘀嗒定时器中断服务程序。启动文件中引用了该函数。
 void SysTick_Handler(void)
 {	
@@ -112,8 +114,6 @@ void SysTick_Handler(void)
 		_10msCount = 0;
 		Run10msTask();	// 每隔10ms调用一次此函数
 	}  
-  //软定时器累加
-  TimeKeeperISR();
 }
 
 //获取计时器当前的计时数，单位ms
@@ -130,7 +130,7 @@ void ResetTimekeeper(void)
 
 //创建一个软定时器。如果创建成功则返回0开始的索引，否则返回0xFF
 //timerType:定时器类型，perValue:定时器预装值，当计时器累计到此值，将引发回调。callFunc：回调函数
-u8 CreateSoftTimer(SoftTimerType timerType,u32 perValue,OneIntParameterHandler callFunc)
+u8 CreateSoftTimer(SoftTimerType timerType,u32 ms,OneIntParameterHandler callFunc)
 {
 	for(u8 timerIndex=0;timerIndex<SoftTimerCount;timerIndex++)
 	{
@@ -138,7 +138,7 @@ u8 CreateSoftTimer(SoftTimerType timerType,u32 perValue,OneIntParameterHandler c
 			continue;
 		_timekeeper.SoftTimers[timerIndex].TimerType=timerType;
 		_timekeeper.SoftTimers[timerIndex].Count=0;
-		_timekeeper.SoftTimers[timerIndex].PreValue=perValue;
+		_timekeeper.SoftTimers[timerIndex].PreValue=ms;
 		_timekeeper.SoftTimers[timerIndex].IsUse=true;
 		_timekeeper.SoftTimers[timerIndex].IsEnable=false;
 		_timekeeper.SoftTimers[timerIndex].CallFunc=callFunc;
