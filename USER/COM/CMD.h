@@ -90,6 +90,20 @@ void RegisterDevice(char* regNum);
 LoopDataStruct GetLoopData();
 //获取文件列表
 FileListStruct* GetFileList();
+
+#define InportNum 24
+#define OutportNum 16
+
+typedef struct
+{
+   bool InportStatus[InportNum];   //24路输入口状态
+   bool OutportStatus[OutportNum]; //16路输出口状态
+}IOStatusStruct; //IO口状态结构
+    
+//读取控制器输入输出口状态
+IOStatusStruct GetIOStatus();
+//设置输出口状态
+void SetOutPortStatus(char outPortIndex);
 	 
 #ifdef __cplusplus
 }

@@ -56,10 +56,10 @@ static void _cbBkWindow(WM_MESSAGE * pMsg)
 			break;
 		case 32: //点击焦点控件
 			LCDBeep(10); 
-            //BEEP_KeyTone();
 			break;
 		default:
 			WM_DefaultProc(pMsg);
+            break;
 	}
 }
 

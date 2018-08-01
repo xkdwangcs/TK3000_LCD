@@ -237,6 +237,8 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
+                    WM_HideWin(pMsg->hWin);
+                    CreateIOStatus(pMsg->hWin);
 					break;
 			}
 			break;
@@ -318,21 +320,6 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					CreateWorkForm();
                     WM_DeleteTimer(_hTimer);
 					break;
-			}
-			break;
-		case panel2_FuncMenuSelect:
-			switch(NCode)
-			{
-			}
-			break;
-		case lbSystemTitle_FuncMenuSelect:
-			switch(NCode)
-			{
-			}
-			break;
-		case lbDateTime_FuncMenuSelect:
-			switch(NCode)
-			{
 			}
 			break;
     }

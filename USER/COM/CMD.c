@@ -180,5 +180,20 @@ FileListStruct* GetFileList()
     return &_fileList;
 }
 
+IOStatusStruct _ioStatus;
+//读取控制器输入输出口状态
+IOStatusStruct GetIOStatus()
+{
+    SendChars_Pack(_rdd,"IOStatus",NULL);
+    ReadDataDelay();
+    CopyBytes((u8*)&_ioStatus,0,_cmdRecvBuff.CmdData,_cmdRecvBuff.DataLeng);
+    return _ioStatus;
+}
 
-
+//设置输出口状态
+void SetOutPortStatus(char outPortIndex)
+{
+    u8 cmd[1]={outPortIndex};
+    //SendChars_Pack(_wrt,"SetOutPort",NULL);
+    SendBytes_Pack(_wrt,"SetOutPort",cmd,1);
+}

@@ -73,7 +73,7 @@ int main(void)
 //		char* fn="0:/TestDir/abc.txt";
 //		CreateFileOnDisk(fn,true);
 //		WriteBytesToFile(fn,(u8*)str,0,strlen(str));
-    LCDBeep(100); 
+    LCDBeep(100);
     MainTask();
   
   
