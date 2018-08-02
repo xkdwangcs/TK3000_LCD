@@ -427,7 +427,7 @@ WM_HWIN CreateIOStatus(WM_HWIN callForm)
     _callForm=callForm;
     _thisForm = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
     _hTimer = WM_CreateTimer(_thisForm, 0, 500, 0);
-    BUTTON_SetDefaultSkinClassic();
+    //BUTTON_SetDefaultSkinClassic();
     return _thisForm;
 }
  
