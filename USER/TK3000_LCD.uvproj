@@ -558,6 +558,16 @@
               <FileType>1</FileType>
               <FilePath>.\UI\IOStatus.c</FilePath>
             </File>
+            <File>
+              <FileName>MotorPara.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\UI\MotorPara.c</FilePath>
+            </File>
+            <File>
+              <FileName>CoordTeach.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\UI\CoordTeach.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

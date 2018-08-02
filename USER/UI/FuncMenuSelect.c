@@ -182,6 +182,9 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
+                    WM_DeleteWindow(pMsg->hWin);
+                    CreateCoordTeach();
+                    WM_DeleteTimer(_hTimer);                    
 					break;
 			}
 			break;
@@ -215,6 +218,9 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
+                    WM_DeleteWindow(pMsg->hWin);
+                    CreateMotorPara();
+                    WM_DeleteTimer(_hTimer);
 					break;
 			}
 			break;
@@ -237,7 +243,7 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
-                    WM_HideWin(pMsg->hWin);
+                    WM_DeleteWindow(pMsg->hWin);
                     CreateIOStatus(pMsg->hWin);
 					break;
 			}
@@ -316,7 +322,7 @@ static void DoEvent(WM_MESSAGE * pMsg)
 					break;
 				case WM_NOTIFICATION_RELEASED:
 					//DO:按钮已被释放（弹起）
-					GUI_EndDialog(pMsg->hWin,0);
+					WM_DeleteWindow(pMsg->hWin);
 					CreateWorkForm();
                     WM_DeleteTimer(_hTimer);
 					break;
