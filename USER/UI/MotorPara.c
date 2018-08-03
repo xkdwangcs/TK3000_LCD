@@ -45,6 +45,14 @@ void LoadMotorPara(WM_HWIN hItem)
       else if(Parameter.LimitMode[i]==1)
         LISTVIEW_SetItemText(hItem, 5, i, "Right");
     }
+	
+	int i=5;
+	 LISTVIEW_AddRow(hItem, NULL);
+     LISTVIEW_SetItemText(hItem, 0, i, "所有轴");
+     LISTVIEW_SetItemText(hItem, 1, i, ConvertFloatToAscii(Parameter.PulseK[0]));
+     LISTVIEW_SetItemText(hItem, 2, i, ConvertFloatToAscii(Parameter.AxisLength[0]));
+     LISTVIEW_SetItemText(hItem, 3, i, ConvertFloatToAscii(Parameter.RunSpeed[0]));
+     LISTVIEW_SetItemText(hItem, 4, i, ConvertFloatToAscii(Parameter.AccSpeed[0]));
 }
 
 //初始化窗体相关控件
