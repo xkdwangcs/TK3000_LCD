@@ -6,6 +6,7 @@
 ******************************************/
 
 #include "DIALOG.h"
+#include "MainTask.h"
 #include <string.h>
 #include "UIPublic.h"
 
@@ -113,13 +114,6 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 { BUTTON_CreateIndirect,"Esc",btnEsc_FullKeyForm,640,276,112,50,0, 0x0, 0 },
 { EDIT_CreateIndirect,"",txtInputData_FullKeyForm,4,4,747,59,0, 0x0, 0 },
 };
-
-
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE14;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE18;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE24;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE32;
-
 
 //初始化窗体相关控件
 static void InitForm(WM_MESSAGE * pMsg){
@@ -327,17 +321,17 @@ static void InitForm(WM_MESSAGE * pMsg){
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnLeft_FullKeyForm);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE32);
+    BUTTON_SetFont(hItem, &GUI_FontHZ40);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00004000);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnRight_FullKeyForm);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE32);
+    BUTTON_SetFont(hItem, &GUI_FontHZ40);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00004000);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnInputType_FullKeyForm);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
+    BUTTON_SetFont(hItem, &GUI_FontHZ32);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00004000);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00008000);
 
@@ -368,7 +362,7 @@ static void InitForm(WM_MESSAGE * pMsg){
 
     hItem = WM_GetDialogItem(pMsg->hWin,txtInputData_FullKeyForm);
     EDIT_SetText(hItem, "");
-    EDIT_SetFont(hItem, &GUI_FontYAHE24);
+    EDIT_SetFont(hItem, &GUI_FontHZ32);
     EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_LEFT);
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00FFFFFF);
     EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);

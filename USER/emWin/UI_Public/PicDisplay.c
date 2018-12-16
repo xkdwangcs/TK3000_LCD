@@ -2,7 +2,7 @@
 #include "GUI.h"
 #include "Delay.h"
 #include "bsp_tft_lcd.h"
-#include "XBFFont.h"
+#include "MainTask.h"
 #include "MemoryAlloc.h"
 
 static FIL _picFile; 
@@ -467,7 +467,7 @@ void TestPictureFontDisplay(void)
 	GUI_SetColor(GUI_RED);
 	//GUI_SetFont(&GUI_Font24_ASCII);
 	GUI_UC_SetEncodeUTF8();
-	GUI_SetFont(&GUI_FontYAHE18);	
+	GUI_SetFont(&GUI_FontHZ24);	
 	GUI_SetTextAlign(GUI_TA_HORIZONTAL|GUI_TA_LEFT);
 	//GUI_Clear();
 	

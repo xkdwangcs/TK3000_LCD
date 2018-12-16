@@ -15,6 +15,8 @@
 #include "usbh_msc_bot.h"
 #include "FileOperate.h"
 #include "GUI.h"
+//#include "bsp_spi_flash.h"
+#include "SPIFlashBase.h"
 
 USB_OTG_CORE_HANDLE   USB_OTG_Core;
 USBH_HOST             USB_Host;
@@ -181,12 +183,46 @@ void USBBackReset(u16 keyCode)
 	//SystemReset();
 }
 
+uint8_t tempbuf[4096]={0}; 
+	FIL file;
+	UINT bw1;
+	FATFS fs; 
+
 //应用操作
 int USBH_USR_MSC_Application(void)
 {
     if(!_isRunOne)
     {
         _isRunOne=true;
+        
+        int count=0;
+        FRESULT result = f_mount(&fs,"1:/",0);	                        
+	result = f_open(&file,"1:/font.bin",FA_READ);
+	if (result ==  FR_OK)
+	{
+        for(;;)
+        {
+            memset(tempbuf,0,sizeof(tempbuf));
+            result = f_read(&file, &tempbuf, 4096, &bw1);		
+            if ((result != FR_OK)||bw1 == 0)
+            {
+                break;
+            }		
+			 WriteBytesSPIFlash(count,tempbuf,4096);//WriteBytes(tempbuf, count*4096, 4096);	
+			
+//            int ucState = sf_WriteBuffer(tempbuf, count*4096, 4096);		
+//            if(ucState == 0)
+//            {
+//                break;
+//            }		
+            count++;
+        }        
+    }
+    result  = f_close(&file);
+    result  = f_mount(NULL, "1:/", 0); 	
+    LCDBeep(200);
+        
+		//CreateUSBFunc_Ctr();
 //			PermissionTypeEnum destPer=AdminiPer;//需要管理员及以上权限
 //			if(_currPermission<destPer)
 //			{
@@ -220,10 +256,10 @@ int USBH_USR_MSC_Application(void)
 //			f_close(&file);
 //			res  = f_mount(NULL, "0:/", 0); 	 
 			//GUI_SetFont(&GUI_Font24_ASCII);	
-			GUI_DispStringHCenterAt("Start copy. Wait...",200,80);		
-			//bool bl= CopyFile("1:/Font/HWXH21.xbf","0:/Font/HWXH21.xbf",true);
-      bool bl= CopyFile("1:/abc.pdf","0:/abc.pdf",true);
-			GUI_DispStringHCenterAt("Copy complate,Plese potup USB!",200,110);	
+//			GUI_DispStringHCenterAt("Start copy. Wait...",200,80);		
+//			//bool bl= CopyFile("1:/Font/HWXH21.xbf","0:/Font/HWXH21.xbf",true);
+//			bool bl= CopyFile("1:/abc.pdf","0:/abc.pdf",true);
+//			GUI_DispStringHCenterAt("Copy complate,Plese potup USB!",200,110);	
 //			char fileList[40][50];//U盘里的动作文件
 //			GetFileList_Dir("1:/Pic",(char*)fileList,40,50,NULL);
     }

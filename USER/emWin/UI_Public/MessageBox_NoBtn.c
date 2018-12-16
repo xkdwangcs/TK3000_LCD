@@ -7,7 +7,7 @@
 ******************************************/
 
 #include  "DIALOG.h"
-
+#include "MainTask.h"
 
 #define MessageBox (GUI_ID_USER +0x00)
 #define lbMsg_MessageBox (GUI_ID_USER +0x01)
@@ -18,23 +18,18 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 { TEXT_CreateIndirect,"这是消息框",lbMsg_MessageBox,48,52,483,136,0, 0x0, 0 },
 };
 
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE14;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE18;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE24;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE32;
-
 //初始化窗体相关控件
 static void InitForm(WM_MESSAGE * pMsg){
     WM_HWIN hItem = pMsg->hWin;
     FRAMEWIN_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
     //FRAMEWIN_SetTitleHeight(hItem,28);
-    FRAMEWIN_SetFont(hItem, &GUI_FontYAHE18);    
+    FRAMEWIN_SetFont(hItem, &GUI_FontHZ24);    
     FRAMEWIN_SetClientColor(hItem,0x00808080);
     FRAMEWIN_SetTextColor(hItem, 0x00FFFFFF);
 
     hItem = WM_GetDialogItem(pMsg->hWin,lbMsg_MessageBox);
     TEXT_SetText(hItem,"这是消息框");
-    TEXT_SetFont(hItem,&GUI_FontYAHE24);
+    TEXT_SetFont(hItem,&GUI_FontHZ32);
     TEXT_SetTextAlign(hItem,GUI_TA_VCENTER|GUI_TA_HCENTER);
     TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//自动换行
     TEXT_SetBkColor(hItem,0x00808080);

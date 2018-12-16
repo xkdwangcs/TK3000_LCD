@@ -50,10 +50,10 @@
 */
 
 #include "bsp_tft_lcd.h"
-#include "fonts.h"
 #include "bsp_tft_429.h"
 #include "bsp_tim_pwm.h"
 #include "SysTick_Timer.h"
+#include "string.h"
 
 /* 下面3个变量，主要用于使程序同时支持不同的屏 */
 uint16_t g_LcdHeight = 240;			/* 显示屏分辨率-高度 */
@@ -310,7 +310,7 @@ uint16_t LCD_GetStrWidth(char *_ptr, FONT_T *_tFont)
 		{
 			switch(_tFont->FontCode)
 			{
-				case FC_RA8875_16:
+				/*case FC_RA8875_16:
 					font_width = g_RA8875_Ascii16_width[code1 - 0x20];
 					break;
 				
@@ -321,7 +321,7 @@ uint16_t LCD_GetStrWidth(char *_ptr, FONT_T *_tFont)
 				case FC_RA8875_32:
 					font_width = g_RA8875_Ascii32_width[code1 - 0x20];
 					break;
-				
+				*/
 				case FC_ST_12:
 					font_width = 6;
 					break;
@@ -374,13 +374,13 @@ uint16_t LCD_GetStrWidth(char *_ptr, FONT_T *_tFont)
 */
 static void _LCD_ReadAsciiDot(uint8_t _code, uint8_t _fontcode, uint8_t *_pBuf)
 {
-	const uint8_t *pAscDot;
+/*	const uint8_t *pAscDot;
 	uint8_t font_bytes = 0;
 
 	pAscDot = 0;
 	switch (_fontcode)
 	{
-		case FC_ST_12:		/* 12点阵 */
+		case FC_ST_12:		//12点阵
 			font_bytes = 24;
 			pAscDot = g_Ascii12;	
 			break;
@@ -388,7 +388,7 @@ static void _LCD_ReadAsciiDot(uint8_t _code, uint8_t _fontcode, uint8_t *_pBuf)
 		case FC_ST_24:
 		case FC_ST_32:
 		case FC_ST_16:
-			/* 缺省是16点阵 */
+			// 缺省是16点阵
 			font_bytes = 32;
 			pAscDot = g_Ascii16;
 			break;
@@ -399,8 +399,9 @@ static void _LCD_ReadAsciiDot(uint8_t _code, uint8_t _fontcode, uint8_t *_pBuf)
 			return;
 	}	
 
-	/* 将CPU内部Flash中的ascii字符点阵复制到buf */
+	//将CPU内部Flash中的ascii字符点阵复制到buf
 	memcpy(_pBuf, &pAscDot[_code * (font_bytes / 2)], (font_bytes / 2));	
+	*/
 }
 
 /*
@@ -416,16 +417,16 @@ static void _LCD_ReadAsciiDot(uint8_t _code, uint8_t _fontcode, uint8_t *_pBuf)
 */
 static void _LCD_ReadHZDot(uint8_t _code1, uint8_t _code2,  uint8_t _fontcode, uint8_t *_pBuf)
 {
-	#ifdef USE_SMALL_FONT	/* 使用CPU 内部Flash 小字库 */
+	/*#ifdef USE_SMALL_FONT	// 使用CPU 内部Flash 小字库
 		uint8_t *pDot;
 		uint8_t font_bytes = 0;
 		uint32_t address;
 		uint16_t m;
 
-		pDot = 0;	/* 仅仅用于避免告警 */
+		pDot = 0;	// 仅仅用于避免告警
 		switch (_fontcode)
 		{
-			case FC_ST_12:		/* 12点阵 */
+			case FC_ST_12:		// 12点阵 
 				font_bytes = 24;
 				pDot = (uint8_t *)g_Hz12;	
 				break;
@@ -464,18 +465,18 @@ static void _LCD_ReadHZDot(uint8_t _code1, uint8_t _code2,  uint8_t _fontcode, u
 			}
 			else if ((pDot[address + 0] == 0xFF) && (pDot[address + 1] == 0xFF))
 			{
-				/* 字库搜索完毕，未找到，则填充全FF */
+				// 字库搜索完毕，未找到，则填充全FF
 				memset(_pBuf, 0xFF, font_bytes);
 				break;
 			}
 		}
-	#else	/* 用全字库 */
+	#else	// 用全字库
 		uint8_t *pDot = 0;
 		uint8_t font_bytes = 0;
 			
 		switch (_fontcode)
 		{
-			case FC_ST_12:		/* 12点阵 */
+			case FC_ST_12:		// 12点阵
 				font_bytes = 24;
 				pDot = (uint8_t *)HZK12_ADDR;	
 				break;
@@ -501,7 +502,7 @@ static void _LCD_ReadHZDot(uint8_t _code1, uint8_t _code2,  uint8_t _fontcode, u
 				return;
 		}			
 	
-		/* 此处需要根据字库文件存放位置进行修改 */
+		//此处需要根据字库文件存放位置进行修改
 		if (_code1 >=0xA1 && _code1 <= 0xA9 && _code2 >=0xA1)
 		{
 			pDot += ((_code1 - 0xA1) * 94 + (_code2 - 0xA1)) * font_bytes;
@@ -512,6 +513,7 @@ static void _LCD_ReadHZDot(uint8_t _code1, uint8_t _code2,  uint8_t _fontcode, u
 		}
 		memcpy(_pBuf, pDot, font_bytes);
 	#endif
+	*/
 }
 			
 /*

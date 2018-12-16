@@ -6,6 +6,7 @@
 ******************************************/
 
 #include "DIALOG.h"
+#include "MainTask.h"
 #include <string.h>
 #include "UIPublic.h"
 
@@ -66,13 +67,6 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 { BUTTON_CreateIndirect,"Enter",btnEnter_NumKeyForm,397,217,133,50,0, 0x0, 0 },
 { EDIT_CreateIndirect,"",txtData_NumKeyForm,2,2,527,57,0, 0x0, 0 },
 };
-
-
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE14;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE18;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE24;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE32;
-
 
 //初始化窗体相关控件
 static void InitForm(WM_MESSAGE * pMsg){
@@ -170,12 +164,12 @@ static void InitForm(WM_MESSAGE * pMsg){
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnLeft_NumKeyForm);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE32);
+    BUTTON_SetFont(hItem, &GUI_FontHZ40);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x0090EE90);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnRight_NumKeyForm);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE32);
+    BUTTON_SetFont(hItem, &GUI_FontHZ40);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x0090EE90);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 

@@ -2,13 +2,17 @@
 #include "bsp_touch.h"
 #include "usbh_usr.h" 
 #include "usb_bsp.h"
+#include "bsp_gpio.h"
 
 //	全局运行时间，单位1ms
 //	最长可以表示 24.85天，如果你的产品连续运行时间超过这个数，则必须考虑溢出问题
 __IO int32_t _iRunTime = 0;
 //毫秒延时计数器
 volatile u32  _msDelayCount;
+//10ms累计器
 volatile u8 _10msCount = 0;
+//1s累计器
+volatile u32 _1sCount = 0;
 //软定时器实例
 TimekeeperStruct _timekeeper;
 
@@ -97,6 +101,22 @@ void Run10msTask(void)
   
 }
 
+bool _isLEDON=false;
+//1s循环调用的任务
+void Run1sTask(void)
+{
+	if(_isLEDON)
+	{
+		LED_OFF();
+		_isLEDON=false;
+	}
+	else
+	{
+		LED_ON();
+		_isLEDON=true;
+	}
+}
+
 //功能说明: 系统嘀嗒定时器中断服务程序。启动文件中引用了该函数。
 void SysTick_Handler(void)
 {	
@@ -107,13 +127,19 @@ void SysTick_Handler(void)
 	{
 		_iRunTime = 0;
 	}
-	Run1msTask();		  //每隔1ms调用一次此函数
+	Run1msTask();		  			//每隔1ms调用一次此函数
   
 	if (++_10msCount >= 10)
 	{
 		_10msCount = 0;
-		Run10msTask();	// 每隔10ms调用一次此函数
+		Run10msTask();				// 每隔10ms调用一次此函数
 	}  
+	
+	if(++_1sCount>=1000)
+	{
+		_1sCount=0;
+		Run1sTask();
+	}
 }
 
 //获取计时器当前的计时数，单位ms

@@ -18,7 +18,10 @@
 *********************************************************************************************************
 */
 
-#include "bsp.h"
+#include "bsp_spi_flash.h"
+#include "bsp_spi_bus.h"
+#include "string.h"
+
 
 /* 串行Flsh的片选GPIO端口  */
 #define SF_RCC_CS 			RCC_AHB1Periph_GPIOD

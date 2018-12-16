@@ -1,13 +1,16 @@
 
 /*****************************************
 *
-* è‚–åº”å¼ºè®¾è®¡çš„GUIBuilderç”Ÿæˆçš„æ–‡ä»¶
+* Ð¤Ó¦Ç¿Éè¼ÆµÄGUIBuilderÉú³ÉµÄÎÄ¼þ
 * 2018.05.16
 *
 ******************************************/
 
 #include  "DIALOG.h"
 #include "USBFunc_Ctr.h"
+#include "MainTask.h"
+#include "FileOperate.h"
+#include "bsp_spi_flash.h"
 
 
 #define USBOpre (GUI_ID_USER +0x00)
@@ -24,7 +27,7 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 };
 
 
-//åˆå§‹åŒ–çª—ä½“ç›¸å…³æŽ§ä»¶
+//³õÊ¼»¯´°ÌåÏà¹Ø¿Ø¼þ
 void InitDialog_USBOpre(WM_MESSAGE * pMsg){
     WM_HWIN hItem = pMsg->hWin;
     FRAMEWIN_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
@@ -40,9 +43,41 @@ void InitDialog_USBOpre(WM_MESSAGE * pMsg){
     hItem = WM_GetDialogItem(pMsg->hWin,button1_USBOpre);
     BUTTON_SetFont(hItem, GUI_FONT_16_ASCII);
 }
+   
+/*	uint8_t tempbuf[4096]={0}; 
+	FIL file;
+	UINT bw1;
+	FATFS fs; 
+void CopyFontToFlash(void)
+{	
+    uint32_t count = 0;
+	uint8_t ucState;
+	FRESULT result = f_mount(&fs,"1:/",0);	                        
+	result = f_open(&file,"1:/font.bin",FA_OPEN_EXISTING | FA_READ);
+	if (result ==  FR_OK)
+	{
+        for(;;)
+        {
+            memset(tempbuf,0,sizeof(tempbuf));
+            result = f_read(&file, &tempbuf, g_tSF.PageSize, &bw1);		
+            if ((result != FR_OK)||bw1 == 0)
+            {
+                break;
+            }		
+            ucState = sf_WriteBuffer(tempbuf, count*g_tSF.PageSize, g_tSF.PageSize);		
+            if(ucState == 0)
+            {
+                break;
+            }		
+            count++;
+        }        
+    }
+    result  = f_close(&file);
+    result  = f_mount(NULL, "1:/", 0); 	
+}
+*/
 
-
-//æŽ§ä»¶äº‹ä»¶å¤„ç†å‡½æ•°
+//¿Ø¼þÊÂ¼þ´¦Àíº¯Êý
 void DoEvent_USBOpre(WM_MESSAGE * pMsg)
 {
     int Id = WM_GetId(pMsg->hWinSrc);
@@ -53,10 +88,10 @@ void DoEvent_USBOpre(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;
@@ -64,10 +99,10 @@ void DoEvent_USBOpre(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;
@@ -75,10 +110,11 @@ void DoEvent_USBOpre(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
+                    //CopyFontToFlash();
 					break;
 			}
 			break;

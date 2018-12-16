@@ -1,11 +1,12 @@
 /*****************************************
 *
-* è‚–åº”å¼ºè®¾è®¡çš„GUIBuilderç”Ÿæˆçš„æ–‡ä»¶
+* Ð¤Ó¦Ç¿Éè¼ÆµÄGUIBuilderÉú³ÉµÄÎÄ¼þ
 * V2.03 (2018.07.17)
 *
 ******************************************/
 
 #include "DIALOG.h"
+#include "MainTask.h"
 #include "FileOperate.h"
 
 #define WelcomForm (GUI_ID_USER +0x00)
@@ -18,18 +19,12 @@
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 { WINDOW_CreateIndirect,"Welcom",WelcomForm,0,0,800,480,0, 0x0, 0 },
 { IMAGE_CreateIndirect,"",picture1_WelcomForm,0,0,800,480,0, 0x0, 0 },
-{ TEXT_CreateIndirect,"è‡ªåŠ¨ç‚¹èƒ¶æŽ§åˆ¶ç³»ç»Ÿ",lbSysName_WelcomForm,208,66,369,57,0, 0x0, 0 },
-{ TEXT_CreateIndirect,"é•¿æ²™æ‹“æŽ§æ™ºèƒ½ç§‘æŠ€æœ‰é™å…¬å¸",lbCompany_WelcomForm,191,337,402,41,0, 0x0, 0 },
+{ TEXT_CreateIndirect,"×Ô¶¯µã½º¿ØÖÆÏµÍ³",lbSysName_WelcomForm,208,66,369,57,0, 0x0, 0 },
+{ TEXT_CreateIndirect,"³¤É³ÍØ¿ØÖÇÄÜ¿Æ¼¼ÓÐÏÞ¹«Ë¾",lbCompany_WelcomForm,191,337,402,41,0, 0x0, 0 },
 { TEXT_CreateIndirect,"http://www.tkrobot.net",lbURL_WelcomForm,212,378,367,33,0, 0x0, 0 },
 };
 
-
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE14;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE18;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE24;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE32;
-
-//åˆå§‹åŒ–çª—ä½“ç›¸å…³æŽ§ä»¶
+//³õÊ¼»¯´°ÌåÏà¹Ø¿Ø¼þ
 static void InitForm(WM_MESSAGE * pMsg){
     WM_HWIN hItem = pMsg->hWin;
     WINDOW_SetBkColor(hItem,0x00F0F0F0);
@@ -43,18 +38,18 @@ static void InitForm(WM_MESSAGE * pMsg){
     }
 
     hItem = WM_GetDialogItem(pMsg->hWin,lbSysName_WelcomForm);
-    TEXT_SetText(hItem,"è‡ªåŠ¨ç‚¹èƒ¶æŽ§åˆ¶ç³»ç»Ÿ");
-    TEXT_SetFont(hItem,&GUI_FontYAHE32);
+    TEXT_SetText(hItem,"×Ô¶¯µã½º¿ØÖÆÏµÍ³");
+    TEXT_SetFont(hItem,&GUI_FontHZ40);
     TEXT_SetTextAlign(hItem,GUI_TA_VCENTER|GUI_TA_HCENTER);
-    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//è‡ªåŠ¨æ¢è¡Œ
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//×Ô¶¯»»ÐÐ
     //TEXT_SetBkColor(hItem,0x00F0F0F0);
     TEXT_SetTextColor(hItem,0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,lbCompany_WelcomForm);
-    TEXT_SetText(hItem,"é•¿æ²™æ‹“æŽ§æ™ºèƒ½ç§‘æŠ€æœ‰é™å…¬å¸");
-    TEXT_SetFont(hItem,&GUI_FontYAHE24);
+    TEXT_SetText(hItem,"³¤É³ÍØ¿ØÖÇÄÜ¿Æ¼¼ÓÐÏÞ¹«Ë¾");
+    TEXT_SetFont(hItem,&GUI_FontHZ32);
     TEXT_SetTextAlign(hItem,GUI_TA_VCENTER|GUI_TA_HCENTER);
-    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//è‡ªåŠ¨æ¢è¡Œ
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//×Ô¶¯»»ÐÐ
     //TEXT_SetBkColor(hItem,0x00F0F0F0);
     TEXT_SetTextColor(hItem,0x00000000);
 
@@ -62,12 +57,12 @@ static void InitForm(WM_MESSAGE * pMsg){
     TEXT_SetText(hItem,"http://www.tkrobot.net");
     TEXT_SetFont(hItem,GUI_FONT_32_ASCII);
     TEXT_SetTextAlign(hItem,GUI_TA_VCENTER|GUI_TA_HCENTER);
-    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//è‡ªåŠ¨æ¢è¡Œ
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//×Ô¶¯»»ÐÐ
     //TEXT_SetBkColor(hItem,0x00F0F0F0);
     TEXT_SetTextColor(hItem,0x00000000);
 }
 
-//æŽ§ä»¶äº‹ä»¶å¤„ç†å‡½æ•°
+//¿Ø¼þÊÂ¼þ´¦Àíº¯Êý
 static void DoEvent(WM_MESSAGE * pMsg)
 {
     int Id = WM_GetId(pMsg->hWinSrc);

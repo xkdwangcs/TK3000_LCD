@@ -1,6 +1,6 @@
 /*****************************************
 *
-* è‚–åº”å¼ºè®¾è®¡çš„GUIBuilderç”Ÿæˆçš„æ–‡ä»¶
+* Ð¤Ó¦Ç¿Éè¼ÆµÄGUIBuilderÉú³ÉµÄÎÄ¼þ
 * V2.03 (2018.07.17)
 *
 ******************************************/
@@ -48,7 +48,7 @@
 
 
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
-{ FRAMEWIN_CreateIndirect,"TK3000_è‡ªåŠ¨ç‚¹èƒ¶æŽ§åˆ¶ç³»ç»Ÿ V1.00",WorkForm,0,0,800,480,0, 0x0, 0 },
+{ FRAMEWIN_CreateIndirect,"TK3000_×Ô¶¯µã½º¿ØÖÆÏµÍ³ V1.00",WorkForm,0,0,800,480,0, 0x0, 0 },
 { EDIT_CreateIndirect,"",pnlCoords_WorkForm,12,12,309,165,0, 0x0, 0 },
 { TEXT_CreateIndirect,"X",lbX_WorkForm,54,24,27,27,0, 0x0, 0 },
 { EDIT_CreateIndirect,"0.001",txtX_WorkForm,98,19,179,35,0, 0x0, 0 },
@@ -59,49 +59,43 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 { TEXT_CreateIndirect,"Z",lbZ_WorkForm,54,134,27,27,0, 0x0, 0 },
 { EDIT_CreateIndirect,"0.001",txtZ_WorkForm,98,130,179,35,0, 0x0, 0 },
 { MULTIEDIT_CreateIndirect,"",mEditMsg_WorkForm,12,183,309,180,0, 0x0, 0 },
-{ TEXT_CreateIndirect,"å·¥ä½œæ–‡ä»¶",label4_WorkForm,350,21,110,31,0, 0x0, 0 },
+{ TEXT_CreateIndirect,"¹¤×÷ÎÄ¼þ",label4_WorkForm,350,21,110,31,0, 0x0, 0 },
 { DROPDOWN_CreateIndirect,"",cmbFileSelect_WorkForm,458,17,313,39,0, 0x0, 0 },
-{ TEXT_CreateIndirect,"æ€»èžºä¸æ•°",label1_WorkForm,349,68,110,31,0, 0x0, 0 },
+{ TEXT_CreateIndirect,"×ÜÂÝË¿Êý",label1_WorkForm,349,68,110,31,0, 0x0, 0 },
 { EDIT_CreateIndirect,"1",txtLSNum_WorkForm,458,66,156,35,0, 0x0, 0 },
-{ TEXT_CreateIndirect,"å½“å‰èžºä¸",label8_WorkForm,350,115,110,31,0, 0x0, 0 },
+{ TEXT_CreateIndirect,"µ±Ç°ÂÝË¿",label8_WorkForm,350,115,110,31,0, 0x0, 0 },
 { EDIT_CreateIndirect,"2",txtLSIndex_WorkForm,458,113,156,35,0, 0x0, 0 },
-{ TEXT_CreateIndirect,"æ€»è®¡æ—¶é•¿",label2_WorkForm,350,158,110,31,0, 0x0, 0 },
+{ TEXT_CreateIndirect,"×Ü¼ÆÊ±³¤",label2_WorkForm,350,158,110,31,0, 0x0, 0 },
 { EDIT_CreateIndirect,"3",txtTimeTotal_WorkForm,458,156,156,35,0, 0x0, 0 },
-{ TEXT_CreateIndirect,"å¹³å‡æ—¶é•¿",label3_WorkForm,350,201,110,31,0, 0x0, 0 },
+{ TEXT_CreateIndirect,"Æ½¾ùÊ±³¤",label3_WorkForm,350,201,110,31,0, 0x0, 0 },
 { EDIT_CreateIndirect,"4",txtTimeAVG_WorkForm,458,199,156,35,0, 0x0, 0 },
-{ TEXT_CreateIndirect,"æ€»åŠ å·¥æ•°",label5_WorkForm,350,245,110,31,0, 0x0, 0 },
+{ TEXT_CreateIndirect,"×Ü¼Ó¹¤Êý",label5_WorkForm,350,245,110,31,0, 0x0, 0 },
 { EDIT_CreateIndirect,"5",txtJGTatol_WorkForm,458,242,156,35,0, 0x0, 0 },
-{ TEXT_CreateIndirect,"ä¸åˆæ ¼æ•°",label6_WorkForm,350,287,110,31,0, 0x0, 0 },
+{ TEXT_CreateIndirect,"²»ºÏ¸ñÊý",label6_WorkForm,350,287,110,31,0, 0x0, 0 },
 { EDIT_CreateIndirect,"6",txtBHGNum_WorkForm,458,285,156,35,0, 0x0, 0 },
-{ TEXT_CreateIndirect,"æ—¥åŠ å·¥æ•°",label7_WorkForm,350,331,110,31,0, 0x0, 0 },
+{ TEXT_CreateIndirect,"ÈÕ¼Ó¹¤Êý",label7_WorkForm,350,331,110,31,0, 0x0, 0 },
 { EDIT_CreateIndirect,"7",txtRJGNum_WorkForm,458,328,156,35,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"å·¥ä½œå‚æ•°",btnWorkParaSet_WorkForm,649,128,122,54,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"IOçŠ¶æ€",btnIOStatusForm_WorkForm,649,189,123,54,0, 0x0, 0 },
-{ TEXT_CreateIndirect,"å·¥ä½œé€Ÿåº¦",label10_WorkForm,645,294,110,31,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"¹¤×÷²ÎÊý",btnWorkParaSet_WorkForm,649,128,122,54,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"IO×´Ì¬",btnIOStatusForm_WorkForm,649,189,123,54,0, 0x0, 0 },
+{ TEXT_CreateIndirect,"¹¤×÷ËÙ¶È",label10_WorkForm,645,294,110,31,0, 0x0, 0 },
 { EDIT_CreateIndirect,"100%",txtWorkSpeed_WorkForm,649,328,122,35,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"è®¾ç½®",btnParaForm_WorkForm,12,382,115,54,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"å¤ä½",btnReset_WorkForm,163,382,106,54,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"é‡æ‰“",btnRedo_WorkForm,285,382,129,54,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"å·¦å¯åŠ¨",btnLeftStart_WorkForm,417,382,129,54,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"å³å¯åŠ¨",btnRightStart_WorkForm,549,382,122,54,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"åœæ­¢",btnStop_WorkForm,674,382,106,54,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"ÉèÖÃ",btnParaForm_WorkForm,12,382,115,54,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"¸´Î»",btnReset_WorkForm,163,382,106,54,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"ÖØ´ò",btnRedo_WorkForm,285,382,129,54,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"×óÆô¶¯",btnLeftStart_WorkForm,417,382,129,54,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"ÓÒÆô¶¯",btnRightStart_WorkForm,549,382,122,54,0, 0x0, 0 },
+{ BUTTON_CreateIndirect,"Í£Ö¹",btnStop_WorkForm,674,382,106,54,0, 0x0, 0 },
 };
 
 
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE14;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE18;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE24;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE32;
-
-
-//åˆå§‹åŒ–çª—ä½“ç›¸å…³æŽ§ä»¶
+//³õÊ¼»¯´°ÌåÏà¹Ø¿Ø¼þ
 static void InitForm(WM_MESSAGE * pMsg){
     WM_HWIN hItem = pMsg->hWin;
     FRAMEWIN_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
-    FRAMEWIN_SetFont(hItem, &GUI_FontYAHE18);
+    FRAMEWIN_SetFont(hItem, &GUI_FontHZ24);
     FRAMEWIN_SetClientColor(hItem,0x00C0C0C0);
     FRAMEWIN_SetTextColor(hItem, 0x00000000);
-    FRAMEWIN_SetMoveable(hItem, 0);//çª—ä½“ä¸å¯ç§»åŠ¨
+    FRAMEWIN_SetMoveable(hItem, 0);//´°Ìå²»¿ÉÒÆ¶¯
 
     hItem = WM_GetDialogItem(pMsg->hWin,pnlCoords_WorkForm);
     EDIT_SetText(hItem, "");
@@ -112,7 +106,7 @@ static void InitForm(WM_MESSAGE * pMsg){
     TEXT_SetText(hItem,"X");
     TEXT_SetFont(hItem,GUI_FONT_24_ASCII);
     TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
-    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//è‡ªåŠ¨æ¢è¡Œ
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//×Ô¶¯»»ÐÐ
     TEXT_SetBkColor(hItem,0x00C0C0C0);
     TEXT_SetTextColor(hItem,0x00000000);
 
@@ -122,14 +116,14 @@ static void InitForm(WM_MESSAGE * pMsg){
     EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_LEFT);
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00C0C0FF);
     EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
-    EDIT_SetMaxLen(hItem, 50); //å­—ç¬¦æœ€å¤§é•¿åº¦
-    EDIT_EnableBlink(hItem, 500, 0); //å…‰æ ‡ä¸é—ªçƒ
+    EDIT_SetMaxLen(hItem, 50); //×Ö·û×î´ó³¤¶È
+    EDIT_EnableBlink(hItem, 500, 0); //¹â±ê²»ÉÁË¸
 
     hItem = WM_GetDialogItem(pMsg->hWin,lbY1_WorkForm);
     TEXT_SetText(hItem,"Y1");
     TEXT_SetFont(hItem,GUI_FONT_24_ASCII);
     TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
-    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//è‡ªåŠ¨æ¢è¡Œ
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//×Ô¶¯»»ÐÐ
     TEXT_SetBkColor(hItem,0x00C0C0C0);
     TEXT_SetTextColor(hItem,0x00000000);
 
@@ -139,14 +133,14 @@ static void InitForm(WM_MESSAGE * pMsg){
     EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_LEFT);
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00C0FFC0);
     EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
-    EDIT_SetMaxLen(hItem, 50); //å­—ç¬¦æœ€å¤§é•¿åº¦
-    EDIT_EnableBlink(hItem, 500, 0); //å…‰æ ‡ä¸é—ªçƒ
+    EDIT_SetMaxLen(hItem, 50); //×Ö·û×î´ó³¤¶È
+    EDIT_EnableBlink(hItem, 500, 0); //¹â±ê²»ÉÁË¸
 
     hItem = WM_GetDialogItem(pMsg->hWin,lbY2_WorkForm);
     TEXT_SetText(hItem,"Y2");
     TEXT_SetFont(hItem,GUI_FONT_24_ASCII);
     TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
-    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//è‡ªåŠ¨æ¢è¡Œ
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//×Ô¶¯»»ÐÐ
     TEXT_SetBkColor(hItem,0x00C0C0C0);
     TEXT_SetTextColor(hItem,0x00000000);
 
@@ -156,14 +150,14 @@ static void InitForm(WM_MESSAGE * pMsg){
     EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_LEFT);
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00C0FFC0);
     EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
-    EDIT_SetMaxLen(hItem, 50); //å­—ç¬¦æœ€å¤§é•¿åº¦
-    EDIT_EnableBlink(hItem, 500, 0); //å…‰æ ‡ä¸é—ªçƒ
+    EDIT_SetMaxLen(hItem, 50); //×Ö·û×î´ó³¤¶È
+    EDIT_EnableBlink(hItem, 500, 0); //¹â±ê²»ÉÁË¸
 
     hItem = WM_GetDialogItem(pMsg->hWin,lbZ_WorkForm);
     TEXT_SetText(hItem,"Z");
     TEXT_SetFont(hItem,GUI_FONT_24_ASCII);
     TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
-    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//è‡ªåŠ¨æ¢è¡Œ
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//×Ô¶¯»»ÐÐ
     TEXT_SetBkColor(hItem,0x00C0C0C0);
     TEXT_SetTextColor(hItem,0x00000000);
 
@@ -173,40 +167,40 @@ static void InitForm(WM_MESSAGE * pMsg){
     EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_LEFT);
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00FFC0C0);
     EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
-    EDIT_SetMaxLen(hItem, 50); //å­—ç¬¦æœ€å¤§é•¿åº¦
-    EDIT_EnableBlink(hItem, 500, 0); //å…‰æ ‡ä¸é—ªçƒ
+    EDIT_SetMaxLen(hItem, 50); //×Ö·û×î´ó³¤¶È
+    EDIT_EnableBlink(hItem, 500, 0); //¹â±ê²»ÉÁË¸
 
     hItem = WM_GetDialogItem(pMsg->hWin,mEditMsg_WorkForm);
-    MULTIEDIT_SetFont(hItem, &GUI_FontYAHE14);
-    //MULTIEDIT_CI_READONLY:åªè¯»æ¨¡å¼ï¼ŒMULTIEDIT_CI_EDITï¼šç¼–è¾‘æ¨¡å¼
-    MULTIEDIT_SetTextColor(hItem, MULTIEDIT_CI_READONLY, 0x00000000);  //è®¾ç½®æ–‡æœ¬é¢œè‰²
-    MULTIEDIT_SetBkColor(hItem, MULTIEDIT_CI_READONLY, 0x00C0E0FF); //è®¾ç½®èƒŒæ™¯è‰²
-    MULTIEDIT_SetAutoScrollV(hItem, 1); //ä½¿ç”¨èƒ½åž‚ç›´æ»šåŠ¨æ¡
-    MULTIEDIT_SetInsertMode(hItem, 0);//ç¦æ­¢æ’å…¥æ¨¡å¼
-    MULTIEDIT_SetWrapWord(hItem); //å¯ç”¨æ¢è¡Œæ¨¡å¼
-    MULTIEDIT_SetReadOnly(hItem, 1); //å¯ç”¨åªè¯»æ¨¡å¼
-    MULTIEDIT_SetBufferSize(hItem,1024);  //æ­¤é•¿åº¦é™å®šæ–¹æ³•å¥½åƒæ²¡ç”¨
-    //MULTIEDIT_SetMaxLen(hItem,200);       //æ­¤é•¿åº¦é™å®šæ–¹æ³•å¥½åƒæ²¡ç”¨
+    MULTIEDIT_SetFont(hItem, &GUI_FontHZ24);
+    //MULTIEDIT_CI_READONLY:Ö»¶ÁÄ£Ê½£¬MULTIEDIT_CI_EDIT£º±à¼­Ä£Ê½
+    MULTIEDIT_SetTextColor(hItem, MULTIEDIT_CI_READONLY, 0x00000000);  //ÉèÖÃÎÄ±¾ÑÕÉ«
+    MULTIEDIT_SetBkColor(hItem, MULTIEDIT_CI_READONLY, 0x00C0E0FF); //ÉèÖÃ±³¾°É«
+    MULTIEDIT_SetAutoScrollV(hItem, 1); //Ê¹ÓÃÄÜ´¹Ö±¹ö¶¯Ìõ
+    MULTIEDIT_SetInsertMode(hItem, 0);//½ûÖ¹²åÈëÄ£Ê½
+    MULTIEDIT_SetWrapWord(hItem); //ÆôÓÃ»»ÐÐÄ£Ê½
+    MULTIEDIT_SetReadOnly(hItem, 1); //ÆôÓÃÖ»¶ÁÄ£Ê½
+    MULTIEDIT_SetBufferSize(hItem,1024);  //´Ë³¤¶ÈÏÞ¶¨·½·¨ºÃÏñÃ»ÓÃ
+    //MULTIEDIT_SetMaxLen(hItem,200);       //´Ë³¤¶ÈÏÞ¶¨·½·¨ºÃÏñÃ»ÓÃ
     MULTIEDIT_AddText(hItem, "OneText");
 
     hItem = WM_GetDialogItem(pMsg->hWin,label4_WorkForm);
-    TEXT_SetText(hItem,"å·¥ä½œæ–‡ä»¶");
-    TEXT_SetFont(hItem,&GUI_FontYAHE18);
+    TEXT_SetText(hItem,"¹¤×÷ÎÄ¼þ");
+    TEXT_SetFont(hItem,&GUI_FontHZ24);
     TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
-    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//è‡ªåŠ¨æ¢è¡Œ
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//×Ô¶¯»»ÐÐ
     TEXT_SetBkColor(hItem,0x00C0C0C0);
     TEXT_SetTextColor(hItem,0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,cmbFileSelect_WorkForm);
-    DROPDOWN_SetFont(hItem, &GUI_FontYAHE18);
-    DROPDOWN_SetAutoScroll(hItem, 1);//è®¾ç½®è‡ªåŠ¨æ»šåŠ¨æ¡
+    DROPDOWN_SetFont(hItem, &GUI_FontHZ24);
+    DROPDOWN_SetAutoScroll(hItem, 1);//ÉèÖÃ×Ô¶¯¹ö¶¯Ìõ
     DROPDOWN_SetListHeight(hItem, 100);
 
     hItem = WM_GetDialogItem(pMsg->hWin,label1_WorkForm);
-    TEXT_SetText(hItem,"æ€»èžºä¸æ•°");
-    TEXT_SetFont(hItem,&GUI_FontYAHE18);
+    TEXT_SetText(hItem,"×ÜÂÝË¿Êý");
+    TEXT_SetFont(hItem,&GUI_FontHZ24);
     TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
-    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//è‡ªåŠ¨æ¢è¡Œ
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//×Ô¶¯»»ÐÐ
     TEXT_SetBkColor(hItem,0x00C0C0C0);
     TEXT_SetTextColor(hItem,0x00000000);
 
@@ -216,14 +210,14 @@ static void InitForm(WM_MESSAGE * pMsg){
     EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_LEFT);
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00C0E0FF);
     EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
-    EDIT_SetMaxLen(hItem, 50); //å­—ç¬¦æœ€å¤§é•¿åº¦
-    EDIT_EnableBlink(hItem, 500, 0); //å…‰æ ‡ä¸é—ªçƒ
+    EDIT_SetMaxLen(hItem, 50); //×Ö·û×î´ó³¤¶È
+    EDIT_EnableBlink(hItem, 500, 0); //¹â±ê²»ÉÁË¸
 
     hItem = WM_GetDialogItem(pMsg->hWin,label8_WorkForm);
-    TEXT_SetText(hItem,"å½“å‰èžºä¸");
-    TEXT_SetFont(hItem,&GUI_FontYAHE18);
+    TEXT_SetText(hItem,"µ±Ç°ÂÝË¿");
+    TEXT_SetFont(hItem,&GUI_FontHZ24);
     TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
-    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//è‡ªåŠ¨æ¢è¡Œ
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//×Ô¶¯»»ÐÐ
     TEXT_SetBkColor(hItem,0x00C0C0C0);
     TEXT_SetTextColor(hItem,0x00000000);
 
@@ -233,14 +227,14 @@ static void InitForm(WM_MESSAGE * pMsg){
     EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_LEFT);
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00C0E0FF);
     EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
-    EDIT_SetMaxLen(hItem, 50); //å­—ç¬¦æœ€å¤§é•¿åº¦
-    EDIT_EnableBlink(hItem, 500, 0); //å…‰æ ‡ä¸é—ªçƒ
+    EDIT_SetMaxLen(hItem, 50); //×Ö·û×î´ó³¤¶È
+    EDIT_EnableBlink(hItem, 500, 0); //¹â±ê²»ÉÁË¸
 
     hItem = WM_GetDialogItem(pMsg->hWin,label2_WorkForm);
-    TEXT_SetText(hItem,"æ€»è®¡æ—¶é•¿");
-    TEXT_SetFont(hItem,&GUI_FontYAHE18);
+    TEXT_SetText(hItem,"×Ü¼ÆÊ±³¤");
+    TEXT_SetFont(hItem,&GUI_FontHZ24);
     TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
-    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//è‡ªåŠ¨æ¢è¡Œ
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//×Ô¶¯»»ÐÐ
     TEXT_SetBkColor(hItem,0x00C0C0C0);
     TEXT_SetTextColor(hItem,0x00000000);
 
@@ -250,14 +244,14 @@ static void InitForm(WM_MESSAGE * pMsg){
     EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_LEFT);
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00C0E0FF);
     EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
-    EDIT_SetMaxLen(hItem, 50); //å­—ç¬¦æœ€å¤§é•¿åº¦
-    EDIT_EnableBlink(hItem, 500, 0); //å…‰æ ‡ä¸é—ªçƒ
+    EDIT_SetMaxLen(hItem, 50); //×Ö·û×î´ó³¤¶È
+    EDIT_EnableBlink(hItem, 500, 0); //¹â±ê²»ÉÁË¸
 
     hItem = WM_GetDialogItem(pMsg->hWin,label3_WorkForm);
-    TEXT_SetText(hItem,"å¹³å‡æ—¶é•¿");
-    TEXT_SetFont(hItem,&GUI_FontYAHE18);
+    TEXT_SetText(hItem,"Æ½¾ùÊ±³¤");
+    TEXT_SetFont(hItem,&GUI_FontHZ24);
     TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
-    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//è‡ªåŠ¨æ¢è¡Œ
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//×Ô¶¯»»ÐÐ
     TEXT_SetBkColor(hItem,0x00C0C0C0);
     TEXT_SetTextColor(hItem,0x00000000);
 
@@ -267,14 +261,14 @@ static void InitForm(WM_MESSAGE * pMsg){
     EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_LEFT);
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00C0E0FF);
     EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
-    EDIT_SetMaxLen(hItem, 50); //å­—ç¬¦æœ€å¤§é•¿åº¦
-    EDIT_EnableBlink(hItem, 500, 0); //å…‰æ ‡ä¸é—ªçƒ
+    EDIT_SetMaxLen(hItem, 50); //×Ö·û×î´ó³¤¶È
+    EDIT_EnableBlink(hItem, 500, 0); //¹â±ê²»ÉÁË¸
 
     hItem = WM_GetDialogItem(pMsg->hWin,label5_WorkForm);
-    TEXT_SetText(hItem,"æ€»åŠ å·¥æ•°");
-    TEXT_SetFont(hItem,&GUI_FontYAHE18);
+    TEXT_SetText(hItem,"×Ü¼Ó¹¤Êý");
+    TEXT_SetFont(hItem,&GUI_FontHZ24);
     TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
-    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//è‡ªåŠ¨æ¢è¡Œ
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//×Ô¶¯»»ÐÐ
     TEXT_SetBkColor(hItem,0x00C0C0C0);
     TEXT_SetTextColor(hItem,0x00000000);
 
@@ -284,14 +278,14 @@ static void InitForm(WM_MESSAGE * pMsg){
     EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_LEFT);
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00C0E0FF);
     EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
-    EDIT_SetMaxLen(hItem, 50); //å­—ç¬¦æœ€å¤§é•¿åº¦
-    EDIT_EnableBlink(hItem, 500, 0); //å…‰æ ‡ä¸é—ªçƒ
+    EDIT_SetMaxLen(hItem, 50); //×Ö·û×î´ó³¤¶È
+    EDIT_EnableBlink(hItem, 500, 0); //¹â±ê²»ÉÁË¸
 
     hItem = WM_GetDialogItem(pMsg->hWin,label6_WorkForm);
-    TEXT_SetText(hItem,"ä¸åˆæ ¼æ•°");
-    TEXT_SetFont(hItem,&GUI_FontYAHE18);
+    TEXT_SetText(hItem,"²»ºÏ¸ñÊý");
+    TEXT_SetFont(hItem,&GUI_FontHZ24);
     TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
-    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//è‡ªåŠ¨æ¢è¡Œ
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//×Ô¶¯»»ÐÐ
     TEXT_SetBkColor(hItem,0x00C0C0C0);
     TEXT_SetTextColor(hItem,0x00000000);
 
@@ -301,14 +295,14 @@ static void InitForm(WM_MESSAGE * pMsg){
     EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_LEFT);
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00C0E0FF);
     EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
-    EDIT_SetMaxLen(hItem, 50); //å­—ç¬¦æœ€å¤§é•¿åº¦
-    EDIT_EnableBlink(hItem, 500, 0); //å…‰æ ‡ä¸é—ªçƒ
+    EDIT_SetMaxLen(hItem, 50); //×Ö·û×î´ó³¤¶È
+    EDIT_EnableBlink(hItem, 500, 0); //¹â±ê²»ÉÁË¸
 
     hItem = WM_GetDialogItem(pMsg->hWin,label7_WorkForm);
-    TEXT_SetText(hItem,"æ—¥åŠ å·¥æ•°");
-    TEXT_SetFont(hItem,&GUI_FontYAHE18);
+    TEXT_SetText(hItem,"ÈÕ¼Ó¹¤Êý");
+    TEXT_SetFont(hItem,&GUI_FontHZ24);
     TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
-    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//è‡ªåŠ¨æ¢è¡Œ
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//×Ô¶¯»»ÐÐ
     TEXT_SetBkColor(hItem,0x00C0C0C0);
     TEXT_SetTextColor(hItem,0x00000000);
 
@@ -318,24 +312,24 @@ static void InitForm(WM_MESSAGE * pMsg){
     EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_LEFT);
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00C0E0FF);
     EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
-    EDIT_SetMaxLen(hItem, 50); //å­—ç¬¦æœ€å¤§é•¿åº¦
-    EDIT_EnableBlink(hItem, 500, 0); //å…‰æ ‡ä¸é—ªçƒ
+    EDIT_SetMaxLen(hItem, 50); //×Ö·û×î´ó³¤¶È
+    EDIT_EnableBlink(hItem, 500, 0); //¹â±ê²»ÉÁË¸
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnWorkParaSet_WorkForm);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00C0C0C0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnIOStatusForm_WorkForm);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00C0C0C0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,label10_WorkForm);
-    TEXT_SetText(hItem,"å·¥ä½œé€Ÿåº¦");
-    TEXT_SetFont(hItem,&GUI_FontYAHE18);
+    TEXT_SetText(hItem,"¹¤×÷ËÙ¶È");
+    TEXT_SetFont(hItem,&GUI_FontHZ24);
     TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
-    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//è‡ªåŠ¨æ¢è¡Œ
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//×Ô¶¯»»ÐÐ
     TEXT_SetBkColor(hItem,0x00C0C0C0);
     TEXT_SetTextColor(hItem,0x00000000);
 
@@ -345,41 +339,41 @@ static void InitForm(WM_MESSAGE * pMsg){
     EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_HCENTER);
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00FFFFFF);
     EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
-    EDIT_SetMaxLen(hItem, 50); //å­—ç¬¦æœ€å¤§é•¿åº¦
-    EDIT_EnableBlink(hItem, 500, 0); //å…‰æ ‡ä¸é—ªçƒ
+    EDIT_SetMaxLen(hItem, 50); //×Ö·û×î´ó³¤¶È
+    EDIT_EnableBlink(hItem, 500, 0); //¹â±ê²»ÉÁË¸
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnParaForm_WorkForm);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
+    BUTTON_SetFont(hItem, &GUI_FontHZ32);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00C0C0C0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnReset_WorkForm);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
+    BUTTON_SetFont(hItem, &GUI_FontHZ32);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00C0C0C0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnRedo_WorkForm);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
+    BUTTON_SetFont(hItem, &GUI_FontHZ32);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00C0C0C0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnLeftStart_WorkForm);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
+    BUTTON_SetFont(hItem, &GUI_FontHZ32);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00C0C0C0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnRightStart_WorkForm);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
+    BUTTON_SetFont(hItem, &GUI_FontHZ32);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00C0C0C0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnStop_WorkForm);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
+    BUTTON_SetFont(hItem, &GUI_FontHZ32);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00FFFFFF);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x000000FF);
 }
 
-static char* _coordFormat = "%.3f";//åæ ‡æ ¼å¼åŒ–å­—ç¬¦
+static char* _coordFormat = "%.3f";//×ø±ê¸ñÊ½»¯×Ö·û
 static WM_HWIN _txtXCoord=NULL;
 static WM_HWIN _txtY1Coord=NULL;
 static WM_HWIN _txtY2Coord=NULL;
@@ -394,7 +388,8 @@ static void ShowCurrCoord(LoopDataStruct loopData)
     EDIT_SetText(_txtZCoord,ConvertFloatToAsciiFormat(coord.Z1,_coordFormat));
 }
 
-//æŽ§ä»¶äº‹ä»¶å¤„ç†å‡½æ•°
+WM_HWIN CreateWorkForm(void);
+//¿Ø¼þÊÂ¼þ´¦Àíº¯Êý
 static void DoEvent(WM_MESSAGE * pMsg)
 {
     int Id = WM_GetId(pMsg->hWinSrc);
@@ -405,13 +400,13 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 				case WM_NOTIFICATION_SEL_CHANGED:
-					//DO:é€‰æ‹©çš„å€¼å·²å‘ç”Ÿæ”¹å˜
+					//DO:Ñ¡ÔñµÄÖµÒÑ·¢Éú¸Ä±ä
 					break;
 			}
 			break;
@@ -419,13 +414,13 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 				case WM_NOTIFICATION_VALUE_CHANGED:
-					//DO:æŽ§ä»¶çš„å€¼å·²æ”¹å˜
+					//DO:¿Ø¼þµÄÖµÒÑ¸Ä±ä
 					break;
 			}
 			break;
@@ -433,13 +428,13 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 				case WM_NOTIFICATION_VALUE_CHANGED:
-					//DO:æŽ§ä»¶çš„å€¼å·²æ”¹å˜
+					//DO:¿Ø¼þµÄÖµÒÑ¸Ä±ä
 					break;
 			}
 			break;
@@ -447,10 +442,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					//GUI_EndDialog(pMsg->hWin,0);
 					//CreateFuncMenuSelect();
 					break;
@@ -460,12 +455,13 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
-                    WM_HideWin(pMsg->hWin);
-                    CreateIOStatus(pMsg->hWin);
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
+                    LoopDataReaded=NULL;
+                    GUI_EndDialog(pMsg->hWin,0);
+                    CreateIOStatus(CreateWorkForm);
 					break;
 			}
 			break;
@@ -473,14 +469,14 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					ShowNumKeyboard1(pMsg->hWin,EDIT_SetText,Id);
 					break;
 				case WM_NOTIFICATION_VALUE_CHANGED:
-					//DO:æŽ§ä»¶çš„å€¼å·²æ”¹å˜
+					//DO:¿Ø¼þµÄÖµÒÑ¸Ä±ä
 					break;
 			}
 			break;
@@ -488,10 +484,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					GUI_EndDialog(pMsg->hWin,0);
 					CreateFuncMenuSelect();
 					break;
@@ -501,10 +497,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;
@@ -512,10 +508,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;
@@ -523,10 +519,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;
@@ -534,10 +530,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;
@@ -545,10 +541,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;

@@ -1,6 +1,6 @@
 /*****************************************
 *
-* è‚–åº”å¼ºè®¾è®¡çš„GUIBuilderç”Ÿæˆçš„æ–‡ä»¶
+* Ğ¤Ó¦Ç¿Éè¼ÆµÄGUIBuilderÉú³ÉµÄÎÄ¼ş
 * V2.03 (2018.07.17)
 *
 ******************************************/
@@ -16,63 +16,59 @@
 #define edtY_MotorControl (GUI_ID_USER +0x04)
 #define lbZ_MotorControl (GUI_ID_USER +0x05)
 #define edtZ_MotorControl (GUI_ID_USER +0x06)
-#define btnXLeft_MotorControl (GUI_ID_USER +0x07)
-#define btnXRight_MotorControl (GUI_ID_USER +0x08)
-#define btnYBack_MotorControl (GUI_ID_USER +0x09)
-#define btnYFront_MotorControl (GUI_ID_USER +0x0A)
-#define btnZUp_MotorControl (GUI_ID_USER +0x0B)
-#define btnZDown_MotorControl (GUI_ID_USER +0x0C)
-#define cmbSpeedType_MotorControl (GUI_ID_USER +0x0D)
-#define edtSDPer_MotorControl (GUI_ID_USER +0x0E)
-#define cmbPTSelect_MotorControl (GUI_ID_USER +0x0F)
-#define btnOK_MotorControl (GUI_ID_USER +0x10)
-#define btnCancel_MotorControl (GUI_ID_USER +0x11)
-#define btnReset_MotorControl (GUI_ID_USER +0x12)
+#define edtSDPer_MotorControl (GUI_ID_USER +0x07)
+#define cmbPTSelect_MotorControl (GUI_ID_USER +0x08)
+#define btnOK_MotorControl (GUI_ID_USER +0x09)
+#define btnCancel_MotorControl (GUI_ID_USER +0x0A)
+#define pnlPointBut_MotorControl (GUI_ID_USER +0x0B)
+#define btnXLeft_MotorControl (GUI_ID_USER +0x0C)
+#define btnXRight_MotorControl (GUI_ID_USER +0x0D)
+#define btnYBack_MotorControl (GUI_ID_USER +0x0E)
+#define btnYFront_MotorControl (GUI_ID_USER +0x0F)
+#define btnZUp_MotorControl (GUI_ID_USER +0x10)
+#define btnZDown_MotorControl (GUI_ID_USER +0x11)
+#define cmbSpeedType_MotorControl (GUI_ID_USER +0x12)
+#define btnReset_MotorControl (GUI_ID_USER +0x13)
 
 
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
-{ FRAMEWIN_CreateIndirect,"ç”µæœºç‚¹åŠ¨æ§åˆ¶",MotorControl,0,0,332,448,0, 0x0, 0 },
-{ TEXT_CreateIndirect,"X:",lbX_MotorControl,26,7,36,29,0, 0x0, 0 },
-{ EDIT_CreateIndirect,"100.256",edtX_MotorControl,65,3,123,35,0, 0x0, 0 },
-{ TEXT_CreateIndirect,"Y:",lbY_MotorControl,26,44,33,29,0, 0x0, 0 },
-{ EDIT_CreateIndirect,"100.256",edtY_MotorControl,65,41,123,35,0, 0x0, 0 },
-{ TEXT_CreateIndirect,"Z:",lbZ_MotorControl,26,81,34,29,0, 0x0, 0 },
-{ EDIT_CreateIndirect,"100.256",edtZ_MotorControl,65,79,123,35,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"Xå·¦",btnXLeft_MotorControl,15,204,140,64,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"Xå³",btnXRight_MotorControl,177,204,140,64,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"Yå",btnYBack_MotorControl,15,127,92,72,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"Yå‰",btnYFront_MotorControl,15,274,92,72,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"Zä¸Š",btnZUp_MotorControl,225,127,92,72,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"Zä¸‹",btnZDown_MotorControl,225,274,92,72,0, 0x0, 0 },
-{ DROPDOWN_CreateIndirect,"æ…¢",cmbSpeedType_MotorControl,123,290,89,39,0, 0x0, 0 },
-{ EDIT_CreateIndirect,"100%",edtSDPer_MotorControl,216,62,101,35,0, 0x0, 0 },
-{ DROPDOWN_CreateIndirect,"å·¦å¹³å°",cmbPTSelect_MotorControl,216,7,101,39,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"ç¡®å®š",btnOK_MotorControl,123,370,89,41,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"è¿”å›",btnCancel_MotorControl,225,370,89,41,0, 0x0, 0 },
-{ BUTTON_CreateIndirect,"å¤ä½",btnReset_MotorControl,123,138,89,50,0, 0x0, 0 },
+{ FRAMEWIN_CreateIndirect,"µç»úµã¶¯¿ØÖÆ",MotorControl,0,0,392,471,0,0x0,0 },
+{ TEXT_CreateIndirect,"X:",lbX_MotorControl,14,14,36,29,0,0x0,0 },
+{ EDIT_CreateIndirect,"100.256",edtX_MotorControl,53,10,123,35,0,0x0,0 },
+{ TEXT_CreateIndirect,"Y:",lbY_MotorControl,14,51,33,29,0,0x0,0 },
+{ EDIT_CreateIndirect,"100.256",edtY_MotorControl,53,48,123,35,0,0x0,0 },
+{ TEXT_CreateIndirect,"Z:",lbZ_MotorControl,14,88,34,29,0,0x0,0 },
+{ EDIT_CreateIndirect,"100.256",edtZ_MotorControl,53,86,123,35,0,0x0,0 },
+{ EDIT_CreateIndirect,"100%",edtSDPer_MotorControl,259,82,101,35,0,0x0,0 },
+{ DROPDOWN_CreateIndirect,"×óÆ½Ì¨",cmbPTSelect_MotorControl,259,14,101,39,0,0x0,0 },
+{ BUTTON_CreateIndirect,"È·¶¨",btnOK_MotorControl,169,390,89,41,0,0x0,0 },
+{ BUTTON_CreateIndirect,"·µ»Ø",btnCancel_MotorControl,271,390,89,41,0,0x0,0 },
+{ EDIT_CreateIndirect,"",pnlPointBut_MotorControl,1,129,385,248,0,0x0,0 },
+{ BUTTON_CreateIndirect,"X×ó",btnXLeft_MotorControl,13,221,140,64,0,0x0,0 },
+{ BUTTON_CreateIndirect,"XÓÒ",btnXRight_MotorControl,232,221,140,64,0,0x0,0 },
+{ BUTTON_CreateIndirect,"Yºó",btnYBack_MotorControl,13,144,92,72,0,0x0,0 },
+{ BUTTON_CreateIndirect,"YÇ°",btnYFront_MotorControl,13,291,92,72,0,0x0,0 },
+{ BUTTON_CreateIndirect,"ZÉÏ",btnZUp_MotorControl,280,144,92,72,0,0x0,0 },
+{ BUTTON_CreateIndirect,"ZÏÂ",btnZDown_MotorControl,280,291,92,72,0,0x0,0 },
+{ DROPDOWN_CreateIndirect,"Âı",cmbSpeedType_MotorControl,154,312,89,39,0,0x0,0 },
+{ BUTTON_CreateIndirect,"¸´Î»",btnReset_MotorControl,154,144,89,50,0,0x0,0 },
 };
 
 
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE14;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE18;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE24;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE32;
-
-
-//åˆå§‹åŒ–çª—ä½“ç›¸å…³æ§ä»¶
+//³õÊ¼»¯´°ÌåÏà¹Ø¿Ø¼ş
 static void InitForm(WM_MESSAGE * pMsg){
     WM_HWIN hItem = pMsg->hWin;
     FRAMEWIN_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
-    FRAMEWIN_SetFont(hItem, &GUI_FontYAHE18);
+    FRAMEWIN_SetFont(hItem, &GUI_FontHZ24);
     FRAMEWIN_SetClientColor(hItem,0x00A9A9A9);
     FRAMEWIN_SetTextColor(hItem, 0x00FFFFFF);
-    FRAMEWIN_SetMoveable(hItem, 0);//çª—ä½“ä¸å¯ç§»åŠ¨
+    FRAMEWIN_SetMoveable(hItem, 0);//´°Ìå²»¿ÉÒÆ¶¯
 
     hItem = WM_GetDialogItem(pMsg->hWin,lbX_MotorControl);
     TEXT_SetText(hItem,"X:");
     TEXT_SetFont(hItem,GUI_FONT_24_ASCII);
     TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
-    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//è‡ªåŠ¨æ¢è¡Œ
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//×Ô¶¯»»ĞĞ
     TEXT_SetBkColor(hItem,0x00A9A9A9);
     TEXT_SetTextColor(hItem,0x00FFFFFF);
 
@@ -82,14 +78,14 @@ static void InitForm(WM_MESSAGE * pMsg){
     EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_LEFT);
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00C0C0FF);
     EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
-    EDIT_SetMaxLen(hItem, 50); //å­—ç¬¦æœ€å¤§é•¿åº¦
-    EDIT_EnableBlink(hItem, 500, 0); //å…‰æ ‡ä¸é—ªçƒ
+    EDIT_SetMaxLen(hItem, 50); //×Ö·û×î´ó³¤¶È
+    EDIT_EnableBlink(hItem, 500, 0); //¹â±ê²»ÉÁË¸
 
     hItem = WM_GetDialogItem(pMsg->hWin,lbY_MotorControl);
     TEXT_SetText(hItem,"Y:");
     TEXT_SetFont(hItem,GUI_FONT_24_ASCII);
     TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
-    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//è‡ªåŠ¨æ¢è¡Œ
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//×Ô¶¯»»ĞĞ
     TEXT_SetBkColor(hItem,0x00A9A9A9);
     TEXT_SetTextColor(hItem,0x00FFFFFF);
 
@@ -99,14 +95,14 @@ static void InitForm(WM_MESSAGE * pMsg){
     EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_LEFT);
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00C0FFC0);
     EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
-    EDIT_SetMaxLen(hItem, 50); //å­—ç¬¦æœ€å¤§é•¿åº¦
-    EDIT_EnableBlink(hItem, 500, 0); //å…‰æ ‡ä¸é—ªçƒ
+    EDIT_SetMaxLen(hItem, 50); //×Ö·û×î´ó³¤¶È
+    EDIT_EnableBlink(hItem, 500, 0); //¹â±ê²»ÉÁË¸
 
     hItem = WM_GetDialogItem(pMsg->hWin,lbZ_MotorControl);
     TEXT_SetText(hItem,"Z:");
     TEXT_SetFont(hItem,GUI_FONT_24_ASCII);
     TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
-    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//è‡ªåŠ¨æ¢è¡Œ
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//×Ô¶¯»»ĞĞ
     TEXT_SetBkColor(hItem,0x00A9A9A9);
     TEXT_SetTextColor(hItem,0x00FFFFFF);
 
@@ -116,46 +112,8 @@ static void InitForm(WM_MESSAGE * pMsg){
     EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_LEFT);
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00FFC0C0);
     EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
-    EDIT_SetMaxLen(hItem, 50); //å­—ç¬¦æœ€å¤§é•¿åº¦
-    EDIT_EnableBlink(hItem, 500, 0); //å…‰æ ‡ä¸é—ªçƒ
-
-    hItem = WM_GetDialogItem(pMsg->hWin,btnXLeft_MotorControl);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
-    BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00C0C0FF);
-    BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
-
-    hItem = WM_GetDialogItem(pMsg->hWin,btnXRight_MotorControl);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
-    BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00C0C0FF);
-    BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
-
-    hItem = WM_GetDialogItem(pMsg->hWin,btnYBack_MotorControl);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
-    BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00C0FFC0);
-    BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
-
-    hItem = WM_GetDialogItem(pMsg->hWin,btnYFront_MotorControl);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
-    BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00C0FFC0);
-    BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
-
-    hItem = WM_GetDialogItem(pMsg->hWin,btnZUp_MotorControl);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
-    BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00FFC0C0);
-    BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
-
-    hItem = WM_GetDialogItem(pMsg->hWin,btnZDown_MotorControl);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE24);
-    BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00FFC0C0);
-    BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
-
-    hItem = WM_GetDialogItem(pMsg->hWin,cmbSpeedType_MotorControl);
-    DROPDOWN_SetFont(hItem, &GUI_FontYAHE18);
-    DROPDOWN_AddString(hItem, "æ…¢");
-    DROPDOWN_AddString(hItem, "ä¸­");
-    DROPDOWN_AddString(hItem, "å¿«");
-    DROPDOWN_SetAutoScroll(hItem, 1);//è®¾ç½®è‡ªåŠ¨æ»šåŠ¨æ¡
-    DROPDOWN_SetListHeight(hItem, 100);
+    EDIT_SetMaxLen(hItem, 50); //×Ö·û×î´ó³¤¶È
+    EDIT_EnableBlink(hItem, 500, 0); //¹â±ê²»ÉÁË¸
 
     hItem = WM_GetDialogItem(pMsg->hWin,edtSDPer_MotorControl);
     EDIT_SetText(hItem, "100%");
@@ -163,28 +121,71 @@ static void InitForm(WM_MESSAGE * pMsg){
     EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_HCENTER);
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00FFFFFF);
     EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
-    EDIT_SetMaxLen(hItem, 50); //å­—ç¬¦æœ€å¤§é•¿åº¦
-    EDIT_EnableBlink(hItem, 500, 0); //å…‰æ ‡ä¸é—ªçƒ
+    EDIT_SetMaxLen(hItem, 50); //×Ö·û×î´ó³¤¶È
+    EDIT_EnableBlink(hItem, 500, 0); //¹â±ê²»ÉÁË¸
 
     hItem = WM_GetDialogItem(pMsg->hWin,cmbPTSelect_MotorControl);
-    DROPDOWN_SetFont(hItem, &GUI_FontYAHE18);
-    DROPDOWN_AddString(hItem, "å·¦å¹³å°");
-    DROPDOWN_AddString(hItem, "å³å¹³å°");
-    DROPDOWN_SetAutoScroll(hItem, 1);//è®¾ç½®è‡ªåŠ¨æ»šåŠ¨æ¡
+    DROPDOWN_SetFont(hItem, &GUI_FontHZ24);
+    DROPDOWN_AddString(hItem, "×óÆ½Ì¨");
+    DROPDOWN_AddString(hItem, "ÓÒÆ½Ì¨");
+    DROPDOWN_SetAutoScroll(hItem, 1);//ÉèÖÃ×Ô¶¯¹ö¶¯Ìõ
     DROPDOWN_SetListHeight(hItem, 100);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnOK_MotorControl);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00A9A9A9);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnCancel_MotorControl);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00A9A9A9);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
+    hItem = WM_GetDialogItem(pMsg->hWin,pnlPointBut_MotorControl);
+    EDIT_SetText(hItem, "");
+    EDIT_SetFocussable(hItem, 0);
+    EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00A9A9A9);
+
+    hItem = WM_GetDialogItem(pMsg->hWin,btnXLeft_MotorControl);
+    BUTTON_SetFont(hItem, &GUI_FontHZ32);
+    BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00C0C0FF);
+    BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
+
+    hItem = WM_GetDialogItem(pMsg->hWin,btnXRight_MotorControl);
+    BUTTON_SetFont(hItem, &GUI_FontHZ32);
+    BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00C0C0FF);
+    BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
+
+    hItem = WM_GetDialogItem(pMsg->hWin,btnYBack_MotorControl);
+    BUTTON_SetFont(hItem, &GUI_FontHZ32);
+    BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00C0FFC0);
+    BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
+
+    hItem = WM_GetDialogItem(pMsg->hWin,btnYFront_MotorControl);
+    BUTTON_SetFont(hItem, &GUI_FontHZ32);
+    BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00C0FFC0);
+    BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
+
+    hItem = WM_GetDialogItem(pMsg->hWin,btnZUp_MotorControl);
+    BUTTON_SetFont(hItem, &GUI_FontHZ32);
+    BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00FFC0C0);
+    BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
+
+    hItem = WM_GetDialogItem(pMsg->hWin,btnZDown_MotorControl);
+    BUTTON_SetFont(hItem, &GUI_FontHZ32);
+    BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00FFC0C0);
+    BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
+
+    hItem = WM_GetDialogItem(pMsg->hWin,cmbSpeedType_MotorControl);
+    DROPDOWN_SetFont(hItem, &GUI_FontHZ24);
+    DROPDOWN_AddString(hItem, "Âı");
+    DROPDOWN_AddString(hItem, "ÖĞ");
+    DROPDOWN_AddString(hItem, "¿ì");
+    DROPDOWN_SetAutoScroll(hItem, 1);//ÉèÖÃ×Ô¶¯¹ö¶¯Ìõ
+    DROPDOWN_SetListHeight(hItem, 100);
+
     hItem = WM_GetDialogItem(pMsg->hWin,btnReset_MotorControl);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00A9A9A9);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 }
@@ -192,7 +193,7 @@ static void InitForm(WM_MESSAGE * pMsg){
 static WM_HWIN _thisForm;
 static WM_HWIN _callForm=NULL;
 
-//æ§ä»¶äº‹ä»¶å¤„ç†å‡½æ•°
+//¿Ø¼şÊÂ¼ş´¦Àíº¯Êı
 static void DoEvent(WM_MESSAGE * pMsg)
 {
     int Id = WM_GetId(pMsg->hWinSrc);
@@ -203,11 +204,11 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
                     AxisPTRun("X","FFX");	
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æğ£©
                     AxisPTStop("X");
 					break;
 			}
@@ -216,7 +217,7 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
           AxisPTRun("X","ZFX");
 //           MoveToCoord(X,10,true); 
 //           for(u8 i=0;i<5;i++)
@@ -226,7 +227,7 @@ static void DoEvent(WM_MESSAGE * pMsg)
 //           }
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æğ£©
           AxisPTStop("X");
 					break;
 			}
@@ -235,11 +236,11 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
                     AxisPTRun("Y","ZFX");
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æğ£©
                     AxisPTStop("Y");
 					break;
 			}
@@ -248,11 +249,11 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
                     AxisPTRun("Y","FFX");
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æğ£©
                     AxisPTStop("Y");
 					break;
 			}
@@ -261,11 +262,11 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
                     AxisPTRun("Z","FFX");	
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æğ£©
                     AxisPTStop("Z");
 					break;
 			}
@@ -274,11 +275,11 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
                     AxisPTRun("Z","ZFX");
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æğ£©
                     AxisPTStop("Z");
 					break;
 			}
@@ -287,13 +288,13 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æğ£©
 					break;
 				case WM_NOTIFICATION_SEL_CHANGED:
-					//DO:é€‰æ‹©çš„å€¼å·²å‘ç”Ÿæ”¹å˜
+					//DO:Ñ¡ÔñµÄÖµÒÑ·¢Éú¸Ä±ä
 					break;
 			}
 			break;
@@ -301,13 +302,13 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æğ£©
 					break;
 				case WM_NOTIFICATION_VALUE_CHANGED:
-					//DO:æ§ä»¶çš„å€¼å·²æ”¹å˜
+					//DO:¿Ø¼şµÄÖµÒÑ¸Ä±ä
 					break;
 			}
 			break;
@@ -315,13 +316,13 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æğ£©
 					break;
 				case WM_NOTIFICATION_SEL_CHANGED:
-					//DO:é€‰æ‹©çš„å€¼å·²å‘ç”Ÿæ”¹å˜
+					//DO:Ñ¡ÔñµÄÖµÒÑ·¢Éú¸Ä±ä
 					break;
 			}
 			break;
@@ -329,10 +330,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æğ£©
                     LoopDataReaded=NULL;
                     WM_HideWin(pMsg->hWin);
                     WM_ShowWin(_callForm);
@@ -343,10 +344,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æğ£©
                     LoopDataReaded=NULL;
                     WM_HideWin(pMsg->hWin);
                     WM_ShowWin(_callForm);
@@ -357,10 +358,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æğ£©
 					break;
 			}
 			break;
@@ -387,7 +388,7 @@ static void _cbDialog(WM_MESSAGE * pMsg)
 static WM_HWIN _txtXCoord=NULL;
 static WM_HWIN _txtYCoord=NULL;
 static WM_HWIN _txtZCoord=NULL;
-static char* _coordFormat = "%.3f";//åæ ‡æ ¼å¼åŒ–å­—ç¬¦
+static char* _coordFormat = "%.3f";//×ø±ê¸ñÊ½»¯×Ö·û
 static void ShowCurrCoord(LoopDataStruct loopData)
 {
     MultiAxisCoordStruct coord =loopData.RealCoord;
@@ -406,7 +407,7 @@ WM_HWIN CreateMotorControl(void)
     return _thisForm;
 }
  
-//åœ¨æŒ‡å®šçš„ï¼ˆx0,y0)ä½ç½®æ˜¾ç¤ºç”µæœºç‚¹åŠ¨æ§åˆ¶çª—ä½“
+//ÔÚÖ¸¶¨µÄ£¨x0,y0)Î»ÖÃÏÔÊ¾µç»úµã¶¯¿ØÖÆ´°Ìå
 void ShowMotorPTForm(WM_HWIN callForm,int x0,int y0)
 {
     _callForm=callForm;
