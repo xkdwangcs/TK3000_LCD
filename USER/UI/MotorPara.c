@@ -1,11 +1,12 @@
 /*****************************************
 *
-* è‚–åº”å¼ºè®¾è®¡çš„GUIBuilderç”Ÿæˆçš„æ–‡ä»¶
+* Ð¤Ó¦Ç¿Éè¼ÆµÄGUIBuilderÉú³ÉµÄÎÄ¼þ
 * V2.04 (2018.08.02)
 *
 ******************************************/
 
 #include "DIALOG.h"
+#include "MainTask.h"
 #include "CMD.h"
 
 #define MotorPara (GUI_ID_USER +0x00)
@@ -16,18 +17,12 @@
 
 
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
-{ FRAMEWIN_CreateIndirect,"è½´å‚æ•°è®¾ç½®",MotorPara,0,0,800,480,0,0x0,0 },
+{ FRAMEWIN_CreateIndirect,"Öá²ÎÊýÉèÖÃ",MotorPara,0,0,800,480,0,0x0,0 },
 { LISTVIEW_CreateIndirect,"",gridPara_MotorPara,0,0,790,385,0,0x0,0 },
-{ BUTTON_CreateIndirect,"ä¿å­˜",btnSave_MotorPara,358,392,106,42,0,0x0,0 },
-{ BUTTON_CreateIndirect,"å·¥ä½œç•Œé¢",btnWorkForm_MotorPara,506,392,122,42,0,0x0,0 },
-{ BUTTON_CreateIndirect,"è¿”å›ž",btnBack_MotorPara,634,392,106,42,0,0x0,0 },
+{ BUTTON_CreateIndirect,"±£´æ",btnSave_MotorPara,358,392,106,42,0,0x0,0 },
+{ BUTTON_CreateIndirect,"¹¤×÷½çÃæ",btnWorkForm_MotorPara,506,392,122,42,0,0x0,0 },
+{ BUTTON_CreateIndirect,"·µ»Ø",btnBack_MotorPara,634,392,106,42,0,0x0,0 },
 };
-
-
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE14;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE18;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE24;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE32;
 
 void LoadMotorPara(WM_HWIN hItem)
 {
@@ -48,55 +43,55 @@ void LoadMotorPara(WM_HWIN hItem)
 	
 	int i=5;
 	 LISTVIEW_AddRow(hItem, NULL);
-     LISTVIEW_SetItemText(hItem, 0, i, "æ‰€æœ‰è½´");
+     LISTVIEW_SetItemText(hItem, 0, i, "ËùÓÐÖá");
      LISTVIEW_SetItemText(hItem, 1, i, ConvertFloatToAscii(Parameter.PulseK[0]));
      LISTVIEW_SetItemText(hItem, 2, i, ConvertFloatToAscii(Parameter.AxisLength[0]));
      LISTVIEW_SetItemText(hItem, 3, i, ConvertFloatToAscii(Parameter.RunSpeed[0]));
      LISTVIEW_SetItemText(hItem, 4, i, ConvertFloatToAscii(Parameter.AccSpeed[0]));
 }
 
-//åˆå§‹åŒ–çª—ä½“ç›¸å…³æŽ§ä»¶
+//³õÊ¼»¯´°ÌåÏà¹Ø¿Ø¼þ
 static void InitForm(WM_MESSAGE * pMsg){
     WM_HWIN hItem = pMsg->hWin;
     FRAMEWIN_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
-    FRAMEWIN_SetFont(hItem, &GUI_FontYAHE18);
+    FRAMEWIN_SetFont(hItem, &GUI_FontHZ24);
     FRAMEWIN_SetClientColor(hItem,0x00F0F0F0);
     FRAMEWIN_SetTextColor(hItem, 0x00000000);
-    FRAMEWIN_SetMoveable(hItem, 0);//çª—ä½“ä¸å¯ç§»åŠ¨
+    FRAMEWIN_SetMoveable(hItem, 0);//´°Ìå²»¿ÉÒÆ¶¯
 
     hItem = WM_GetDialogItem(pMsg->hWin,gridPara_MotorPara);
-    LISTVIEW_AddColumn(hItem, 100, "è½´å·", GUI_TA_HCENTER | GUI_TA_VCENTER);
-    LISTVIEW_AddColumn(hItem, 140, "è„‰å†²å½“é‡", GUI_TA_HCENTER | GUI_TA_VCENTER);
-    LISTVIEW_AddColumn(hItem, 140, "è¡Œç¨‹[mm]", GUI_TA_HCENTER | GUI_TA_VCENTER);
-    LISTVIEW_AddColumn(hItem, 120, "é€Ÿåº¦", GUI_TA_HCENTER | GUI_TA_VCENTER);
-    LISTVIEW_AddColumn(hItem, 140, "åŠ é€Ÿåº¦", GUI_TA_HCENTER | GUI_TA_VCENTER);
-    LISTVIEW_AddColumn(hItem, 160, "é™ä½", GUI_TA_HCENTER | GUI_TA_VCENTER);
+    LISTVIEW_AddColumn(hItem, 100, "ÖáºÅ", GUI_TA_HCENTER | GUI_TA_VCENTER);
+    LISTVIEW_AddColumn(hItem, 140, "Âö³åµ±Á¿", GUI_TA_HCENTER | GUI_TA_VCENTER);
+    LISTVIEW_AddColumn(hItem, 140, "ÐÐ³Ì[mm]", GUI_TA_HCENTER | GUI_TA_VCENTER);
+    LISTVIEW_AddColumn(hItem, 120, "ËÙ¶È", GUI_TA_HCENTER | GUI_TA_VCENTER);
+    LISTVIEW_AddColumn(hItem, 140, "¼ÓËÙ¶È", GUI_TA_HCENTER | GUI_TA_VCENTER);
+    LISTVIEW_AddColumn(hItem, 160, "ÏÞÎ»", GUI_TA_HCENTER | GUI_TA_VCENTER);
     HEADER_Handle hHeader = LISTVIEW_GetHeader(hItem);
-    HEADER_SetFont(hHeader, &GUI_FontYAHE14);//è®¾ç½®åˆ—å¤´å­—ä½“
-    LISTVIEW_SetFont(hItem, &GUI_FontYAHE14);//è®¾ç½®è¡Œå­—ä½“
-    LISTVIEW_SetRowHeight(hItem, 50);//è®¾ç½®è¡Œé«˜
+    HEADER_SetFont(hHeader, &GUI_FontHZ16);//ÉèÖÃÁÐÍ·×ÖÌå
+    LISTVIEW_SetFont(hItem, &GUI_FontHZ16);//ÉèÖÃÐÐ×ÖÌå
+    LISTVIEW_SetRowHeight(hItem, 50);//ÉèÖÃÐÐ¸ß
     LISTVIEW_SetHeaderHeight(hItem, 33);
-    LISTVIEW_SetGridVis(hItem, 1);//ç½‘æ ¼çº¿å¯è§
-    LISTVIEW_EnableCellSelect(hItem, 1);//ä½¿èƒ½å•å…ƒæ ¼æ“ä½œ
+    LISTVIEW_SetGridVis(hItem, 1);//Íø¸ñÏß¿É¼û
+    LISTVIEW_EnableCellSelect(hItem, 1);//Ê¹ÄÜµ¥Ôª¸ñ²Ù×÷
     LoadMotorPara(hItem);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnSave_MotorPara);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnWorkForm_MotorPara);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnBack_MotorPara);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 }
 
-//æŽ§ä»¶äº‹ä»¶å¤„ç†å‡½æ•°
+//¿Ø¼þÊÂ¼þ´¦Àíº¯Êý
 static void DoEvent(WM_MESSAGE * pMsg)
 {
     int Id = WM_GetId(pMsg->hWinSrc);
@@ -108,17 +103,17 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					hItem = WM_GetDialogItem(pMsg->hWin, gridPara_MotorPara);
 					int rowIndex = LISTVIEW_GetSel(hItem);
 					int colIndex = LISTVIEW_GetSelCol(hItem);
 					//ShowNumKeyboard2(pMsg->hWin, LISTVIEW_SetItemText, gridPara_MotorPara, colIndex, rowIndex);
 					break;
 				case WM_NOTIFICATION_SEL_CHANGED:
-					//DO:é€‰æ‹©çš„å€¼å·²å‘ç”Ÿæ”¹å˜
+					//DO:Ñ¡ÔñµÄÖµÒÑ·¢Éú¸Ä±ä
 					break;
 			}
 			break;
@@ -126,10 +121,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;
@@ -137,12 +132,12 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
                     GUI_EndDialog(pMsg->hWin,0);
 					CreateWorkForm();
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;
@@ -150,10 +145,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
                     GUI_EndDialog(pMsg->hWin,0);
 					CreateFuncMenuSelect();
 					break;

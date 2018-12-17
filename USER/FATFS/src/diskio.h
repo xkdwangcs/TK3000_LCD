@@ -43,7 +43,7 @@ DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void* buff);
 #define FS_NAND		0
 #define FS_USB		1
 #define FS_SPI		2
-#define FS_SD			3
+#define FS_SD		3
 #define FS_NOR		4
 
 /* Disk Status Bits (DSTATUS) */

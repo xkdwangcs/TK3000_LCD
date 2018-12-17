@@ -322,7 +322,16 @@ DECLARE_FONT(PROPAA);
 DECLARE_FONT(PROP_AA2);
 DECLARE_FONT(PROP_AA2_EXT);
 DECLARE_FONT(PROP_AA4);
-DECLARE_FONT(PROP_AA4_EXT);
+DECLARE_FONT(PROP_AA4_EXT);	
+DECLARE_FONT(USER); 
+
+#define GUI_FONTTYPE_USER       \
+        GUIUSER_DispChar,       \
+        GUIUSER_GetCharDistX,   \
+        GUIMONO_GetFontInfo,    \
+        GUIMONO_IsInFont,       \
+        (GUI_GETCHARINFO *)0,   \
+        (tGUI_ENC_APIList*)0 
 
 /* MONO: Monospaced fonts */
 #define GUI_FONTTYPE_MONO       \

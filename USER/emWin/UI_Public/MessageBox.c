@@ -6,7 +6,7 @@
 ******************************************/
 
 #include "DIALOG.h"
-
+#include "MainTask.h"
 
 #define MessageBox (GUI_ID_USER +0x00)
 #define lbMsg_MessageBox (GUI_ID_USER +0x01)
@@ -21,37 +21,30 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 { BUTTON_CreateIndirect,"取消",btnCancel_MessageBox,307,225,89,41,0, 0x0, 0 },
 };
 
-
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE14;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE18;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE24;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE32;
-
-
 //初始化窗体相关控件
 static void InitForm(WM_MESSAGE * pMsg){
     WM_HWIN hItem = pMsg->hWin;
     FRAMEWIN_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
-    FRAMEWIN_SetFont(hItem, &GUI_FontYAHE18);
+    FRAMEWIN_SetFont(hItem, &GUI_FontHZ24);
     FRAMEWIN_SetClientColor(hItem,0x00808080);
     FRAMEWIN_SetTextColor(hItem, 0x00FFFFFF);
     FRAMEWIN_SetMoveable(hItem, 0);//窗体不可移动
 
     hItem = WM_GetDialogItem(pMsg->hWin,lbMsg_MessageBox);
     TEXT_SetText(hItem,"这是消息框");
-    TEXT_SetFont(hItem,&GUI_FontYAHE18);
+    TEXT_SetFont(hItem,&GUI_FontHZ24);
     TEXT_SetTextAlign(hItem,GUI_TA_VCENTER|GUI_TA_HCENTER);
     TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//自动换行
     TEXT_SetBkColor(hItem,0x00808080);
     TEXT_SetTextColor(hItem,0x00FFFFFF);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnOK_MessageBox);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00808080);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnCancel_MessageBox);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00808080);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 }

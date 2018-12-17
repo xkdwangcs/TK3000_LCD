@@ -1,6 +1,6 @@
 /*****************************************
 *
-* è‚–åº”å¼ºè®¾è®¡çš„GUIBuilderç”Ÿæˆçš„æ–‡ä»¶
+* Ð¤Ó¦Ç¿Éè¼ÆµÄGUIBuilderÉú³ÉµÄÎÄ¼þ
 * V2.03 (2018.07.17)
 *
 ******************************************/
@@ -29,34 +29,28 @@
 
 
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
-{ WINDOW_CreateIndirect,"åŠŸèƒ½èœå•é€‰æ‹©",FuncMenuSelect,0,0,800,480,0,0x0,0 },
+{ WINDOW_CreateIndirect,"¹¦ÄÜ²Ëµ¥Ñ¡Ôñ",FuncMenuSelect,0,0,800,480,0,0x0,0 },
 { EDIT_CreateIndirect,"",panel1_FuncMenuSelect,0,54,800,426,0,0x0,0 },
-{ BUTTON_CreateIndirect,"åæ ‡ç¤ºæ•™",btnZBSJ_FuncMenuSelect,22,74,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"å–æ–™åæ ‡",btnQLZB_FuncMenuSelect,178,74,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"å·¥ä½œå‚æ•°",btnWorkPara_FuncMenuSelect,334,74,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"ç”µæœºå‚æ•°",btnMotorPara_FuncMenuSelect,490,74,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"è®¾å¤‡å‚æ•°",btnDevPara_FuncMenuSelect,642,74,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"IOå£çŠ¶æ€",btnIOStatus_FuncMenuSelect,22,171,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"ç«¯å£é…ç½®",btnPortConfig_FuncMenuSelect,178,171,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"åŠ¨ä½œé…ç½®",btnMotionConfig_FuncMenuSelect,334,171,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"é“­ç‰Œä¿¡æ¯",btnMPXX_FuncMenuSelect,490,171,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"ç³»ç»Ÿç®¡ç†",btnSystem_FuncMenuSelect,642,171,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"æ—¥å¿—æŸ¥çœ‹",btnLogView_FuncMenuSelect,22,268,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"å…³äºŽ",btnAbout_FuncMenuSelect,178,268,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"å·¥ä½œç•Œé¢",btnWorkForm_FuncMenuSelect,642,388,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"×ø±êÊ¾½Ì",btnZBSJ_FuncMenuSelect,22,74,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"È¡ÁÏ×ø±ê",btnQLZB_FuncMenuSelect,178,74,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"¹¤×÷²ÎÊý",btnWorkPara_FuncMenuSelect,334,74,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"µç»ú²ÎÊý",btnMotorPara_FuncMenuSelect,490,74,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"Éè±¸²ÎÊý",btnDevPara_FuncMenuSelect,642,74,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"IO¿Ú×´Ì¬",btnIOStatus_FuncMenuSelect,22,171,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"¶Ë¿ÚÅäÖÃ",btnPortConfig_FuncMenuSelect,178,171,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"¶¯×÷ÅäÖÃ",btnMotionConfig_FuncMenuSelect,334,171,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"ÃúÅÆÐÅÏ¢",btnMPXX_FuncMenuSelect,490,171,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"ÏµÍ³¹ÜÀí",btnSystem_FuncMenuSelect,642,171,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"ÈÕÖ¾²é¿´",btnLogView_FuncMenuSelect,22,268,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"¹ØÓÚ",btnAbout_FuncMenuSelect,178,268,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"¹¤×÷½çÃæ",btnWorkForm_FuncMenuSelect,642,388,130,68,0,0x0,0 },
 { EDIT_CreateIndirect,"",panel2_FuncMenuSelect,0,0,800,50,0,0x0,0 },
-{ TEXT_CreateIndirect,"èžºä¸æœºè‡ªåŠ¨é”ä»˜ç³»ç»Ÿ V4.10",lbSystemTitle_FuncMenuSelect,45,4,430,36,0,0x0,0 },
+{ TEXT_CreateIndirect,"ÂÝË¿»ú×Ô¶¯Ëø¸¶ÏµÍ³ V4.10",lbSystemTitle_FuncMenuSelect,45,4,430,36,0,0x0,0 },
 { TEXT_CreateIndirect,"2018-07-31 08:47:00",lbDateTime_FuncMenuSelect,557,17,238,24,0,0x0,0 },
 };
 
 
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE14;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE18;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE24;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE32;
-
-
-//åˆå§‹åŒ–çª—ä½“ç›¸å…³æŽ§ä»¶
+//³õÊ¼»¯´°ÌåÏà¹Ø¿Ø¼þ
 static void InitForm(WM_MESSAGE * pMsg){
     WM_HWIN hItem = pMsg->hWin;
     WINDOW_SetBkColor(hItem,0x00F0F0F0);
@@ -67,67 +61,67 @@ static void InitForm(WM_MESSAGE * pMsg){
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00F0F0F0);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnZBSJ_FuncMenuSelect);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnQLZB_FuncMenuSelect);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnWorkPara_FuncMenuSelect);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnMotorPara_FuncMenuSelect);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnDevPara_FuncMenuSelect);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnIOStatus_FuncMenuSelect);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnPortConfig_FuncMenuSelect);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnMotionConfig_FuncMenuSelect);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnMPXX_FuncMenuSelect);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnSystem_FuncMenuSelect);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnLogView_FuncMenuSelect);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnAbout_FuncMenuSelect);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnWorkForm_FuncMenuSelect);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ32);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
@@ -137,10 +131,10 @@ static void InitForm(WM_MESSAGE * pMsg){
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00808080);
 
     hItem = WM_GetDialogItem(pMsg->hWin,lbSystemTitle_FuncMenuSelect);
-    TEXT_SetText(hItem,"èžºä¸æœºè‡ªåŠ¨é”ä»˜ç³»ç»Ÿ V4.10");
-    TEXT_SetFont(hItem,&GUI_FontYAHE18);
+    TEXT_SetText(hItem,"ÂÝË¿»ú×Ô¶¯Ëø¸¶ÏµÍ³ V4.10");
+    TEXT_SetFont(hItem,&GUI_FontHZ24);
     TEXT_SetTextAlign(hItem,GUI_TA_VCENTER|GUI_TA_LEFT);
-    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//è‡ªåŠ¨æ¢è¡Œ
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//×Ô¶¯»»ÐÐ
     TEXT_SetBkColor(hItem,0x00808080);
     TEXT_SetTextColor(hItem,0x0000FF00);
 
@@ -148,7 +142,7 @@ static void InitForm(WM_MESSAGE * pMsg){
     TEXT_SetText(hItem,"2018-07-31 08:47:00");
     TEXT_SetFont(hItem,GUI_FONT_24_ASCII);
     TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
-    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//è‡ªåŠ¨æ¢è¡Œ
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//×Ô¶¯»»ÐÐ
     TEXT_SetBkColor(hItem,0x00808080);
     TEXT_SetTextColor(hItem,0x00FFFFFF);
 }
@@ -167,7 +161,8 @@ static void ShowDateTime(LoopDataStruct loopData)
     TEXT_SetText(_lbDateTime,_timeStr);
 }
 
-//æŽ§ä»¶äº‹ä»¶å¤„ç†å‡½æ•°
+WM_HWIN CreateFuncMenuSelect(void);
+//¿Ø¼þÊÂ¼þ´¦Àíº¯Êý
 static void DoEvent(WM_MESSAGE * pMsg)
 {
     int Id = WM_GetId(pMsg->hWinSrc);
@@ -178,10 +173,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
                     WM_DeleteWindow(pMsg->hWin);
                     CreateCoordTeach();
                     WM_DeleteTimer(_hTimer);                    
@@ -192,10 +187,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;
@@ -203,10 +198,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;
@@ -214,10 +209,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
                     WM_DeleteWindow(pMsg->hWin);
                     CreateMotorPara();
                     WM_DeleteTimer(_hTimer);
@@ -228,10 +223,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;
@@ -239,12 +234,12 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
                     WM_DeleteWindow(pMsg->hWin);
-                    CreateIOStatus(pMsg->hWin);
+                    CreateIOStatus(CreateFuncMenuSelect);
 					break;
 			}
 			break;
@@ -252,10 +247,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;
@@ -263,10 +258,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;
@@ -274,10 +269,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;
@@ -285,10 +280,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;
@@ -296,10 +291,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;
@@ -307,10 +302,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;
@@ -318,10 +313,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					WM_DeleteWindow(pMsg->hWin);
 					CreateWorkForm();
                     WM_DeleteTimer(_hTimer);

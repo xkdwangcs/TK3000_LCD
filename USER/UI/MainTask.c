@@ -2,27 +2,26 @@
 #include "bsp_touch.h"
 #include "LCDPara.h"
 #include "FileOperate.h"
-#include "XBFFont.h"
 #include "CMD.h"
 
-//读取到循环数据后引发
+//��ȡ��ѭ�����ݺ�����
 LoopDataReadHandler LoopDataReaded;
 
 void TouchCalibrationTask()
 {
     GUI_PID_STATE PIDState;
-    //GUI_Init();                /* 初始化 */
-    TOUCH_Calibration();       /* 四点触摸校准 */
-    GUI_CURSOR_Show();         /* 显示鼠标 */
-    GUI_SetBkColor(GUI_WHITE); /* 设置背景色 */
-    GUI_SetColor(GUI_BLACK);   /* 设置前景色 */
+    //GUI_Init();                /* ��ʼ�� */
+    TOUCH_Calibration();       /* �ĵ㴥��У׼ */
+    GUI_CURSOR_Show();         /* ��ʾ��� */
+    GUI_SetBkColor(GUI_WHITE); /* ���ñ���ɫ */
+    GUI_SetColor(GUI_BLACK);   /* ����ǰ��ɫ */
     GUI_Clear();
     GUI_SetFont(&GUI_Font24B_1);
     GUI_DispStringAt("Draw Panel", 0, 0);
     /*
-    	连续读取5次，因为emWin的PID输入管理器含有一个FIFO缓冲器，
-    默认情况下最多可以保存5个PID事件，下面连续读取5次相当于清空FIFO.
-    防止触摸校准的时点击的点显示到画板上面。
+    	������ȡ5�Σ���ΪemWin��PID�������������һ��FIFO��������
+    Ĭ������������Ա���5��PID�¼�������������ȡ5���൱�����FIFO.
+    ��ֹ����У׼��ʱ����ĵ���ʾ���������档
     */
     GUI_PID_GetState(&PIDState);
     GUI_PID_GetState(&PIDState);
@@ -36,7 +35,7 @@ void TouchCalibrationTask()
         if (PIDState.Pressed == 1)
         {
             GUI_SetPenSize(5);
-            /* 为了防止游标不显示或者不跟着移动，这里添加如下函数 */
+            /* Ϊ�˷�ֹ�α겻��ʾ���߲������ƶ��������������º��� */
             GUI_CURSOR_SetPosition(PIDState.x, PIDState.y);
             GUI_DrawPoint(PIDState.x, PIDState.y);
         }
@@ -44,7 +43,7 @@ void TouchCalibrationTask()
     }
 }
 
-//桌面窗口回调函数
+//���洰�ڻص�����
 static void _cbBkWindow(WM_MESSAGE * pMsg)
 {
 	WM_HWIN hWin = pMsg->hWin;
@@ -54,8 +53,9 @@ static void _cbBkWindow(WM_MESSAGE * pMsg)
 //			GUI_SetBkColor(GUI_BLUE);
 //			GUI_Clear();
 			break;
-		case 32: //点击焦点控件
-			LCDBeep(10); 
+		//case 32: //�������ؼ�
+        case WM_TOUCH_CHILD:
+			//LCDBeep(10); 
 			break;
 		default:
 			WM_DefaultProc(pMsg);
@@ -65,130 +65,118 @@ static void _cbBkWindow(WM_MESSAGE * pMsg)
 
 void MainTask(void)
 {
-    //使能窗口使用内存设备，这样可以有效避免闪烁, 
-	//放在GUI_Init前面就包括桌面窗口，如果放在后面就不包括桌面窗口
-	//放此处可以重绘掉背景无效窗体
+    //ʹ�ܴ���ʹ���ڴ��豸������������Ч������˸, 
+	//����GUI_Initǰ��Ͱ������洰�ڣ�������ں���Ͳ��������洰��
+	//�Ŵ˴������ػ��������Ч����
 	//WM_SetCreateFlags(WM_CF_MEMDEV); 
-	GUI_Init();//初始化emWin/ucGUI
-    /*	 关于多缓冲和窗口内存设备的设置说明
-	   1. 使能多缓冲是调用的如下函数，用户要在LCDConf_Lin_Template.c文件中配置了多缓冲，调用此函数才有效：
+	GUI_Init();//��ʼ��emWin/ucGUI
+    /*	 ���ڶ໺��ʹ����ڴ��豸������˵��
+	   1. ʹ�ܶ໺���ǵ��õ����º������û�Ҫ��LCDConf_Lin_Template.c�ļ��������˶໺�壬���ô˺�������Ч��
 		  WM_MULTIBUF_Enable(1);
-	   2. 窗口使能使用内存设备是调用函数：WM_SetCreateFlags(WM_CF_MEMDEV);
-	   3. 如果emWin的配置多缓冲和窗口内存设备都支持，二选一即可，且务必优先选择使用多缓冲，实际使用
-		  STM32F429BIT6 + 32位SDRAM + RGB565/RGB888平台测试，多缓冲可以有效的降低窗口移动或者滑动时的撕裂
-		  感，并有效的提高流畅性，通过使能窗口使用内存设备是做不到的。
-	   4. 所有emWin例子默认是开启三缓冲。
+	   2. ����ʹ��ʹ���ڴ��豸�ǵ��ú�����WM_SetCreateFlags(WM_CF_MEMDEV);
+	   3. ���emWin�����ö໺��ʹ����ڴ��豸��֧�֣���ѡһ���ɣ����������ѡ��ʹ�ö໺�壬ʵ��ʹ��
+		  STM32F429BIT6 + 32λSDRAM + RGB565/RGB888ƽ̨���ԣ��໺�������Ч�Ľ��ʹ����ƶ����߻���ʱ��˺��
+		  �У�����Ч����������ԣ�ͨ��ʹ�ܴ���ʹ���ڴ��豸���������ġ�
+	   4. ����emWin����Ĭ���ǿ��������塣
 	*/
 	WM_MULTIBUF_Enable(1);	
-	//设置桌面窗口的背景色，会自动重绘
+	//�������洰�ڵı���ɫ�����Զ��ػ�
 	//WM_SetDesktopColor(GUI_BLUE); 
-	//设置桌面窗口的回调函数,当把WM_SetCreateFlags放到GUI_Init()之前时，可以WM_SetDesktopColor替代
+	//�������洰�ڵĻص�����,����WM_SetCreateFlags�ŵ�GUI_Init()֮ǰʱ������WM_SetDesktopColor���
 	WM_SetCallback(WM_HBKWIN,_cbBkWindow);	
-    
-//	if(_isTouchCalibration)
-//	{
-//		TouchCalibrationTask();
-//	}
-//	//XBF字库的使用
-//	UseXBF();
-//	GUI_UC_SetEncodeUTF8();
-//	GUI_SetFont(&XBF_Font);	
-//	GUI_SetTextAlign(GUI_TA_HORIZONTAL|GUI_TA_LEFT);
-//	GUI_DispStringHCenterAt("中文测试,XBF!",200,50);
-//	GUI_DispStringHCenterAt("二行中文测试,XBF!",200,80);	
-//	GUI_DispStringHCenterAt("非常好!",200,110);
-//	GUI_Delay(1000);	
+    	
+	if(_isTouchCalibration)
+	{
+		TouchCalibrationTask();
+	}	
+
+//    GUI_SetTextAlign(GUI_TA_HORIZONTAL|GUI_TA_LEFT);
+//    GUI_SetFont(&GUI_FontHZ16);	
+//	GUI_DispStringHCenterAt("16���ֿ����@~%����������<>&%$#&*��OK!!",5,0);	
+//    GUI_SetFont(&GUI_FontHZ24);	
+//	GUI_DispStringHCenterAt("24���ֿ����@~%����������<>&%$#&*��OK!!",5,26);	
+//    GUI_SetFont(&GUI_FontHZ32);	
+//	GUI_DispStringHCenterAt("32���ֿ����@~%����������<>&%$#&*��OK!!",5,60);	
+//    GUI_SetFont(&GUI_FontHZ40);	
+//	GUI_DispStringHCenterAt("40���ֿ����@~%����������<>&%$#&*��OK!!",5,102);	
     
     bool isExitWhile=false;		
-	FIL fil;
-    FATFS fs;
-    FRESULT res = f_mount(&fs,"0:/",0);
-	res=OpenFile(_xbfLibName18,FA_READ,&fil);
-	if(res!=FR_OK)
-	{
-		GUI_SetFont(&GUI_Font24_ASCII);	
-		GUI_DispStringHCenterAt("Plase copy XBF file LIB to disk!",200,50);		
-	}
-	else
-	{
-			CloseFile(&fil,_xbfLibName18);
-			IniXBF();
-			GUI_UC_SetEncodeUTF8();
-			GUI_SetFont(&GUI_FontYAHE18);	
-			GUI_SetTextAlign(GUI_TA_HORIZONTAL|GUI_TA_LEFT);
-            //TestPictureFontDisplay();   
-            //CreateFuncMenuSelect();
-        
-			char devMode[16]={0};
-			while(!GetDevMode(devMode))
-			{
-				GUI_Clear();
-				GUI_DispStringHCenterAt("设备未联机，请检查!",200,50);
-				GUI_Delay(500);
-			}					
-			CreateNumKeyForm();                  //创建数字键盘
-            CreateFullKeyForm();                    //创建全键盘
-            CreateMessageBox();                   //创建有按钮对话框
-            CreateMessageBox_NoBtn();      //创建无按钮对话框
-            CreateMotorControl();                   //创建电机点动窗体
-			StatusParaStruct appStatus;
-            DeviceStatusEnum lastStatus=0xFF;
-            
-            //显示欢迎界面
-            //WM_HWIN welForm = CreateWelcomForm();
-            //GUI_Delay(2000);                      
-            //GUI_EndDialog(welForm,0);            
-			while(true)
-			{			
-                isExitWhile=false;	                
-				GUI_Clear(); 
-				appStatus =GetCurrStatus();
-                if(appStatus.DevStatus==lastStatus)
-                {
-                    GUI_Delay(500);
-                    continue;
-                }
-                lastStatus=appStatus.DevStatus;
-				switch(appStatus.DevStatus)
-				{
-					case NoGetStatus: //没有读取到当前状态
-						GUI_DispStringHCenterAt("没有读取到设备程序当前状态",200,50);
-						break;
-					case DeviceIniting: //设备初始化中
-                        //CreateWelcomForm();
-                        //GUI_Delay(1000);	
-                        break;
-					case DevReady: //设备准备就绪,进入工作主界面
-					case DevWorking: //设备正在工作
-						CreateWorkForm();
-						isExitWhile=true;
-						break;
-					case DevScram: //急停中
-						ShowMessageBox_NoBut("设备已急停，请弹出【急停按钮】再继续！");
-                        //CreateMessageBox_NoBtn();
-						break;
-					case RegWait: //注册码录入,进入注册码录入界面
-						CreateRegister();
-						isExitWhile=true;
-						break;
-					case USBInsert: //USB已插入
-						
-						break;
-					default:
-						GUI_DispStringHCenterAt(appStatus.StatusDescribe,200,50);
-						break;
-				}
-				if(isExitWhile) break;
-				GUI_Delay(500);
-			}	
-		}
+    GUI_SetFont(&GUI_FontHZ24);	
+    GUI_SetTextAlign(GUI_TA_HORIZONTAL|GUI_TA_LEFT);
+    //TestPictureFontDisplay();   
+    //CreateFuncMenuSelect();
+
+    //LoadFontLib();
+
+    char devMode[16]={0};
+    while(!GetDevMode(devMode))
+    {
+        GUI_Clear();
+        GUI_DispStringHCenterAt("�豸δ����������!",200,50);
+        GUI_Delay(500);
+    }					
+    CreateNumKeyForm();                 //�������ּ���
+    CreateFullKeyForm();                //����ȫ����
+    CreateMessageBox();                 //�����а�ť�Ի���
+    CreateMessageBox_NoBtn();      		//�����ް�ť�Ի���
+    CreateMotorControl();               //��������㶯����
+    StatusParaStruct appStatus;
+    DeviceStatusEnum lastStatus=0xFF;
+    
+    //��ʾ��ӭ����
+    //WM_HWIN welForm = CreateWelcomForm();
+    //GUI_Delay(2000);                      
+    //GUI_EndDialog(welForm,0);            
+    while(true)
+    {			
+        isExitWhile=false;	                
+        GUI_Clear(); 
+        appStatus =GetCurrStatus();
+        if(appStatus.DevStatus==lastStatus)
+        {
+            GUI_Delay(500);
+            continue;
+        }
+        lastStatus=appStatus.DevStatus;
+        switch(appStatus.DevStatus)
+        {
+            case NoGetStatus: //û�ж�ȡ����ǰ״̬
+                GUI_DispStringHCenterAt("û�ж�ȡ���豸����ǰ״̬",200,50);
+                break;
+            case DeviceIniting: //�豸��ʼ����
+                //CreateWelcomForm();
+                //GUI_Delay(1000);	
+                break;
+            case DevReady: //�豸׼������,���빤��������
+            case DevWorking: //�豸���ڹ���
+                CreateWorkForm();
+                isExitWhile=true;
+                break;
+            case DevScram: //��ͣ��
+                ShowMessageBox_NoBut("�豸�Ѽ�ͣ���뵯������ͣ��ť���ټ�����");
+                //CreateMessageBox_NoBtn();
+                break;
+            case RegWait: //ע����¼��,����ע����¼�����
+                CreateRegister();
+                isExitWhile=true;
+                break;
+            case USBInsert: //USB�Ѳ���
+                
+                break;
+            default:
+                GUI_DispStringHCenterAt(appStatus.StatusDescribe,200,50);
+                break;
+        }
+        if(isExitWhile) break;
+        GUI_Delay(500);
+    }
     
     static char loopCount=0;   
     while(1)
     {
         if(isExitWhile)
         {
-            //要改为GUI定时器的方式
+            //Ҫ��ΪGUI��ʱ���ķ�ʽ
             if(loopCount>=20)
             {
                 loopCount=0;

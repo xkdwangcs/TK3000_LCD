@@ -1,11 +1,12 @@
 /*****************************************
 *
-* è‚–åº”å¼ºè®¾è®¡çš„GUIBuilderç”Ÿæˆçš„æ–‡ä»¶
+* Ð¤Ó¦Ç¿Éè¼ÆµÄGUIBuilderÉú³ÉµÄÎÄ¼þ
 * V2.03 (2018.07.17)
 *
 ******************************************/
 
 #include "DIALOG.h"
+#include "MainTask.h"
 #include "CMD.h"
 
 #define IOStatus (GUI_ID_USER +0x00)
@@ -57,7 +58,7 @@
 
 
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
-{ WINDOW_CreateIndirect,"åŠŸèƒ½èœå•é€‰æ‹©",IOStatus,0,0,800,480,0,0x0,0 },
+{ WINDOW_CreateIndirect,"¹¦ÄÜ²Ëµ¥Ñ¡Ôñ",IOStatus,0,0,800,480,0,0x0,0 },
 { EDIT_CreateIndirect,"",pnlInport_IOStatus,0,12,800,170,0,0x0,0 },
 { CHECKBOX_CreateIndirect,"I01",chk1_IOStatus,19,32,68,25,0,0x0,0 },
 { CHECKBOX_CreateIndirect,"I02",chk2_IOStatus,116,32,68,25,0,0x0,0 },
@@ -100,18 +101,12 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 { BUTTON_CreateIndirect,"O14",btn14_IOStatus,499,309,89,73,0,0x0,0 },
 { BUTTON_CreateIndirect,"O15",btn15_IOStatus,595,309,89,73,0,0x0,0 },
 { BUTTON_CreateIndirect,"O16",btn16_IOStatus,691,309,89,73,0,0x0,0 },
-{ BUTTON_CreateIndirect,"è¿”å›ž",btnBack_IOStatus,635,421,106,47,0,0x0,0 },
-{ TEXT_CreateIndirect,"*ç»¿è‰²ä¸ºä½Žç”µå¹³ï¼ˆåˆï¼‰",label1_IOStatus,15,416,192,25,0,0x0,0 },
-{ TEXT_CreateIndirect,"*çº¢è‰²ä¸ºé«˜ç”µå¹³ï¼ˆå¼€ï¼‰",label2_IOStatus,15,446,192,25,0,0x0,0 },
+{ BUTTON_CreateIndirect,"·µ»Ø",btnBack_IOStatus,635,421,106,47,0,0x0,0 },
+{ TEXT_CreateIndirect,"*ÂÌÉ«[ºÏ]",label1_IOStatus,15,416,250,25,0,0x0,0 },
+{ TEXT_CreateIndirect,"*ºìÉ«[¿ª]",label2_IOStatus,15,446,250,25,0,0x0,0 },
 };
 
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE14;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE18;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE24;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE32;
-
-
-//åˆå§‹åŒ–çª—ä½“ç›¸å…³æŽ§ä»¶
+//³õÊ¼»¯´°ÌåÏà¹Ø¿Ø¼þ
 static void InitForm(WM_MESSAGE * pMsg){
     WM_HWIN hItem = pMsg->hWin;
     WINDOW_SetBkColor(hItem,0x00F0F0F0);
@@ -123,99 +118,99 @@ static void InitForm(WM_MESSAGE * pMsg){
 
     hItem = WM_GetDialogItem(pMsg->hWin,chk1_IOStatus);
     CHECKBOX_SetText(hItem, "I01");
-    CHECKBOX_SetFont(hItem, &GUI_FontYAHE18);
+    CHECKBOX_SetFont(hItem, &GUI_FontHZ24);
 
     hItem = WM_GetDialogItem(pMsg->hWin,chk2_IOStatus);
     CHECKBOX_SetText(hItem, "I02");
-    CHECKBOX_SetFont(hItem, &GUI_FontYAHE18);
+    CHECKBOX_SetFont(hItem, &GUI_FontHZ24);
 
     hItem = WM_GetDialogItem(pMsg->hWin,chk3_IOStatus);
     CHECKBOX_SetText(hItem, "I03");
-    CHECKBOX_SetFont(hItem, &GUI_FontYAHE18);
+    CHECKBOX_SetFont(hItem, &GUI_FontHZ24);
 
     hItem = WM_GetDialogItem(pMsg->hWin,chk4_IOStatus);
     CHECKBOX_SetText(hItem, "I04");
-    CHECKBOX_SetFont(hItem, &GUI_FontYAHE18);
+    CHECKBOX_SetFont(hItem, &GUI_FontHZ24);
 
     hItem = WM_GetDialogItem(pMsg->hWin,chk5_IOStatus);
     CHECKBOX_SetText(hItem, "I05");
-    CHECKBOX_SetFont(hItem, &GUI_FontYAHE18);
+    CHECKBOX_SetFont(hItem, &GUI_FontHZ24);
 
     hItem = WM_GetDialogItem(pMsg->hWin,chk6_IOStatus);
     CHECKBOX_SetText(hItem, "I06");
-    CHECKBOX_SetFont(hItem, &GUI_FontYAHE18);
+    CHECKBOX_SetFont(hItem, &GUI_FontHZ24);
 
     hItem = WM_GetDialogItem(pMsg->hWin,chk7_IOStatus);
     CHECKBOX_SetText(hItem, "I07");
-    CHECKBOX_SetFont(hItem, &GUI_FontYAHE18);
+    CHECKBOX_SetFont(hItem, &GUI_FontHZ24);
 
     hItem = WM_GetDialogItem(pMsg->hWin,chk8_IOStatus);
     CHECKBOX_SetText(hItem, "I08");
-    CHECKBOX_SetFont(hItem, &GUI_FontYAHE18);
+    CHECKBOX_SetFont(hItem, &GUI_FontHZ24);
 
     hItem = WM_GetDialogItem(pMsg->hWin,chk9_IOStatus);
     CHECKBOX_SetText(hItem, "I09");
-    CHECKBOX_SetFont(hItem, &GUI_FontYAHE18);
+    CHECKBOX_SetFont(hItem, &GUI_FontHZ24);
 
     hItem = WM_GetDialogItem(pMsg->hWin,chk10_IOStatus);
     CHECKBOX_SetText(hItem, "I10");
-    CHECKBOX_SetFont(hItem, &GUI_FontYAHE18);
+    CHECKBOX_SetFont(hItem, &GUI_FontHZ24);
 
     hItem = WM_GetDialogItem(pMsg->hWin,chk11_IOStatus);
     CHECKBOX_SetText(hItem, "I11");
-    CHECKBOX_SetFont(hItem, &GUI_FontYAHE18);
+    CHECKBOX_SetFont(hItem, &GUI_FontHZ24);
 
     hItem = WM_GetDialogItem(pMsg->hWin,chk12_IOStatus);
     CHECKBOX_SetText(hItem, "I12");
-    CHECKBOX_SetFont(hItem, &GUI_FontYAHE18);
+    CHECKBOX_SetFont(hItem, &GUI_FontHZ24);
 
     hItem = WM_GetDialogItem(pMsg->hWin,chk13_IOStatus);
     CHECKBOX_SetText(hItem, "I13");
-    CHECKBOX_SetFont(hItem, &GUI_FontYAHE18);
+    CHECKBOX_SetFont(hItem, &GUI_FontHZ24);
 
     hItem = WM_GetDialogItem(pMsg->hWin,chk14_IOStatus);
     CHECKBOX_SetText(hItem, "I14");
-    CHECKBOX_SetFont(hItem, &GUI_FontYAHE18);
+    CHECKBOX_SetFont(hItem, &GUI_FontHZ24);
 
     hItem = WM_GetDialogItem(pMsg->hWin,chk15_IOStatus);
     CHECKBOX_SetText(hItem, "I15");
-    CHECKBOX_SetFont(hItem, &GUI_FontYAHE18);
+    CHECKBOX_SetFont(hItem, &GUI_FontHZ24);
 
     hItem = WM_GetDialogItem(pMsg->hWin,chk16_IOStatus);
     CHECKBOX_SetText(hItem, "I16");
-    CHECKBOX_SetFont(hItem, &GUI_FontYAHE18);
+    CHECKBOX_SetFont(hItem, &GUI_FontHZ24);
 
     hItem = WM_GetDialogItem(pMsg->hWin,chk17_IOStatus);
     CHECKBOX_SetText(hItem, "I17");
-    CHECKBOX_SetFont(hItem, &GUI_FontYAHE18);
+    CHECKBOX_SetFont(hItem, &GUI_FontHZ24);
 
     hItem = WM_GetDialogItem(pMsg->hWin,chk18_IOStatus);
     CHECKBOX_SetText(hItem, "I18");
-    CHECKBOX_SetFont(hItem, &GUI_FontYAHE18);
+    CHECKBOX_SetFont(hItem, &GUI_FontHZ24);
 
     hItem = WM_GetDialogItem(pMsg->hWin,chk19_IOStatus);
     CHECKBOX_SetText(hItem, "I19");
-    CHECKBOX_SetFont(hItem, &GUI_FontYAHE18);
+    CHECKBOX_SetFont(hItem, &GUI_FontHZ24);
 
     hItem = WM_GetDialogItem(pMsg->hWin,chk20_IOStatus);
     CHECKBOX_SetText(hItem, "I20");
-    CHECKBOX_SetFont(hItem, &GUI_FontYAHE18);
+    CHECKBOX_SetFont(hItem, &GUI_FontHZ24);
 
     hItem = WM_GetDialogItem(pMsg->hWin,chk21_IOStatus);
     CHECKBOX_SetText(hItem, "I21");
-    CHECKBOX_SetFont(hItem, &GUI_FontYAHE18);
+    CHECKBOX_SetFont(hItem, &GUI_FontHZ24);
 
     hItem = WM_GetDialogItem(pMsg->hWin,chk22_IOStatus);
     CHECKBOX_SetText(hItem, "I22");
-    CHECKBOX_SetFont(hItem, &GUI_FontYAHE18);
+    CHECKBOX_SetFont(hItem, &GUI_FontHZ24);
 
     hItem = WM_GetDialogItem(pMsg->hWin,chk23_IOStatus);
     CHECKBOX_SetText(hItem, "I23");
-    CHECKBOX_SetFont(hItem, &GUI_FontYAHE18);
+    CHECKBOX_SetFont(hItem, &GUI_FontHZ24);
 
     hItem = WM_GetDialogItem(pMsg->hWin,chk24_IOStatus);
     CHECKBOX_SetText(hItem, "I24");
-    CHECKBOX_SetFont(hItem, &GUI_FontYAHE18);
+    CHECKBOX_SetFont(hItem, &GUI_FontHZ24);
 
     hItem = WM_GetDialogItem(pMsg->hWin,pnlOutport_IOStatus);
     EDIT_SetText(hItem, "");
@@ -223,112 +218,112 @@ static void InitForm(WM_MESSAGE * pMsg){
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00F0F0F0);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btn1_IOStatus);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ32);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btn2_IOStatus);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ32);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btn3_IOStatus);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ32);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btn4_IOStatus);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ32);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btn5_IOStatus);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ32);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btn6_IOStatus);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ32);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btn7_IOStatus);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ32);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btn8_IOStatus);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ32);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btn9_IOStatus);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ32);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btn10_IOStatus);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ32);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btn11_IOStatus);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ32);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btn12_IOStatus);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ32);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btn13_IOStatus);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ32);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btn14_IOStatus);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ32);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btn15_IOStatus);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ32);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btn16_IOStatus);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ32);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnBack_IOStatus);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
     
     hItem = WM_GetDialogItem(pMsg->hWin,label1_IOStatus);
-    TEXT_SetText(hItem,"*ç»¿è‰²ä¸ºä½Žç”µå¹³ï¼ˆåˆï¼‰");
-    TEXT_SetFont(hItem,&GUI_FontYAHE14);
+    TEXT_SetText(hItem,"*ÂÌÉ«[ºÏ]");
+    TEXT_SetFont(hItem,&GUI_FontHZ24);
     TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
-    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//è‡ªåŠ¨æ¢è¡Œ
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//×Ô¶¯»»ÐÐ
     TEXT_SetBkColor(hItem,0x00F0F0F0);
     TEXT_SetTextColor(hItem,0x0000C000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,label2_IOStatus);
-    TEXT_SetText(hItem,"*çº¢è‰²ä¸ºé«˜ç”µå¹³ï¼ˆå¼€ï¼‰");
-    TEXT_SetFont(hItem,&GUI_FontYAHE14);
+    TEXT_SetText(hItem,"*ºìÉ«[¿ª]");
+    TEXT_SetFont(hItem,&GUI_FontHZ24);
     TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
-    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//è‡ªåŠ¨æ¢è¡Œ
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//×Ô¶¯»»ÐÐ
     TEXT_SetBkColor(hItem,0x00F0F0F0);
     TEXT_SetTextColor(hItem,0x000000FF);
 }
 
 static WM_HWIN _thisForm;
-static WM_HWIN _callForm;
+CreateFormHandler _createCallForm=NULL;
 static WM_HTIMER _hTimer;
 
-//æŽ§ä»¶äº‹ä»¶å¤„ç†å‡½æ•°
+//¿Ø¼þÊÂ¼þ´¦Àíº¯Êý
 static void DoEvent(WM_MESSAGE * pMsg)
 {
     int Id = WM_GetId(pMsg->hWinSrc);
@@ -344,13 +339,15 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
                     WM_DeleteTimer(_hTimer);
                     GUI_EndDialog(pMsg->hWin,0);
-                    WM_ShowWin(_callForm);
+                    if(_createCallForm!=NULL)
+                        _createCallForm();
+                    //WM_ShowWin(_callForm);
 					break;
 			}
 			break;
@@ -372,7 +369,7 @@ void ShowIOStatus(IOStatusStruct ioStatus)
             CHECKBOX_SetBoxBkColor(hItem,GUI_RED,CHECKBOX_CI_DISABLED);
             CHECKBOX_SetTextColor(hItem,GUI_RED);
             CHECKBOX_SetState(hItem,0);
-            //AppendStr(str,"é«˜");
+            //AppendStr(str,"¸ß");
             //CHECKBOX_SetText(hItem,str);
         }
         else
@@ -381,23 +378,23 @@ void ShowIOStatus(IOStatusStruct ioStatus)
             CHECKBOX_SetBoxBkColor(hItem,0x0000C000,CHECKBOX_CI_DISABLED);
             CHECKBOX_SetTextColor(hItem,0x0000C000);
             CHECKBOX_SetState(hItem,1);
-            //AppendStr(str,"ä½Ž");
+            //AppendStr(str,"µÍ");
             //CHECKBOX_SetText(hItem,str);
         }
     }
     for(int i=0;i<OutportNum;i++)
     {
         hItem = WM_GetDialogItem(_thisForm,btn1_IOStatus+i);
-        if(ioStatus.OutportStatus[i])
+        if(ioStatus.OutportStatus[i]) //¸ßµçÆ½£¬ºÏ
         {
-            //è¦å˜ä¸ºæ—§é£Žæ ¼æ‰èƒ½æ”¹å˜èƒŒæ™¯è‰²
-            //BUTTON_SetBkColor(hItem,BUTTON_CI_UNPRESSED,GUI_RED);
-            BUTTON_SetTextColor(hItem,BUTTON_CI_UNPRESSED,GUI_RED);
-        }
-        else
-        {
+            //Òª±äÎª¾É·ç¸ñ²ÅÄÜ¸Ä±ä±³¾°É«
             //BUTTON_SetBkColor(hItem,BUTTON_CI_UNPRESSED,0x0000C000);
             BUTTON_SetTextColor(hItem,BUTTON_CI_UNPRESSED,0x0000C000);
+        }
+        else //µÍµçÆ½£¬¿ª
+        {
+            //BUTTON_SetBkColor(hItem,BUTTON_CI_UNPRESSED,GUI_RED);
+            BUTTON_SetTextColor(hItem,BUTTON_CI_UNPRESSED,GUI_RED);
         }
     }
 }
@@ -422,9 +419,9 @@ static void _cbDialog(WM_MESSAGE * pMsg)
     }
 }
 
-WM_HWIN CreateIOStatus(WM_HWIN callForm) 
+WM_HWIN CreateIOStatus(CreateFormHandler createCallForm) 
 {
-    _callForm=callForm;
+    _createCallForm=createCallForm;
     _thisForm = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
     _hTimer = WM_CreateTimer(_thisForm, 0, 500, 0);
     //BUTTON_SetDefaultSkinClassic();

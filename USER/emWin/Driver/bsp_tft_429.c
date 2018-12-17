@@ -22,7 +22,6 @@
 #include "bsp_tft_lcd.h"
 #include "bsp_touch.h"
 #include "bsp_fmc_sdram.h"
-#include "fonts.h"
 #include "string.h"
 
 typedef uint32_t LCD_COLOR;

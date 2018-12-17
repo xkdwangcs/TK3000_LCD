@@ -17,6 +17,8 @@ typedef void (*SetCtrTextHandler2)(int ctrID,int colIndex,int rowIndex,char* par
     
 //读取到一个循环数据作为参数的函数指针
 typedef void (*LoopDataReadHandler)(LoopDataStruct loopData);
+//创建窗体的函数句柄
+typedef  WM_HWIN (*CreateFormHandler)(void);
 	
 	
 	#ifdef __cplusplus

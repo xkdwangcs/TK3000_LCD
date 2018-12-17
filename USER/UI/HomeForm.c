@@ -1,6 +1,6 @@
-ï»¿/*****************************************
+/*****************************************
 *
-* è‚–åº”å¼ºè®¾è®¡çš„GUIBuilderç”Ÿæˆçš„æ–‡ä»¶
+* Ð¤Ó¦Ç¿Éè¼ÆµÄGUIBuilderÉú³ÉµÄÎÄ¼þ
 * V2.03 (2018.07.17)
 *
 ******************************************/
@@ -31,21 +31,21 @@
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 { WINDOW_CreateIndirect,"HomeForm",HomeForm,0,0,800,480,0,0x0,0 },
 { EDIT_CreateIndirect,"",panel1_HomeForm,0,54,800,426,0,0x0,0 },
-{ BUTTON_CreateIndirect,"åæ ‡ç¤ºæ•™",btnZBSJ_HomeForm,22,74,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"å–æ–™åæ ‡",btnQLZB_HomeForm,178,74,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"å·¥ä½œå‚æ•°",btnWorkPara_HomeForm,334,74,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"ç”µæœºå‚æ•°",btnMotorPara_HomeForm,490,74,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"è®¾å¤‡å‚æ•°",btnDevPara_HomeForm,642,74,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"IOå£çŠ¶æ€",btnIOStatus_HomeForm,22,168,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"ç«¯å£é…ç½®",btnPortConfig_HomeForm,178,168,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"åŠ¨ä½œé…ç½®",btnMotionConfig_HomeForm,334,168,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"é“­ç‰Œä¿¡æ¯",btnMPXX_HomeForm,490,168,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"ç³»ç»Ÿç®¡ç†",btnSystem_HomeForm,642,168,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"æ—¥å¿—æŸ¥çœ‹",btnLogView_HomeForm,22,268,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"å…³äºŽ",btnAbout_HomeForm,178,268,130,68,0,0x0,0 },
-{ BUTTON_CreateIndirect,"å·¥ä½œç•Œé¢",btnWorkForm_HomeForm,642,388,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"×ø±êÊ¾½Ì",btnZBSJ_HomeForm,22,74,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"È¡ÁÏ×ø±ê",btnQLZB_HomeForm,178,74,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"¹¤×÷²ÎÊý",btnWorkPara_HomeForm,334,74,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"µç»ú²ÎÊý",btnMotorPara_HomeForm,490,74,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"Éè±¸²ÎÊý",btnDevPara_HomeForm,642,74,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"IO¿Ú×´Ì¬",btnIOStatus_HomeForm,22,168,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"¶Ë¿ÚÅäÖÃ",btnPortConfig_HomeForm,178,168,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"¶¯×÷ÅäÖÃ",btnMotionConfig_HomeForm,334,168,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"ÃúÅÆÐÅÏ¢",btnMPXX_HomeForm,490,168,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"ÏµÍ³¹ÜÀí",btnSystem_HomeForm,642,168,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"ÈÕÖ¾²é¿´",btnLogView_HomeForm,22,268,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"¹ØÓÚ",btnAbout_HomeForm,178,268,130,68,0,0x0,0 },
+{ BUTTON_CreateIndirect,"¹¤×÷½çÃæ",btnWorkForm_HomeForm,642,388,130,68,0,0x0,0 },
 { EDIT_CreateIndirect,"",panel2_HomeForm,0,0,800,50,0,0x0,0 },
-{ TEXT_CreateIndirect,"èžºä¸æœºè‡ªåŠ¨é”ä»˜ç³»ç»Ÿ V4.10",lbSystemTitle_HomeForm,45,4,430,36,0,0x0,0 },
+{ TEXT_CreateIndirect,"ÂÝË¿»ú×Ô¶¯Ëø¸¶ÏµÍ³ V4.10",lbSystemTitle_HomeForm,45,4,430,36,0,0x0,0 },
 { TEXT_CreateIndirect,"2018-07-31 08:47:00",lbDateTime_HomeForm,557,17,238,24,0,0x0,0 },
 };
 
@@ -56,7 +56,7 @@ extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE24;
 extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE32;
 
 
-//åˆå§‹åŒ–çª—ä½“ç›¸å…³æŽ§ä»¶
+//³õÊ¼»¯´°ÌåÏà¹Ø¿Ø¼þ
 static void InitForm(WM_MESSAGE * pMsg){
     WM_HWIN hItem = pMsg->hWin;
     WINDOW_SetBkColor(hItem,0x00F0F0F0);
@@ -137,10 +137,10 @@ static void InitForm(WM_MESSAGE * pMsg){
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00808080);
 
     hItem = WM_GetDialogItem(pMsg->hWin,lbSystemTitle_HomeForm);
-    TEXT_SetText(hItem,"èžºä¸æœºè‡ªåŠ¨é”ä»˜ç³»ç»Ÿ V4.10");
+    TEXT_SetText(hItem,"ÂÝË¿»ú×Ô¶¯Ëø¸¶ÏµÍ³ V4.10");
     TEXT_SetFont(hItem,&GUI_FontYAHE18);
     TEXT_SetTextAlign(hItem,GUI_TA_VCENTER|GUI_TA_LEFT);
-    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//è‡ªåŠ¨æ¢è¡Œ
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//×Ô¶¯»»ÐÐ
     TEXT_SetBkColor(hItem,0x00808080);
     TEXT_SetTextColor(hItem,0x0000FF00);
 
@@ -148,13 +148,13 @@ static void InitForm(WM_MESSAGE * pMsg){
     TEXT_SetText(hItem,"2018-07-31 08:47:00");
     TEXT_SetFont(hItem,GUI_FONT_24_ASCII);
     TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
-    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//è‡ªåŠ¨æ¢è¡Œ
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//×Ô¶¯»»ÐÐ
     TEXT_SetBkColor(hItem,0x00808080);
     TEXT_SetTextColor(hItem,0x00FFFFFF);
 }
 
 
-//æŽ§ä»¶äº‹ä»¶å¤„ç†å‡½æ•°
+//¿Ø¼þÊÂ¼þ´¦Àíº¯Êý
 static void DoEvent(WM_MESSAGE * pMsg)
 {
     int Id = WM_GetId(pMsg->hWinSrc);
@@ -175,10 +175,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;
@@ -186,10 +186,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;
@@ -197,10 +197,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;
@@ -208,10 +208,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;
@@ -219,10 +219,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;
@@ -230,10 +230,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;
@@ -241,10 +241,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;
@@ -252,10 +252,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;
@@ -263,10 +263,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;
@@ -274,10 +274,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;
@@ -285,10 +285,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;
@@ -296,10 +296,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;
@@ -307,10 +307,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:æŒ‰é’®å·²è¢«ç‚¹å‡»
+					//DO:°´Å¥ÒÑ±»µã»÷
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:æŒ‰é’®å·²è¢«é‡Šæ”¾ï¼ˆå¼¹èµ·ï¼‰
+					//DO:°´Å¥ÒÑ±»ÊÍ·Å£¨µ¯Æð£©
 					break;
 			}
 			break;

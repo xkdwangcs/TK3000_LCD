@@ -1,12 +1,12 @@
-﻿/*****************************************
+/*****************************************
 *
-* 肖应强设计的GUIBuilder生成的文件
+* ФӦǿ��Ƶ�GUIBuilder���ɵ��ļ�
 * V2.04 (2018.08.02)
 *
 ******************************************/
 
 #include "DIALOG.h"
-
+#include "MainTask.h"
 
 #define CoordTeach (GUI_ID_USER +0x00)
 #define button2_CoordTeach (GUI_ID_USER +0x01)
@@ -35,12 +35,12 @@
 
 
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
-{ WINDOW_CreateIndirect,"功能菜单选择",CoordTeach,0,0,800,480,0,0x0,0 },
-{ BUTTON_CreateIndirect,"动作测试",button2_CoordTeach,3,419,120,50,0,0x0,0 },
-{ BUTTON_CreateIndirect,"点动控制",button10_CoordTeach,540,419,119,50,0,0x0,0 },
-{ BUTTON_CreateIndirect,"文件列表",button11_CoordTeach,138,419,119,50,0,0x0,0 },
-{ BUTTON_CreateIndirect,"坐标列表",button4_CoordTeach,406,419,119,50,0,0x0,0 },
-{ BUTTON_CreateIndirect,"坐标图例",button6_CoordTeach,272,419,119,50,0,0x0,0 },
+{ WINDOW_CreateIndirect,"���ܲ˵�ѡ��",CoordTeach,0,0,800,480,0,0x0,0 },
+{ BUTTON_CreateIndirect,"��������",button2_CoordTeach,3,419,120,50,0,0x0,0 },
+{ BUTTON_CreateIndirect,"�㶯����",button10_CoordTeach,540,419,119,50,0,0x0,0 },
+{ BUTTON_CreateIndirect,"�ļ��б�",button11_CoordTeach,138,419,119,50,0,0x0,0 },
+{ BUTTON_CreateIndirect,"�����б�",button4_CoordTeach,406,419,119,50,0,0x0,0 },
+{ BUTTON_CreateIndirect,"����ͼ��",button6_CoordTeach,272,419,119,50,0,0x0,0 },
 { LISTVIEW_CreateIndirect,"",dataGridView1_CoordTeach,222,7,574,404,0,0x0,0 },
 { EDIT_CreateIndirect,"",panel1_CoordTeach,3,7,213,278,0,0x0,0 },
 { TEXT_CreateIndirect,"X:",lbX_CoordTeach,13,16,36,29,0,0x0,0 },
@@ -49,65 +49,58 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 { EDIT_CreateIndirect,"100.256",edtY_CoordTeach,52,50,152,35,0,0x0,0 },
 { TEXT_CreateIndirect,"Z:",lbZ_CoordTeach,13,90,34,29,0,0x0,0 },
 { EDIT_CreateIndirect,"100.256",edtZ_CoordTeach,52,88,152,35,0,0x0,0 },
-{ BUTTON_CreateIndirect,"新增",btnReset_CoordTeach,8,184,104,45,0,0x0,0 },
-{ BUTTON_CreateIndirect,"定位",button1_CoordTeach,118,133,91,45,0,0x0,0 },
-{ BUTTON_CreateIndirect,"删除",button3_CoordTeach,118,184,91,45,0,0x0,0 },
-{ BUTTON_CreateIndirect,"修改",button5_CoordTeach,8,235,104,45,0,0x0,0 },
-{ BUTTON_CreateIndirect,"插入",button7_CoordTeach,118,235,91,45,0,0x0,0 },
-{ BUTTON_CreateIndirect,"左平台",button13_CoordTeach,8,133,104,45,0,0x0,0 },
+{ BUTTON_CreateIndirect,"����",btnReset_CoordTeach,8,184,104,45,0,0x0,0 },
+{ BUTTON_CreateIndirect,"��λ",button1_CoordTeach,118,133,91,45,0,0x0,0 },
+{ BUTTON_CreateIndirect,"ɾ��",button3_CoordTeach,118,184,91,45,0,0x0,0 },
+{ BUTTON_CreateIndirect,"�޸�",button5_CoordTeach,8,235,104,45,0,0x0,0 },
+{ BUTTON_CreateIndirect,"����",button7_CoordTeach,118,235,91,45,0,0x0,0 },
+{ BUTTON_CreateIndirect,"��ƽ̨",button13_CoordTeach,8,133,104,45,0,0x0,0 },
 { EDIT_CreateIndirect,"",panel2_CoordTeach,3,291,213,120,0,0x0,0 },
-{ BUTTON_CreateIndirect,"保存为取料坐标",button8_CoordTeach,8,302,201,45,0,0x0,0 },
-{ BUTTON_CreateIndirect,"定位到取料坐标",button9_CoordTeach,8,353,201,45,0,0x0,0 },
-{ BUTTON_CreateIndirect,"返回",button12_CoordTeach,695,419,93,50,0,0x0,0 },
+{ BUTTON_CreateIndirect,"����Ϊȡ������",button8_CoordTeach,8,302,201,45,0,0x0,0 },
+{ BUTTON_CreateIndirect,"��λ��ȡ������",button9_CoordTeach,8,353,201,45,0,0x0,0 },
+{ BUTTON_CreateIndirect,"����",button12_CoordTeach,695,419,93,50,0,0x0,0 },
 };
 
-
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE14;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE18;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE24;
-extern GUI_CONST_STORAGE GUI_FONT GUI_FontYAHE32;
-
-
-//初始化窗体相关控件
+//��ʼ��������ؿؼ�
 static void InitForm(WM_MESSAGE * pMsg){
     WM_HWIN hItem = pMsg->hWin;
     WINDOW_SetBkColor(hItem,0x00F0F0F0);
 
     hItem = WM_GetDialogItem(pMsg->hWin,button2_CoordTeach);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00FFC0FF);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,button10_CoordTeach);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00FFC0FF);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,button11_CoordTeach);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00FFC0FF);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,button4_CoordTeach);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00FFC0FF);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,button6_CoordTeach);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00FFC0FF);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,dataGridView1_CoordTeach);
-    LISTVIEW_AddColumn(hItem, 100, "序号", GUI_TA_HCENTER | GUI_TA_VCENTER);
-    LISTVIEW_AddColumn(hItem, 471, "坐标", GUI_TA_HCENTER | GUI_TA_VCENTER);
+    LISTVIEW_AddColumn(hItem, 100, "���", GUI_TA_HCENTER | GUI_TA_VCENTER);
+    LISTVIEW_AddColumn(hItem, 471, "����", GUI_TA_HCENTER | GUI_TA_VCENTER);
     HEADER_Handle hHeader = LISTVIEW_GetHeader(hItem);
-    HEADER_SetFont(hHeader, &GUI_FontYAHE14);//设置列头字体
-    LISTVIEW_SetFont(hItem, &GUI_FontYAHE14);//设置行字体
-    LISTVIEW_SetRowHeight(hItem, 50);//设置行高
+    HEADER_SetFont(hHeader, &GUI_FontHZ16);//������ͷ����
+    LISTVIEW_SetFont(hItem, &GUI_FontHZ16);//����������
+    LISTVIEW_SetRowHeight(hItem, 50);//�����и�
     LISTVIEW_SetHeaderHeight(hItem, 33);
-    LISTVIEW_SetGridVis(hItem, 1);//网格线可见
-    LISTVIEW_EnableCellSelect(hItem, 1);//使能单元格操作
+    LISTVIEW_SetGridVis(hItem, 1);//�����߿ɼ�
+    LISTVIEW_EnableCellSelect(hItem, 1);//ʹ�ܵ�Ԫ�����
 
     hItem = WM_GetDialogItem(pMsg->hWin,panel1_CoordTeach);
     EDIT_SetText(hItem, "");
@@ -118,7 +111,7 @@ static void InitForm(WM_MESSAGE * pMsg){
     TEXT_SetText(hItem,"X:");
     TEXT_SetFont(hItem,GUI_FONT_24_ASCII);
     TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
-    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//自动换行
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//�Զ�����
     TEXT_SetBkColor(hItem,0x00F0F0F0);
     TEXT_SetTextColor(hItem,0x00000000);
 
@@ -128,14 +121,14 @@ static void InitForm(WM_MESSAGE * pMsg){
     EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_LEFT);
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00C0C0FF);
     EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
-    EDIT_SetMaxLen(hItem, 50); //字符最大长度
-    EDIT_EnableBlink(hItem, 500, 0); //光标不闪烁
+    EDIT_SetMaxLen(hItem, 50); //�ַ���󳤶�
+    EDIT_EnableBlink(hItem, 500, 0); //��겻��˸
 
     hItem = WM_GetDialogItem(pMsg->hWin,lbY_CoordTeach);
     TEXT_SetText(hItem,"Y:");
     TEXT_SetFont(hItem,GUI_FONT_24_ASCII);
     TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
-    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//自动换行
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//�Զ�����
     TEXT_SetBkColor(hItem,0x00F0F0F0);
     TEXT_SetTextColor(hItem,0x00000000);
 
@@ -145,14 +138,14 @@ static void InitForm(WM_MESSAGE * pMsg){
     EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_LEFT);
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00C0FFC0);
     EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
-    EDIT_SetMaxLen(hItem, 50); //字符最大长度
-    EDIT_EnableBlink(hItem, 500, 0); //光标不闪烁
+    EDIT_SetMaxLen(hItem, 50); //�ַ���󳤶�
+    EDIT_EnableBlink(hItem, 500, 0); //��겻��˸
 
     hItem = WM_GetDialogItem(pMsg->hWin,lbZ_CoordTeach);
     TEXT_SetText(hItem,"Z:");
     TEXT_SetFont(hItem,GUI_FONT_24_ASCII);
     TEXT_SetTextAlign(hItem,GUI_TA_TOP|GUI_TA_LEFT);
-    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//自动换行
+    TEXT_SetWrapMode(hItem, GUI_WRAPMODE_CHAR);//�Զ�����
     TEXT_SetBkColor(hItem,0x00F0F0F0);
     TEXT_SetTextColor(hItem,0x00000000);
 
@@ -162,36 +155,36 @@ static void InitForm(WM_MESSAGE * pMsg){
     EDIT_SetTextAlign(hItem, GUI_TA_VCENTER|GUI_TA_LEFT);
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00FFC0C0);
     EDIT_SetTextColor(hItem, EDIT_CI_ENABLED, 0x00000000);
-    EDIT_SetMaxLen(hItem, 50); //字符最大长度
-    EDIT_EnableBlink(hItem, 500, 0); //光标不闪烁
+    EDIT_SetMaxLen(hItem, 50); //�ַ���󳤶�
+    EDIT_EnableBlink(hItem, 500, 0); //��겻��˸
 
     hItem = WM_GetDialogItem(pMsg->hWin,btnReset_CoordTeach);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,button1_CoordTeach);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,button3_CoordTeach);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,button5_CoordTeach);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,button7_CoordTeach);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,button13_CoordTeach);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
@@ -201,23 +194,23 @@ static void InitForm(WM_MESSAGE * pMsg){
     EDIT_SetBkColor(hItem, EDIT_CI_ENABLED, 0x00F0F0F0);
 
     hItem = WM_GetDialogItem(pMsg->hWin,button8_CoordTeach);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,button9_CoordTeach);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00F0F0F0);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 
     hItem = WM_GetDialogItem(pMsg->hWin,button12_CoordTeach);
-    BUTTON_SetFont(hItem, &GUI_FontYAHE18);
+    BUTTON_SetFont(hItem, &GUI_FontHZ24);
     BUTTON_SetBkColor(hItem, BUTTON_CI_UNPRESSED, 0x00ED9564);
     BUTTON_SetTextColor(hItem, BUTTON_CI_UNPRESSED, 0x00000000);
 }
 
 
-//控件事件处理函数
+//�ؼ��¼���������
 static void DoEvent(WM_MESSAGE * pMsg)
 {
     int Id = WM_GetId(pMsg->hWinSrc);
@@ -234,10 +227,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
+					//DO:��ť�ѱ����
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
+					//DO:��ť�ѱ��ͷţ�����
 					break;
 			}
 			break;
@@ -245,10 +238,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
+					//DO:��ť�ѱ����
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
+					//DO:��ť�ѱ��ͷţ�����
 					break;
 			}
 			break;
@@ -256,10 +249,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
+					//DO:��ť�ѱ����
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
+					//DO:��ť�ѱ��ͷţ�����
 					break;
 			}
 			break;
@@ -267,10 +260,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
+					//DO:��ť�ѱ����
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
+					//DO:��ť�ѱ��ͷţ�����
 					break;
 			}
 			break;
@@ -278,10 +271,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
+					//DO:��ť�ѱ����
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
+					//DO:��ť�ѱ��ͷţ�����
 					break;
 			}
 			break;
@@ -289,17 +282,17 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
+					//DO:��ť�ѱ����
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
+					//DO:��ť�ѱ��ͷţ�����
 					hItem = WM_GetDialogItem(pMsg->hWin, dataGridView1_CoordTeach);
 					int rowIndex = LISTVIEW_GetSel(hItem);
 					int colIndex = LISTVIEW_GetSelCol(hItem);
 					//ShowNumKeyboard2(pMsg->hWin, LISTVIEW_SetItemText, dataGridView1_CoordTeach, colIndex, rowIndex);
 					break;
 				case WM_NOTIFICATION_SEL_CHANGED:
-					//DO:选择的值已发生改变
+					//DO:ѡ���ֵ�ѷ����ı�
 					break;
 			}
 			break;
@@ -317,13 +310,13 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
+					//DO:��ť�ѱ����
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
+					//DO:��ť�ѱ��ͷţ�����
 					break;
 				case WM_NOTIFICATION_VALUE_CHANGED:
-					//DO:控件的值已改变
+					//DO:�ؼ���ֵ�Ѹı�
 					break;
 			}
 			break;
@@ -336,13 +329,13 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
+					//DO:��ť�ѱ����
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
+					//DO:��ť�ѱ��ͷţ�����
 					break;
 				case WM_NOTIFICATION_VALUE_CHANGED:
-					//DO:控件的值已改变
+					//DO:�ؼ���ֵ�Ѹı�
 					break;
 			}
 			break;
@@ -355,13 +348,13 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
+					//DO:��ť�ѱ����
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
+					//DO:��ť�ѱ��ͷţ�����
 					break;
 				case WM_NOTIFICATION_VALUE_CHANGED:
-					//DO:控件的值已改变
+					//DO:�ؼ���ֵ�Ѹı�
 					break;
 			}
 			break;
@@ -369,10 +362,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
+					//DO:��ť�ѱ����
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
+					//DO:��ť�ѱ��ͷţ�����
 					break;
 			}
 			break;
@@ -380,10 +373,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
+					//DO:��ť�ѱ����
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
+					//DO:��ť�ѱ��ͷţ�����
 					break;
 			}
 			break;
@@ -391,10 +384,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
+					//DO:��ť�ѱ����
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
+					//DO:��ť�ѱ��ͷţ�����
 					break;
 			}
 			break;
@@ -402,10 +395,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
+					//DO:��ť�ѱ����
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
+					//DO:��ť�ѱ��ͷţ�����
 					break;
 			}
 			break;
@@ -413,10 +406,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
+					//DO:��ť�ѱ����
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
+					//DO:��ť�ѱ��ͷţ�����
 					break;
 			}
 			break;
@@ -424,10 +417,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
+					//DO:��ť�ѱ����
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
+					//DO:��ť�ѱ��ͷţ�����
 					break;
 			}
 			break;
@@ -440,10 +433,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
+					//DO:��ť�ѱ����
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
+					//DO:��ť�ѱ��ͷţ�����
 					break;
 			}
 			break;
@@ -451,10 +444,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
+					//DO:��ť�ѱ����
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
+					//DO:��ť�ѱ��ͷţ�����
 					break;
 			}
 			break;
@@ -462,10 +455,10 @@ static void DoEvent(WM_MESSAGE * pMsg)
 			switch(NCode)
 			{
 				case WM_NOTIFICATION_CLICKED:
-					//DO:按钮已被点击
+					//DO:��ť�ѱ����
 					break;
 				case WM_NOTIFICATION_RELEASED:
-					//DO:按钮已被释放（弹起）
+					//DO:��ť�ѱ��ͷţ�����
 					break;
 			}
 			break;
